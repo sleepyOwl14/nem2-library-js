@@ -70,10 +70,12 @@ describe('BlockRoutesApi', () => {
 	});
 
 	describe('getBlockchainHeight', () => {
-		it('should call getBlockchainHeight successfully', done => blockchainRoutesApi.getBlockchainHeight().then(height => {
-			expect(height).to.not.be.equal(0);
-			done();
-		}));
+		it('should call getBlockchainHeight successfully', done => {
+			blockchainRoutesApi.getBlockchainHeight().then(height => {
+				expect(height).to.not.be.equal(0);
+				done();
+			});
+		});
 	});
 	describe('getBlockchainScore', () => {
 		it('should call getBlockchainScore successfully', done => {
@@ -90,6 +92,21 @@ describe('BlockRoutesApi', () => {
 				expect(storage.numBlocks).to.be.greaterThan(0);
 				expect(storage.numTransactions).to.be.greaterThan(0);
 				done();
+			});
+		});
+	});
+
+	describe('getMerkleTree', () => {
+		it('should call getMerkleTree successfully', done => {
+			blockchainRoutesApi.getMerkleTree(
+				250934,
+				'A983745F69959AF438C5B59501B7B6FCD4312DE1F5252A6E8B54D09E23266A7C'
+			).then(tree => {
+				expect(tree).to.have.property('merklePath');
+				expect(tree).to.have.property('rootHash');
+				done();
+			}).catch(error => {
+				console.log(error);
 			});
 		});
 	});
