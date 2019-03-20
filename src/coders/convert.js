@@ -192,8 +192,20 @@ const convert = {
 		for (let i = 0; i < rawString.length; i++)
 			result += rawString.charCodeAt(i).toString(16);
 
-
 		return result;
+	},
+
+	/**
+	 * Convert Hex UTF-8
+	 * @param {string} str - A Hex String
+	 * @return {string} str - An UTF-8 string
+	 */
+	hexToUtf8(hexString) {
+		var rawString = ''
+		for (var i = 0; i < hexString.length; i+=2) {
+			rawString += String.fromCharCode(parseInt(hexString.substr(i, 2), 16))
+		}
+		return decodeURIComponent(escape(rawString))
 	},
 
 	/**

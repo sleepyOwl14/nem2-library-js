@@ -20,15 +20,102 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import * as TransferTransactionBufferPackage from '../buffers/TransferTransactionBuffer';
 import convert from '../coders/convert';
-import TransferTransactionSchema from '../schema/TransferTransactionSchema';
 
-const { flatbuffers } = require('flatbuffers');
+import bufferUtils from '../buffers/bufferUtils';
+
 const address = require('../coders/address').default;
 
-
-const { TransferTransactionBuffer, MessageBuffer, MosaicBuffer } = TransferTransactionBufferPackage.default.Buffers;
-
 export default class TransferTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new TransferTransactionBufferPackage.Uint8ArrayConsumableBuffer(binary);
+		var TransferTransactionObj = TransferTransactionBufferPackage.TransferTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		return new this.BufferLoading(TransferTransactionObj);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static get BufferLoading(){
+
+		class BufferProperties{
+			constructor(transferTransactionBuffer){
+				this.bufferClass = transferTransactionBuffer;
+			}
+
+			getSize(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getSize());
+			}
+
+			getSignature(){
+				return convert.uint8ToHex(this.bufferClass.getSignature());
+			}
+
+			getSigner(){
+				return convert.uint8ToHex(this.bufferClass.getSigner());
+			}
+		
+			getVersion(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion());
+			}
+
+			getVersionHex(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion()).toString(16);
+			}
+		
+			getType(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getType());
+			}
+
+			getTypeHex(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
+			}
+		
+			getFee(){
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getFee(), 4);
+			}
+		
+			getDeadline = () => {
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getDeadline(), 4);
+			}
+		
+			getRecipient(){
+				return address.addressToString(this.bufferClass.getRecipient());
+			}
+		
+			getMessage(){
+				var message = convert.hexToUtf8(convert.uint8ToHex(this.bufferClass.getMessage()));
+
+				// remove the appended message type included in the message buffer
+				return message.substr(1); 
+			}
+		
+			getMosaics(){
+				var mosaics = this.bufferClass.getMosaics();
+
+				var mosaicsData = [];
+
+				for(var i = 0; i < mosaics.length; i++){
+					var mosaicData = {
+						mosaicId : bufferUtils.bufferArray_to_uintArray(mosaics[i].mosaicId, 4),
+						amount : bufferUtils.bufferArray_to_uintArray(mosaics[i].amount, 4),
+					};
+					mosaicsData.push(mosaicData);
+				}
+
+				return mosaicsData;
+			}
+		}
+
+		return BufferProperties;
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -83,61 +170,45 @@ export default class TransferTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
-				// Constants
+				var transferTransaction = new TransferTransactionBufferPackage.TransferTransactionBuffer();
 
-				// Create message
-				const bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
-				const payload = MessageBuffer.createPayloadVector(builder, bytePayload);
-				MessageBuffer.startMessageBuffer(builder);
-				MessageBuffer.addType(builder, this.message.type);
-				MessageBuffer.addPayload(builder, payload);
-				const message = MessageBuffer.endMessageBuffer(builder);
-
-				// Create mosaics
 				const mosaics = [];
 				this.mosaics.forEach(mosaic => {
-					const id = MosaicBuffer.createIdVector(builder, mosaic.id);
-					const amount = MosaicBuffer.createAmountVector(builder, mosaic.amount);
-					MosaicBuffer.startMosaicBuffer(builder);
-					MosaicBuffer.addId(builder, id);
-					MosaicBuffer.addAmount(builder, amount);
-					mosaics.push(MosaicBuffer.endMosaicBuffer(builder));
+					var mosaicBuffer = new TransferTransactionBufferPackage.UnresolvedMosaicBuffer();
+
+					mosaicBuffer.setMosaicid(bufferUtils.uintArray_to_bufferArray(mosaic.id, 4));
+					mosaicBuffer.setAmount(bufferUtils.uintArray_to_bufferArray(mosaic.amount, 4));
+					mosaics.push(mosaicBuffer);
+
 				});
 
-				// Create vectors
-				const signatureVector = TransferTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = TransferTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = TransferTransactionBuffer.createDeadlineVector(builder, this.deadline);
-				const feeVector = TransferTransactionBuffer.createFeeVector(builder, this.fee);
-				const recipientVector = TransferTransactionBuffer.createRecipientVector(builder, this.recipient);
-				const mosaicsVector = TransferTransactionBuffer.createMosaicsVector(builder, mosaics);
+				var bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
 
+				// extra byte for message type
+				if(bytePayload.length == 0){
+					bytePayload = Uint8Array.of([0]);
+				}
+				else{
+					bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([0]), bytePayload);
+				}
 
-				TransferTransactionBuffer.startTransferTransactionBuffer(builder);
-				TransferTransactionBuffer.addSize(builder, 149 + (16 * this.mosaics.length) + bytePayload.length);
-				TransferTransactionBuffer.addSignature(builder, signatureVector);
-				TransferTransactionBuffer.addSigner(builder, signerVector);
-				TransferTransactionBuffer.addVersion(builder, this.version);
-				TransferTransactionBuffer.addType(builder, this.type);
-				TransferTransactionBuffer.addFee(builder, feeVector);
-				TransferTransactionBuffer.addDeadline(builder, deadlineVector);
-				TransferTransactionBuffer.addRecipient(builder, recipientVector);
-				TransferTransactionBuffer.addNumMosaics(builder, this.mosaics.length);
-				TransferTransactionBuffer.addMessageSize(builder, bytePayload.length + 1);
-				TransferTransactionBuffer.addMessage(builder, message);
-				TransferTransactionBuffer.addMosaics(builder, mosaicsVector);
+				// does not need to be in this order 
+				transferTransaction.setSize(bufferUtils.uint_to_buffer(148 + (16 * this.mosaics.length) + bytePayload.length, 4));
+				transferTransaction.setSignature("");
+				transferTransaction.setSigner("");
+				transferTransaction.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				transferTransaction.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				transferTransaction.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
+				transferTransaction.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				transferTransaction.setRecipient(this.recipient);
+				transferTransaction.setMessage(bytePayload);
+				transferTransaction.setMosaics(mosaics);
+			
+				var bytes = transferTransaction.serialize();
 
-
-				// Calculate size
-
-				const codedTransfer = TransferTransactionBuffer.endTransferTransactionBuffer(builder);
-				builder.finish(codedTransfer);
-
-				const bytes = builder.asUint8Array();
-				return new TransferTransaction(bytes, TransferTransactionSchema);
+				return new TransferTransaction(bytes);
 			}
+
 		}
 
 		return Builder;

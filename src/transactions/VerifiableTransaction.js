@@ -30,9 +30,8 @@ export default class VerifiableTransaction {
 	 * @param {Uint8Array} bytes Uint8Array after flatbuffers.build.asUint8Array()
 	 * @param {module:schema/Schema} schema Schema definition corresponding to flatbuffer Schema
 	 */
-	constructor(bytes, schema) {
+	constructor(bytes) {
 		this.bytes = bytes;
-		this.schema = schema;
 	}
 
 	/**
@@ -60,7 +59,7 @@ export default class VerifiableTransaction {
 	 * @returns {module:model/TransactionPayload} - Signed Transaction Payload
 	 */
 	signTransaction(keyPair) {
-		const byteBuffer = this.serialize();
+		const byteBuffer = Array.from(this.bytes);
 		const signingBytes = byteBuffer.slice(4 + 64 + 32);
 		const keyPairEncoded = KeyPair.createKeyPairFromPrivateKeyString(keyPair.privateKey);
 		const signature = Array.from(KeyPair.sign(keyPair, new Uint8Array(signingBytes)));
@@ -75,10 +74,6 @@ export default class VerifiableTransaction {
 			payload,
 			hash: VerifiableTransaction.createTransactionHash(payload)
 		};
-	}
-
-	serialize() {
-		return this.schema.serialize(Array.from(this.bytes));
 	}
 
 	/**
@@ -101,7 +96,7 @@ export default class VerifiableTransaction {
 	 */
 	toAggregateTransaction(_signer) {
 		const signer = convert.hexToUint8(_signer);
-		let resultBytes = this.schema.serialize(Array.from(this.bytes));
+		let resultBytes = this.bytes;
 		resultBytes.splice(0, 4 + 64 + 32);
 		resultBytes = Array.from(signer).concat(resultBytes);
 		resultBytes.splice(32 + 2 + 2, 16);
