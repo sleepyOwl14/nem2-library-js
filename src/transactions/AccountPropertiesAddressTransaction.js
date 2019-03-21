@@ -18,18 +18,100 @@
  * @module transactions/AccountPropertiesAddressTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import AccountPropertiesAddressModificationTransactionSchema from '../schema/AccountPropertiesAddressModificationTransactionSchema';
-import AccountPropertiesAddressTransactionBufferPackage from '../buffers/AccountPropertiesAddressTransactionBuffer';
+import convert from '../coders/convert';
 
-const {
-	AccountPropertiesAddressTransactionBuffer,
-	PropertyAddressModificationBuffer
-} = AccountPropertiesAddressTransactionBufferPackage.Buffers;
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	AccountPropertyAddressBuffer,
+	AddressPropertyModificationBuffer} from '../buffers';
 
 const address = require('../coders/address').default;
-const { flatbuffers } = require('flatbuffers');
 
 export default class AccountPropertiesAddressTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AccountPropertyAddressTransactionBufferData = AccountPropertyAddressBuffer.AddressPropertyTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		return new this.BufferProperties(AccountPropertyAddressTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static get BufferProperties(){
+
+		class BufferProperties{
+			constructor(addressPropertyTransactionBuffer){
+				this.bufferClass = addressPropertyTransactionBuffer;
+			}
+
+			getSize(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getSize());
+			}
+
+			getSignature(){
+				return convert.uint8ToHex(this.bufferClass.getSignature());
+			}
+
+			getSigner(){
+				return convert.uint8ToHex(this.bufferClass.getSigner());
+			}
+		
+			getVersion(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion());
+			}
+
+			getVersionHex(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion()).toString(16);
+			}
+		
+			getType(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getType());
+			}
+
+			getTypeHex(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
+			}
+		
+			getFee(){
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getFee(), 4);
+			}
+		
+			getDeadline(){
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getDeadline(), 4);
+			}
+		
+			getPropertyType(){
+				return bufferUtils.buffer_to_uint(this.propertyType);
+			}
+		
+			getModifications(){
+				var modifications = this.bufferClass.getModifications();
+
+				var modificationsData = [];
+
+				for(var i = 0; i < modifications.length; i++){
+					var modification = {
+						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						value : convert.uint8ToHex(modifications[i].value),
+					};
+					modificationsData.push(modification);
+				}
+
+				return modificationsData;
+			}
+		}
+
+		return BufferProperties;
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -69,51 +151,41 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var accountPropertiesAddressTransactionBuffer = new AccountPropertyAddressBuffer.AddressPropertyTransactionBuffer();
 
-				// Create modifications
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {
-					const addressModificationVector = PropertyAddressModificationBuffer
-						.createValueVector(builder, address.stringToAddress(modification.value));
-					PropertyAddressModificationBuffer.startPropertyAddressModificationBuffer(builder);
-					PropertyAddressModificationBuffer.addModificationType(builder, modification.modificationType);
-					PropertyAddressModificationBuffer.addValue(builder, addressModificationVector);
-					modificationsArray.push(PropertyAddressModificationBuffer.endPropertyAddressModificationBuffer(builder));
+					
+					var addressPropertyModificationBuffer = new AddressPropertyModificationBuffer();
+					
+					var addressString;
+
+					if (/^[0-9a-fA-F]{16}$/.test(modification.value)) {
+						// received hexadecimal notation
+						addressString = address.aliasToRecipient(convert.hexToUint8(modification.value));
+					} else {
+						addressString = address.stringToAddress(modification.value);
+					}
+					
+					addressPropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType));
+					addressPropertyModificationBuffer.setValue(addressString);
+					modificationsArray.push(addressPropertyModificationBuffer);
 				});
 
-				// Create vectors
-				const signatureVector = AccountPropertiesAddressTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = AccountPropertiesAddressTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = AccountPropertiesAddressTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = AccountPropertiesAddressTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const modificationVector = AccountPropertiesAddressTransactionBuffer
-					.createModificationsVector(builder, modificationsArray);
+				// does not need to be in order 
+				accountPropertiesAddressTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (26 * this.modifications.length), 4));
+				accountPropertiesAddressTransactionBuffer.setSignature("");
+				accountPropertiesAddressTransactionBuffer.setSigner("");
+				accountPropertiesAddressTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				accountPropertiesAddressTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				accountPropertiesAddressTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
+				accountPropertiesAddressTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountPropertiesAddressTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
+				accountPropertiesAddressTransactionBuffer.setModifications(modificationsArray);
+			
+				var bytes = accountPropertiesAddressTransactionBuffer.serialize();
 
-
-				AccountPropertiesAddressTransactionBuffer.startAccountPropertiesAddressTransactionBuffer(builder);
-				AccountPropertiesAddressTransactionBuffer.addSize(builder, 122 + (26 * this.modifications.length));
-				AccountPropertiesAddressTransactionBuffer.addSignature(builder, signatureVector);
-				AccountPropertiesAddressTransactionBuffer.addSigner(builder, signerVector);
-				AccountPropertiesAddressTransactionBuffer.addVersion(builder, this.version);
-				AccountPropertiesAddressTransactionBuffer.addType(builder, this.type);
-				AccountPropertiesAddressTransactionBuffer.addFee(builder, feeVector);
-				AccountPropertiesAddressTransactionBuffer.addDeadline(builder, deadlineVector);
-				AccountPropertiesAddressTransactionBuffer.addPropertyType(builder, this.propertyType);
-				AccountPropertiesAddressTransactionBuffer.addModificationCount(builder, this.modifications.length);
-				AccountPropertiesAddressTransactionBuffer.addModifications(builder, modificationVector);
-
-				// Calculate size
-				const codedAccountPropertiesAddress = AccountPropertiesAddressTransactionBuffer.endAccountPropertiesAddressTransactionBuffer(builder);
-				builder.finish(codedAccountPropertiesAddress);
-
-				const bytes = builder.asUint8Array();
-
-				return new AccountPropertiesAddressTransaction(bytes, AccountPropertiesAddressModificationTransactionSchema);
+				return new AccountPropertiesAddressTransaction(bytes);
 			}
 		}
 

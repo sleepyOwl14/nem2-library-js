@@ -18,16 +18,84 @@
  * @module transactions/AccountLinkTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import AccountLinkTransactionBufferPackage from '../buffers/AccountLinkTransactionBuffer';
-import AccountLinkTransactionSchema from '../schema/AccountLinkTransactionSchema';
 import convert from '../coders/convert';
-
-const { flatbuffers } = require('flatbuffers');
-
-
-const { AccountLinkTransactionBuffer } = AccountLinkTransactionBufferPackage.Buffers;
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	AccountLinkTransactionBuffer} from '../buffers';
 
 export default class AccountLinkTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.AccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		return new this.BufferProperties(AccountLinkTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static get BufferProperties(){
+
+		class BufferProperties{
+			constructor(accountLinkTransactionBuffer){
+				this.bufferClass = accountLinkTransactionBuffer;
+			}
+
+			getSize(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getSize());
+			}
+
+			getSignature(){
+				return convert.uint8ToHex(this.bufferClass.getSignature());
+			}
+
+			getSigner(){
+				return convert.uint8ToHex(this.bufferClass.getSigner());
+			}
+		
+			getVersion(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion());
+			}
+
+			getVersionHex(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion()).toString(16);
+			}
+		
+			getType(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getType());
+			}
+
+			getTypeHex(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
+			}
+		
+			getFee(){
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getFee(), 4);
+			}
+		
+			getDeadline(){
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getDeadline(), 4);
+			}
+
+			getRemoteAccountKey(){
+				return convert.uint8ToHex(this.bufferClass.getRemoteaccountkey());
+			}
+		
+			getLinkAction(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getLinkaction());
+			}
+		}
+
+		return BufferProperties;
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -66,36 +134,23 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 				return this;
 			}
 			build() {
-				const builder = new flatbuffers.Builder(1);
 
-				// Create vectors
-				const signatureVector = AccountLinkTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = AccountLinkTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = AccountLinkTransactionBuffer.createDeadlineVector(builder, this.deadline);
-				const feeVector = AccountLinkTransactionBuffer.createFeeVector(builder, this.fee);
-				const remoteAccountKeyVector = AccountLinkTransactionBuffer.createRemoteAccountKeyVector(builder, this.remoteAccountKey);
+				var accountLinkTransactionBuffer = new AccountLinkTransactionBuffer.AccountLinkTransactionBuffer();
 
+				// does not need to be in this order 
+				accountLinkTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));
+				accountLinkTransactionBuffer.setSignature("");
+				accountLinkTransactionBuffer.setSigner("");
+				accountLinkTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				accountLinkTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				accountLinkTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
+				accountLinkTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountLinkTransactionBuffer.setRemoteaccountkey(this.remoteAccountKey);
+				accountLinkTransactionBuffer.setLinkaction(bufferUtils.uint_to_buffer(this.linkAction,1));
+			
+				var bytes = accountLinkTransactionBuffer.serialize();
 
-				AccountLinkTransactionBuffer.startAccountLinkTransactionBuffer(builder);
-				AccountLinkTransactionBuffer.addSize(builder, 154);
-				AccountLinkTransactionBuffer.addSignature(builder, signatureVector);
-				AccountLinkTransactionBuffer.addSigner(builder, signerVector);
-				AccountLinkTransactionBuffer.addVersion(builder, this.version);
-				AccountLinkTransactionBuffer.addType(builder, this.type);
-				AccountLinkTransactionBuffer.addFee(builder, feeVector);
-				AccountLinkTransactionBuffer.addDeadline(builder, deadlineVector);
-				AccountLinkTransactionBuffer.addRemoteAccountKey(builder, remoteAccountKeyVector);
-				AccountLinkTransactionBuffer.addLinkAction(builder, this.linkAction);
-
-
-				// Calculate size
-
-				const codedTransfer = AccountLinkTransactionBuffer.endAccountLinkTransactionBuffer(builder);
-				builder.finish(codedTransfer);
-
-				const bytes = builder.asUint8Array();
-				return new AccountLinkTransaction(bytes, AccountLinkTransactionSchema);
+				return new AccountLinkTransaction(bytes);
 			}
 		}
 

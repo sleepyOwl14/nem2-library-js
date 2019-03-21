@@ -20,6 +20,31 @@ export declare class AccountLinkTransaction extends VerifiableTransaction {
 }
 
 export declare module AccountLinkTransaction {
+
+    class BufferProperties{
+        getSize(): Number;
+
+        getSignature(): String;
+
+        getSigner(): String;
+    
+        getVersion(): Number;
+
+        getVersionHex(): String;
+    
+        getType() : Number;
+
+        getTypeHex() : String;
+    
+        getFee() : Array;
+    
+        getDeadline() : Array;
+    
+        getRemoteAccountKey(): String;
+
+        getLinkAction(): Number;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

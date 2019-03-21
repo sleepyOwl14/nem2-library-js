@@ -1,5 +1,5 @@
-import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
+import PropertyModificationBuffer from './PropertyModificationBuffer';
+import AddressPropertyModificationBuffer from './AddressPropertyModificationBuffer';
 
 import bufferUtils from './BufferUtils';
 
@@ -8,44 +8,52 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class AccountLinkTransactionBodyBuffer {
-    getRemoteaccountkey = () => {
-        return this.remoteAccountKey
+class AddressPropertyTransactionBodyBuffer {
+    getPropertytype = () => {
+        return this.propertyType
     }
 
-    setRemoteaccountkey = (remoteAccountKey) => {
-        this.remoteAccountKey = remoteAccountKey
+    setPropertytype = (propertyType) => {
+        this.propertyType = propertyType
     }
 
-    getLinkaction = () => {
-        return this.linkAction
+    getModifications = () => {
+        return this.modifications
     }
 
-    setLinkaction = (linkAction) => {
-        this.linkAction = linkAction
+    setModifications = (modifications) => {
+        this.modifications = modifications
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AccountLinkTransactionBodyBuffer()
-        var remoteAccountKey = consumableBuffer.get_bytes(32)
-        object.remoteAccountKey = remoteAccountKey
-        var linkAction = consumableBuffer.get_bytes(1)
-        object.linkAction = linkAction
+        var object = new AddressPropertyTransactionBodyBuffer()
+        var propertyType = consumableBuffer.get_bytes(1)
+        object.propertyType = propertyType
+        var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
+        object.modifications = []
+        var i
+        for (i = 0; i < modificationsCount; i++) {
+            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            object.modifications.push(newmodifications)
+        }
         return object
     }
 
     serialize = () => {
         var newArray = new Uint8Array()
-        var fitArrayremoteAccountKey = fit_bytearray(this.remoteAccountKey, 32)
-        newArray = concat_typedarrays(newArray, fitArrayremoteAccountKey)
-        var fitArraylinkAction = fit_bytearray(this.linkAction, 1)
-        newArray = concat_typedarrays(newArray, fitArraylinkAction)
+        var fitArraypropertyType = fit_bytearray(this.propertyType, 1)
+        newArray = concat_typedarrays(newArray, fitArraypropertyType)
+        newArray = concat_typedarrays(newArray, uint_to_buffer(this.modifications.length, 1))
+        var i
+        for (i in this.modifications) {
+            newArray = concat_typedarrays(newArray, this.modifications[i].serialize())
+        }
         return newArray
     }
 
 }
 
-class AccountLinkTransactionBuffer {
+class AddressPropertyTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -102,24 +110,24 @@ class AccountLinkTransactionBuffer {
         this.deadline = deadline
     }
 
-    getRemoteaccountkey = () => {
-        return this.remoteAccountKey
+    getPropertytype = () => {
+        return this.propertyType
     }
 
-    setRemoteaccountkey = (remoteAccountKey) => {
-        this.remoteAccountKey = remoteAccountKey
+    setPropertytype = (propertyType) => {
+        this.propertyType = propertyType
     }
 
-    getLinkaction = () => {
-        return this.linkAction
+    getModifications = () => {
+        return this.modifications
     }
 
-    setLinkaction = (linkAction) => {
-        this.linkAction = linkAction
+    setModifications = (modifications) => {
+        this.modifications = modifications
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AccountLinkTransactionBuffer()
+        var object = new AddressPropertyTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -134,10 +142,15 @@ class AccountLinkTransactionBuffer {
         object.fee = fee
         var deadline = consumableBuffer.get_bytes(8)
         object.deadline = deadline
-        var remoteAccountKey = consumableBuffer.get_bytes(32)
-        object.remoteAccountKey = remoteAccountKey
-        var linkAction = consumableBuffer.get_bytes(1)
-        object.linkAction = linkAction
+        var propertyType = consumableBuffer.get_bytes(1)
+        object.propertyType = propertyType
+        var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
+        object.modifications = []
+        var i
+        for (i = 0; i < modificationsCount; i++) {
+            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            object.modifications.push(newmodifications)
+        }
         return object
     }
 
@@ -157,16 +170,19 @@ class AccountLinkTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayfee)
         var fitArraydeadline = fit_bytearray(this.deadline, 8)
         newArray = concat_typedarrays(newArray, fitArraydeadline)
-        var fitArrayremoteAccountKey = fit_bytearray(this.remoteAccountKey, 32)
-        newArray = concat_typedarrays(newArray, fitArrayremoteAccountKey)
-        var fitArraylinkAction = fit_bytearray(this.linkAction, 1)
-        newArray = concat_typedarrays(newArray, fitArraylinkAction)
+        var fitArraypropertyType = fit_bytearray(this.propertyType, 1)
+        newArray = concat_typedarrays(newArray, fitArraypropertyType)
+        newArray = concat_typedarrays(newArray, uint_to_buffer(this.modifications.length, 1))
+        var i
+        for (i in this.modifications) {
+            newArray = concat_typedarrays(newArray, this.modifications[i].serialize())
+        }
         return newArray
     }
 
 }
 
-class EmbeddedAccountLinkTransactionBuffer {
+class EmbeddedAddressPropertyTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -199,24 +215,24 @@ class EmbeddedAccountLinkTransactionBuffer {
         this.type = type
     }
 
-    getRemoteaccountkey = () => {
-        return this.remoteAccountKey
+    getPropertytype = () => {
+        return this.propertyType
     }
 
-    setRemoteaccountkey = (remoteAccountKey) => {
-        this.remoteAccountKey = remoteAccountKey
+    setPropertytype = (propertyType) => {
+        this.propertyType = propertyType
     }
 
-    getLinkaction = () => {
-        return this.linkAction
+    getModifications = () => {
+        return this.modifications
     }
 
-    setLinkaction = (linkAction) => {
-        this.linkAction = linkAction
+    setModifications = (modifications) => {
+        this.modifications = modifications
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedAccountLinkTransactionBuffer()
+        var object = new EmbeddedAddressPropertyTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -225,10 +241,15 @@ class EmbeddedAccountLinkTransactionBuffer {
         object.version = version
         var type = consumableBuffer.get_bytes(2)
         object.type = type
-        var remoteAccountKey = consumableBuffer.get_bytes(32)
-        object.remoteAccountKey = remoteAccountKey
-        var linkAction = consumableBuffer.get_bytes(1)
-        object.linkAction = linkAction
+        var propertyType = consumableBuffer.get_bytes(1)
+        object.propertyType = propertyType
+        var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
+        object.modifications = []
+        var i
+        for (i = 0; i < modificationsCount; i++) {
+            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            object.modifications.push(newmodifications)
+        }
         return object
     }
 
@@ -242,20 +263,23 @@ class EmbeddedAccountLinkTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayversion)
         var fitArraytype = fit_bytearray(this.type, 2)
         newArray = concat_typedarrays(newArray, fitArraytype)
-        var fitArrayremoteAccountKey = fit_bytearray(this.remoteAccountKey, 32)
-        newArray = concat_typedarrays(newArray, fitArrayremoteAccountKey)
-        var fitArraylinkAction = fit_bytearray(this.linkAction, 1)
-        newArray = concat_typedarrays(newArray, fitArraylinkAction)
+        var fitArraypropertyType = fit_bytearray(this.propertyType, 1)
+        newArray = concat_typedarrays(newArray, fitArraypropertyType)
+        newArray = concat_typedarrays(newArray, uint_to_buffer(this.modifications.length, 1))
+        var i
+        for (i in this.modifications) {
+            newArray = concat_typedarrays(newArray, this.modifications[i].serialize())
+        }
         return newArray
     }
 
 }
 
 module.exports = {
-    Uint8ArrayConsumableBuffer,
-    UnresolvedMosaicBuffer,
-    AccountLinkTransactionBodyBuffer,
-    AccountLinkTransactionBuffer,
-    EmbeddedAccountLinkTransactionBuffer,
+    PropertyModificationBuffer,
+    AddressPropertyModificationBuffer,
+    AddressPropertyTransactionBodyBuffer,
+    AddressPropertyTransactionBuffer,
+    EmbeddedAddressPropertyTransactionBuffer,
 };
 
