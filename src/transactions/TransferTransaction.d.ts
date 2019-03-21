@@ -15,30 +15,14 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import {CommonBufferProperties} from "../buffers";
 
 export declare class TransferTransaction extends VerifiableTransaction {
 }
 
 export declare module TransferTransaction {
 
-    class BufferProperties{
-        getSize(): Number;
-
-        getSignature(): String;
-
-        getSigner(): String;
-    
-        getVersion(): Number;
-
-        getVersionHex(): String;
-    
-        getType() : Number;
-
-        getTypeHex() : String;
-    
-        getFee() : Array;
-    
-        getDeadline() : Array;
+    class BufferProperties extends CommonBufferProperties{
     
         getRecipient(): String;
     

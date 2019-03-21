@@ -4,15 +4,21 @@ import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
 import bufferUtils from './BufferUtils';
 import TransferTransactionBuffer from './TransferTransactionBuffer';
 import AccountLinkTransactionBuffer from './AccountLinkTransactionBuffer';
-import AccountPropertyAddressBuffer from './AccountPropertyAddressBuffer';
-import AddressPropertyModificationBuffer from './AddressPropertyModificationBuffer';
+import AccountPropertyAddressBuffer from './AccountPropertyAddressTransactionBuffer';
+import AccountPropertiesEntityTypeTransactionBuffer from './AccountPropertiesEntityTypeTransactionBuffer';
+import MosaicPropertyTransactionBuffer from './AccountPropertiesMosaicTransactionBuffer';
+import AddressAliasTransactionBuffer from './AddressAliasTransactionBuffer';
+import CommonBufferProperties from './CommonBufferProperties';
 
 export{
+    CommonBufferProperties,
     Uint8ArrayConsumableBuffer,
     UnresolvedMosaicBuffer,
     bufferUtils,
     TransferTransactionBuffer,
     AccountLinkTransactionBuffer,
     AccountPropertyAddressBuffer,
-    AddressPropertyModificationBuffer,
+    AccountPropertiesEntityTypeTransactionBuffer,
+    MosaicPropertyTransactionBuffer,
+    AddressAliasTransactionBuffer,
 }

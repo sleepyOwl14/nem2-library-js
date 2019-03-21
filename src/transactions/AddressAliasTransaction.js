@@ -15,18 +15,58 @@
  */
 
 import VerifiableTransaction from './VerifiableTransaction';
-import AddressAliasTransactionSchema from '../schema/AddressAliasTransactionSchema';
-import AddressAliasTransactionBufferPackage from '../buffers/AddressAliasTransactionBuffer';
+import convert from '../coders/convert';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	AddressAliasTransactionBuffer,
+	CommonBufferProperties} from '../buffers';
 
-const { AddressAliasTransactionBuffer } = AddressAliasTransactionBufferPackage.Buffers;
-
-const { flatbuffers } = require('flatbuffers');
 const addressEncoder = require('../coders/address').default;
 
 /**
  * @module transactions/AddressAliasTransaction
  */
 export default class AddressAliasTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.AddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		return new this.BufferProperties(AddressAliasTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static get BufferProperties(){
+
+		class BufferProperties extends CommonBufferProperties{
+			constructor(addressAliasTransactionBuffer){
+				super(addressAliasTransactionBuffer);
+			}
+		
+			getAliasAction(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getAliasaction());
+			}
+		
+			getNamespaceId(){
+				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getNamespaceid(), 4);
+			}
+		
+			getAddress(){
+				return addressEncoder.addressToString(this.bufferClass.getAddress());
+			}
+		}
+
+		return BufferProperties;
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -71,42 +111,23 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
 
-				// Create vectors
-				const signatureVector = AddressAliasTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = AddressAliasTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = AddressAliasTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = AddressAliasTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const namespaceIdVector = AddressAliasTransactionBuffer
-					.createNamespaceIdVector(builder, this.namespaceId);
-				const addressVector = AddressAliasTransactionBuffer
-					.createAddressVector(builder, this.address);
+				var addressAliasTransactionBuffer = new AddressAliasTransactionBuffer.AddressAliasTransactionBuffer();
 
+				addressAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));
+				addressAliasTransactionBuffer.setSignature("");
+				addressAliasTransactionBuffer.setSigner("");
+				addressAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				addressAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				addressAliasTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
+				addressAliasTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				addressAliasTransactionBuffer.setAliasaction(bufferUtils.uint_to_buffer(this.actionType));
+				addressAliasTransactionBuffer.setNamespaceid(bufferUtils.uintArray_to_bufferArray(this.namespaceId, 4));
+				addressAliasTransactionBuffer.setAddress(this.address);
 
-				AddressAliasTransactionBuffer.startAddressAliasTransactionBuffer(builder);
-				AddressAliasTransactionBuffer.addSize(builder, 154);
-				AddressAliasTransactionBuffer.addSignature(builder, signatureVector);
-				AddressAliasTransactionBuffer.addSigner(builder, signerVector);
-				AddressAliasTransactionBuffer.addVersion(builder, this.version);
-				AddressAliasTransactionBuffer.addType(builder, this.type);
-				AddressAliasTransactionBuffer.addFee(builder, feeVector);
-				AddressAliasTransactionBuffer.addDeadline(builder, deadlineVector);
-				AddressAliasTransactionBuffer.addActionType(builder, this.actionType);
-				AddressAliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-				AddressAliasTransactionBuffer.addAddress(builder, addressVector);
+				var bytes = addressAliasTransactionBuffer.serialize();
 
-				// Calculate size
-				const codedMosaicChangeSupply = AddressAliasTransactionBuffer.endAddressAliasTransactionBuffer(builder);
-				builder.finish(codedMosaicChangeSupply);
-
-                const bytes = builder.asUint8Array();
-
-				return new AddressAliasTransaction(bytes, AddressAliasTransactionSchema);
+				return new AddressAliasTransaction(bytes);
 			}
 		}
 

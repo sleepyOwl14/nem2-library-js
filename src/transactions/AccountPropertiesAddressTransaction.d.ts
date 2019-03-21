@@ -15,11 +15,20 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import {CommonBufferProperties} from "../buffers";
 
 export declare class AccountPropertiesAddressTransaction extends VerifiableTransaction {
 }
 
 export declare module AccountPropertiesAddressTransaction {
+
+    class BufferProperties extends CommonBufferProperties{
+    
+        getPropertyType(): Number;
+    
+        getModifications():  Array;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

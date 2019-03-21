@@ -1,6 +1,3 @@
-import PropertyModificationBuffer from './PropertyModificationBuffer';
-import AddressPropertyModificationBuffer from './AddressPropertyModificationBuffer';
-
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -8,7 +5,69 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class AddressPropertyTransactionBodyBuffer {
+class PropertyModificationBuffer {
+    getModificationtype = () => {
+        return this.modificationType
+    }
+
+    setModificationtype = (modificationType) => {
+        this.modificationType = modificationType
+    }
+
+    static loadFromBinary(consumableBuffer) {
+        var object = new PropertyModificationBuffer()
+        var modificationType = consumableBuffer.get_bytes(1)
+        object.modificationType = modificationType
+        return object
+    }
+
+    serialize = () => {
+        var newArray = new Uint8Array()
+        var fitArraymodificationType = fit_bytearray(this.modificationType, 1)
+        newArray = concat_typedarrays(newArray, fitArraymodificationType)
+        return newArray
+    }
+
+}
+
+class TransactionTypePropertyModificationBuffer {
+    getModificationtype = () => {
+        return this.modificationType
+    }
+
+    setModificationtype = (modificationType) => {
+        this.modificationType = modificationType
+    }
+
+    getValue = () => {
+        return this.value
+    }
+
+    setValue = (value) => {
+        this.value = value
+    }
+
+    static loadFromBinary(consumableBuffer) {
+        var object = new TransactionTypePropertyModificationBuffer()
+        var modificationType = consumableBuffer.get_bytes(1)
+        object.modificationType = modificationType
+        var value = consumableBuffer.get_bytes(2)
+        object.value = value
+        return object
+    }
+
+    serialize = () => {
+        var newArray = new Uint8Array()
+        var fitArraymodificationType = fit_bytearray(this.modificationType, 1)
+        newArray = concat_typedarrays(newArray, fitArraymodificationType)
+        var fitArrayvalue = fit_bytearray(this.value, 2)
+        newArray = concat_typedarrays(newArray, fitArrayvalue)
+        return newArray
+    }
+
+}
+
+class TransactionTypePropertyTransactionBodyBuffer {
     getPropertytype = () => {
         return this.propertyType
     }
@@ -26,14 +85,14 @@ class AddressPropertyTransactionBodyBuffer {
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AddressPropertyTransactionBodyBuffer()
+        var object = new TransactionTypePropertyTransactionBodyBuffer()
         var propertyType = consumableBuffer.get_bytes(1)
         object.propertyType = propertyType
         var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
         object.modifications = []
         var i
         for (i = 0; i < modificationsCount; i++) {
-            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            var newmodifications = TransactionTypePropertyModificationBuffer.loadFromBinary(consumableBuffer)
             object.modifications.push(newmodifications)
         }
         return object
@@ -53,7 +112,7 @@ class AddressPropertyTransactionBodyBuffer {
 
 }
 
-class AddressPropertyTransactionBuffer {
+class TransactionTypePropertyTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -127,7 +186,7 @@ class AddressPropertyTransactionBuffer {
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AddressPropertyTransactionBuffer()
+        var object = new TransactionTypePropertyTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -148,7 +207,7 @@ class AddressPropertyTransactionBuffer {
         object.modifications = []
         var i
         for (i = 0; i < modificationsCount; i++) {
-            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            var newmodifications = TransactionTypePropertyModificationBuffer.loadFromBinary(consumableBuffer)
             object.modifications.push(newmodifications)
         }
         return object
@@ -182,7 +241,7 @@ class AddressPropertyTransactionBuffer {
 
 }
 
-class EmbeddedAddressPropertyTransactionBuffer {
+class EmbeddedTransactionTypePropertyTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -232,7 +291,7 @@ class EmbeddedAddressPropertyTransactionBuffer {
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedAddressPropertyTransactionBuffer()
+        var object = new EmbeddedTransactionTypePropertyTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -247,7 +306,7 @@ class EmbeddedAddressPropertyTransactionBuffer {
         object.modifications = []
         var i
         for (i = 0; i < modificationsCount; i++) {
-            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            var newmodifications = TransactionTypePropertyModificationBuffer.loadFromBinary(consumableBuffer)
             object.modifications.push(newmodifications)
         }
         return object
@@ -277,9 +336,9 @@ class EmbeddedAddressPropertyTransactionBuffer {
 
 module.exports = {
     PropertyModificationBuffer,
-    AddressPropertyModificationBuffer,
-    AddressPropertyTransactionBodyBuffer,
-    AddressPropertyTransactionBuffer,
-    EmbeddedAddressPropertyTransactionBuffer,
+    TransactionTypePropertyModificationBuffer,
+    TransactionTypePropertyTransactionBodyBuffer,
+    TransactionTypePropertyTransactionBuffer,
+    EmbeddedTransactionTypePropertyTransactionBuffer,
 };
 

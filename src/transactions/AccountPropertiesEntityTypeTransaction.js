@@ -18,17 +18,63 @@
  * @module transactions/AccountPropertiesEntityTypeTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import AccountPropertiesEntityTypeModificationTransactionSchema from '../schema/AccountPropertiesEntityTypeModificationTransactionSchema';
-import AccountPropertiesEntityTypeTransactionBufferPackage from '../buffers/AccountPropertiesEntityTypeTransactionBuffer';
-
-const {
+import convert from '../coders/convert';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
 	AccountPropertiesEntityTypeTransactionBuffer,
-	PropertyEntityTypeModificationBuffer
-} = AccountPropertiesEntityTypeTransactionBufferPackage.Buffers;
+	CommonBufferProperties} from '../buffers';
 
-const { flatbuffers } = require('flatbuffers');
+const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyModificationBuffer;
 
 export default class AccountPropertiesEntityTypeTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		return new this.BufferProperties(AccountPropertiesEntityTypeTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static get BufferProperties(){
+
+		class BufferProperties extends CommonBufferProperties{
+			constructor(accountPropertiesEntityTypeTransactionBuffer){
+				super(accountPropertiesEntityTypeTransactionBuffer);
+			}
+		
+			getPropertyType(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
+			}
+		
+			getModifications(){
+				var modifications = this.bufferClass.getModifications();
+
+				var modificationsData = [];
+
+				for(var i = 0; i < modifications.length; i++){
+					var modification = {
+						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						value : bufferUtils.buffer_to_uint(modifications[i].value),
+					};
+					modificationsData.push(modification);
+				}
+
+				return modificationsData;
+			}
+		}
+
+		return BufferProperties;
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -68,50 +114,32 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var accountPropertiesEntityTypeTransactionBuffer = new AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyTransactionBuffer();
 
-				// Create modifications
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {
-					PropertyEntityTypeModificationBuffer.startPropertyEntityTypeModificationBuffer(builder);
-					PropertyEntityTypeModificationBuffer.addModificationType(builder, modification.modificationType);
-					PropertyEntityTypeModificationBuffer.addValue(builder, modification.value);
-					modificationsArray.push(PropertyEntityTypeModificationBuffer.endPropertyEntityTypeModificationBuffer(builder));
+					
+					var transactionTypePropertyModificationBuffer = new TransactionTypePropertyModificationBuffer();
+
+					transactionTypePropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType, 1));
+					transactionTypePropertyModificationBuffer.setValue(bufferUtils.uint_to_buffer(modification.value, 2));
+					modificationsArray.push(transactionTypePropertyModificationBuffer);
 				});
 
-				// Create vectors
-				const signatureVector = AccountPropertiesEntityTypeTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = AccountPropertiesEntityTypeTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = AccountPropertiesEntityTypeTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = AccountPropertiesEntityTypeTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const modificationVector = AccountPropertiesEntityTypeTransactionBuffer
-					.createModificationsVector(builder, modificationsArray);
+				// does not need to be in order 
+				accountPropertiesEntityTypeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (3 * this.modifications.length), 4));
+				accountPropertiesEntityTypeTransactionBuffer.setSignature("");
+				accountPropertiesEntityTypeTransactionBuffer.setSigner("");
+				accountPropertiesEntityTypeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				accountPropertiesEntityTypeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				accountPropertiesEntityTypeTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
+				accountPropertiesEntityTypeTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountPropertiesEntityTypeTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
+				accountPropertiesEntityTypeTransactionBuffer.setModifications(modificationsArray);
+			
+				var bytes = accountPropertiesEntityTypeTransactionBuffer.serialize();
 
-
-				AccountPropertiesEntityTypeTransactionBuffer.startAccountPropertiesEntityTypeTransactionBuffer(builder);
-				AccountPropertiesEntityTypeTransactionBuffer.addSize(builder, 122 + (3 * this.modifications.length));
-				AccountPropertiesEntityTypeTransactionBuffer.addSignature(builder, signatureVector);
-				AccountPropertiesEntityTypeTransactionBuffer.addSigner(builder, signerVector);
-				AccountPropertiesEntityTypeTransactionBuffer.addVersion(builder, this.version);
-				AccountPropertiesEntityTypeTransactionBuffer.addType(builder, this.type);
-				AccountPropertiesEntityTypeTransactionBuffer.addFee(builder, feeVector);
-				AccountPropertiesEntityTypeTransactionBuffer.addDeadline(builder, deadlineVector);
-				AccountPropertiesEntityTypeTransactionBuffer.addPropertyType(builder, this.propertyType);
-				AccountPropertiesEntityTypeTransactionBuffer.addModificationCount(builder, this.modifications.length);
-				AccountPropertiesEntityTypeTransactionBuffer.addModifications(builder, modificationVector);
-
-				// Calculate size
-				const codedAccountPropertiesAddress = AccountPropertiesEntityTypeTransactionBuffer
-					.endAccountPropertiesEntityTypeTransactionBuffer(builder);
-				builder.finish(codedAccountPropertiesAddress);
-
-				const bytes = builder.asUint8Array();
-
-				return new AccountPropertiesEntityTypeTransaction(bytes, AccountPropertiesEntityTypeModificationTransactionSchema);
+				return new AccountPropertiesEntityTypeTransaction(bytes);
 			}
 		}
 

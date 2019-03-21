@@ -1,6 +1,5 @@
 
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
 
 import bufferUtils from './BufferUtils';
 
@@ -321,7 +320,6 @@ class EmbeddedTransferTransactionBuffer {
 
 module.exports = {
     UnresolvedMosaicBuffer,
-    Uint8ArrayConsumableBuffer,
     TransferTransactionBodyBuffer,
     TransferTransactionBuffer,
     EmbeddedTransferTransactionBuffer,

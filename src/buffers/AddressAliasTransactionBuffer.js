@@ -5,44 +5,56 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class AccountLinkTransactionBodyBuffer {
-    getRemoteaccountkey = () => {
-        return this.remoteAccountKey
+class AddressAliasTransactionBodyBuffer {
+    getAliasaction = () => {
+        return this.aliasAction
     }
 
-    setRemoteaccountkey = (remoteAccountKey) => {
-        this.remoteAccountKey = remoteAccountKey
+    setAliasaction = (aliasAction) => {
+        this.aliasAction = aliasAction
     }
 
-    getLinkaction = () => {
-        return this.linkAction
+    getNamespaceid = () => {
+        return this.namespaceId
     }
 
-    setLinkaction = (linkAction) => {
-        this.linkAction = linkAction
+    setNamespaceid = (namespaceId) => {
+        this.namespaceId = namespaceId
+    }
+
+    getAddress = () => {
+        return this.address
+    }
+
+    setAddress = (address) => {
+        this.address = address
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AccountLinkTransactionBodyBuffer()
-        var remoteAccountKey = consumableBuffer.get_bytes(32)
-        object.remoteAccountKey = remoteAccountKey
-        var linkAction = consumableBuffer.get_bytes(1)
-        object.linkAction = linkAction
+        var object = new AddressAliasTransactionBodyBuffer()
+        var aliasAction = consumableBuffer.get_bytes(1)
+        object.aliasAction = aliasAction
+        var namespaceId = consumableBuffer.get_bytes(8)
+        object.namespaceId = namespaceId
+        var address = consumableBuffer.get_bytes(25)
+        object.address = address
         return object
     }
 
     serialize = () => {
         var newArray = new Uint8Array()
-        var fitArrayremoteAccountKey = fit_bytearray(this.remoteAccountKey, 32)
-        newArray = concat_typedarrays(newArray, fitArrayremoteAccountKey)
-        var fitArraylinkAction = fit_bytearray(this.linkAction, 1)
-        newArray = concat_typedarrays(newArray, fitArraylinkAction)
+        var fitArrayaliasAction = fit_bytearray(this.aliasAction, 1)
+        newArray = concat_typedarrays(newArray, fitArrayaliasAction)
+        var fitArraynamespaceId = fit_bytearray(this.namespaceId, 8)
+        newArray = concat_typedarrays(newArray, fitArraynamespaceId)
+        var fitArrayaddress = fit_bytearray(this.address, 25)
+        newArray = concat_typedarrays(newArray, fitArrayaddress)
         return newArray
     }
 
 }
 
-class AccountLinkTransactionBuffer {
+class AddressAliasTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -99,24 +111,32 @@ class AccountLinkTransactionBuffer {
         this.deadline = deadline
     }
 
-    getRemoteaccountkey = () => {
-        return this.remoteAccountKey
+    getAliasaction = () => {
+        return this.aliasAction
     }
 
-    setRemoteaccountkey = (remoteAccountKey) => {
-        this.remoteAccountKey = remoteAccountKey
+    setAliasaction = (aliasAction) => {
+        this.aliasAction = aliasAction
     }
 
-    getLinkaction = () => {
-        return this.linkAction
+    getNamespaceid = () => {
+        return this.namespaceId
     }
 
-    setLinkaction = (linkAction) => {
-        this.linkAction = linkAction
+    setNamespaceid = (namespaceId) => {
+        this.namespaceId = namespaceId
+    }
+
+    getAddress = () => {
+        return this.address
+    }
+
+    setAddress = (address) => {
+        this.address = address
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AccountLinkTransactionBuffer()
+        var object = new AddressAliasTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -131,10 +151,12 @@ class AccountLinkTransactionBuffer {
         object.fee = fee
         var deadline = consumableBuffer.get_bytes(8)
         object.deadline = deadline
-        var remoteAccountKey = consumableBuffer.get_bytes(32)
-        object.remoteAccountKey = remoteAccountKey
-        var linkAction = consumableBuffer.get_bytes(1)
-        object.linkAction = linkAction
+        var aliasAction = consumableBuffer.get_bytes(1)
+        object.aliasAction = aliasAction
+        var namespaceId = consumableBuffer.get_bytes(8)
+        object.namespaceId = namespaceId
+        var address = consumableBuffer.get_bytes(25)
+        object.address = address
         return object
     }
 
@@ -154,16 +176,18 @@ class AccountLinkTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayfee)
         var fitArraydeadline = fit_bytearray(this.deadline, 8)
         newArray = concat_typedarrays(newArray, fitArraydeadline)
-        var fitArrayremoteAccountKey = fit_bytearray(this.remoteAccountKey, 32)
-        newArray = concat_typedarrays(newArray, fitArrayremoteAccountKey)
-        var fitArraylinkAction = fit_bytearray(this.linkAction, 1)
-        newArray = concat_typedarrays(newArray, fitArraylinkAction)
+        var fitArrayaliasAction = fit_bytearray(this.aliasAction, 1)
+        newArray = concat_typedarrays(newArray, fitArrayaliasAction)
+        var fitArraynamespaceId = fit_bytearray(this.namespaceId, 8)
+        newArray = concat_typedarrays(newArray, fitArraynamespaceId)
+        var fitArrayaddress = fit_bytearray(this.address, 25)
+        newArray = concat_typedarrays(newArray, fitArrayaddress)
         return newArray
     }
 
 }
 
-class EmbeddedAccountLinkTransactionBuffer {
+class EmbeddedAddressAliasTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -196,24 +220,32 @@ class EmbeddedAccountLinkTransactionBuffer {
         this.type = type
     }
 
-    getRemoteaccountkey = () => {
-        return this.remoteAccountKey
+    getAliasaction = () => {
+        return this.aliasAction
     }
 
-    setRemoteaccountkey = (remoteAccountKey) => {
-        this.remoteAccountKey = remoteAccountKey
+    setAliasaction = (aliasAction) => {
+        this.aliasAction = aliasAction
     }
 
-    getLinkaction = () => {
-        return this.linkAction
+    getNamespaceid = () => {
+        return this.namespaceId
     }
 
-    setLinkaction = (linkAction) => {
-        this.linkAction = linkAction
+    setNamespaceid = (namespaceId) => {
+        this.namespaceId = namespaceId
+    }
+
+    getAddress = () => {
+        return this.address
+    }
+
+    setAddress = (address) => {
+        this.address = address
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedAccountLinkTransactionBuffer()
+        var object = new EmbeddedAddressAliasTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -222,10 +254,12 @@ class EmbeddedAccountLinkTransactionBuffer {
         object.version = version
         var type = consumableBuffer.get_bytes(2)
         object.type = type
-        var remoteAccountKey = consumableBuffer.get_bytes(32)
-        object.remoteAccountKey = remoteAccountKey
-        var linkAction = consumableBuffer.get_bytes(1)
-        object.linkAction = linkAction
+        var aliasAction = consumableBuffer.get_bytes(1)
+        object.aliasAction = aliasAction
+        var namespaceId = consumableBuffer.get_bytes(8)
+        object.namespaceId = namespaceId
+        var address = consumableBuffer.get_bytes(25)
+        object.address = address
         return object
     }
 
@@ -239,18 +273,20 @@ class EmbeddedAccountLinkTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayversion)
         var fitArraytype = fit_bytearray(this.type, 2)
         newArray = concat_typedarrays(newArray, fitArraytype)
-        var fitArrayremoteAccountKey = fit_bytearray(this.remoteAccountKey, 32)
-        newArray = concat_typedarrays(newArray, fitArrayremoteAccountKey)
-        var fitArraylinkAction = fit_bytearray(this.linkAction, 1)
-        newArray = concat_typedarrays(newArray, fitArraylinkAction)
+        var fitArrayaliasAction = fit_bytearray(this.aliasAction, 1)
+        newArray = concat_typedarrays(newArray, fitArrayaliasAction)
+        var fitArraynamespaceId = fit_bytearray(this.namespaceId, 8)
+        newArray = concat_typedarrays(newArray, fitArraynamespaceId)
+        var fitArrayaddress = fit_bytearray(this.address, 25)
+        newArray = concat_typedarrays(newArray, fitArrayaddress)
         return newArray
     }
 
 }
 
 module.exports = {
-    AccountLinkTransactionBodyBuffer,
-    AccountLinkTransactionBuffer,
-    EmbeddedAccountLinkTransactionBuffer,
+    AddressAliasTransactionBodyBuffer,
+    AddressAliasTransactionBuffer,
+    EmbeddedAddressAliasTransactionBuffer,
 };
 

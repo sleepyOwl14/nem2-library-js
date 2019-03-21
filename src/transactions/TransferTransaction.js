@@ -23,7 +23,8 @@ import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	TransferTransactionBuffer, 
-	UnresolvedMosaicBuffer} from '../buffers';
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties} from '../buffers';
 
 const address = require('../coders/address').default;
 
@@ -46,45 +47,9 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 	static get BufferProperties(){
 
-		class BufferProperties{
+		class BufferProperties extends CommonBufferProperties{
 			constructor(transferTransactionBuffer){
-				this.bufferClass = transferTransactionBuffer;
-			}
-
-			getSize(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getSize());
-			}
-
-			getSignature(){
-				return convert.uint8ToHex(this.bufferClass.getSignature());
-			}
-
-			getSigner(){
-				return convert.uint8ToHex(this.bufferClass.getSigner());
-			}
-		
-			getVersion(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion());
-			}
-
-			getVersionHex(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getVersion()).toString(16);
-			}
-		
-			getType(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getType());
-			}
-
-			getTypeHex(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
-			}
-		
-			getFee(){
-				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getFee(), 4);
-			}
-		
-			getDeadline(){
-				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getDeadline(), 4);
+				super(transferTransactionBuffer);
 			}
 		
 			getRecipient(){

@@ -18,17 +18,63 @@
  * @module transactions/AccountPropertiesMosaicTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import AccountPropertiesMosaicModificationTransactionSchema from '../schema/AccountPropertiesMosaicModificationTransactionSchema';
-import AccountPropertiesMosaicTransactionBufferPackage from '../buffers/AccountPropertiesMosaicTransactionBuffer';
+import convert from '../coders/convert';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	MosaicPropertyTransactionBuffer,
+	CommonBufferProperties} from '../buffers';
 
-const {
-	AccountPropertiesMosaicTransactionBuffer,
-	PropertyMosaicModificationBuffer
-} = AccountPropertiesMosaicTransactionBufferPackage.Buffers;
-
-const { flatbuffers } = require('flatbuffers');
+const MosaicPropertyModificationBuffer = MosaicPropertyTransactionBuffer.MosaicPropertyModificationBuffer;
 
 export default class AccountPropertiesMosaicTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicPropertyTransactionBufferData = MosaicPropertyTransactionBuffer.MosaicPropertyTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		return new this.BufferProperties(MosaicPropertyTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static get BufferProperties(){
+
+		class BufferProperties extends CommonBufferProperties{
+			constructor(accountPropertiesMosaicTransactionBuffer){
+				super(accountPropertiesMosaicTransactionBuffer);
+			}
+		
+			getPropertyType(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
+			}
+		
+			getModifications(){
+				var modifications = this.bufferClass.getModifications();
+
+				var modificationsData = [];
+
+				for(var i = 0; i < modifications.length; i++){
+					var modification = {
+						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						value : bufferUtils.bufferArray_to_uintArray(modifications[i].value, 4),
+					};
+					modificationsData.push(modification);
+				}
+
+				return modificationsData;
+			}
+		}
+
+		return BufferProperties;
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -68,52 +114,32 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var accountPropertiesMosaicTransactionBuffer = new MosaicPropertyTransactionBuffer.MosaicPropertyTransactionBuffer();
 
-				// Create modifications
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {
-					const addressModificationVector = PropertyMosaicModificationBuffer
-						.createValueVector(builder, modification.value);
-					PropertyMosaicModificationBuffer.startPropertyMosaicModificationBuffer(builder);
-					PropertyMosaicModificationBuffer.addModificationType(builder, modification.modificationType);
-					PropertyMosaicModificationBuffer.addValue(builder, addressModificationVector);
-					modificationsArray.push(PropertyMosaicModificationBuffer.endPropertyMosaicModificationBuffer(builder));
+					
+					var mosaicPropertyModificationBuffer = new MosaicPropertyModificationBuffer();
+
+					mosaicPropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType, 1));
+					mosaicPropertyModificationBuffer.setValue(bufferUtils.uintArray_to_bufferArray(modification.value, 4));
+					modificationsArray.push(mosaicPropertyModificationBuffer);
 				});
 
-				// Create vectors
-				const signatureVector = AccountPropertiesMosaicTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = AccountPropertiesMosaicTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = AccountPropertiesMosaicTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = AccountPropertiesMosaicTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const modificationVector = AccountPropertiesMosaicTransactionBuffer
-					.createModificationsVector(builder, modificationsArray);
+				// does not need to be in order 
+				accountPropertiesMosaicTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (9 * this.modifications.length), 4));
+				accountPropertiesMosaicTransactionBuffer.setSignature("");
+				accountPropertiesMosaicTransactionBuffer.setSigner("");
+				accountPropertiesMosaicTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				accountPropertiesMosaicTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				accountPropertiesMosaicTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
+				accountPropertiesMosaicTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountPropertiesMosaicTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
+				accountPropertiesMosaicTransactionBuffer.setModifications(modificationsArray);
+			
+				var bytes = accountPropertiesMosaicTransactionBuffer.serialize();
 
-
-				AccountPropertiesMosaicTransactionBuffer.startAccountPropertiesMosaicTransactionBuffer(builder);
-				AccountPropertiesMosaicTransactionBuffer.addSize(builder, 122 + (9 * this.modifications.length));
-				AccountPropertiesMosaicTransactionBuffer.addSignature(builder, signatureVector);
-				AccountPropertiesMosaicTransactionBuffer.addSigner(builder, signerVector);
-				AccountPropertiesMosaicTransactionBuffer.addVersion(builder, this.version);
-				AccountPropertiesMosaicTransactionBuffer.addType(builder, this.type);
-				AccountPropertiesMosaicTransactionBuffer.addFee(builder, feeVector);
-				AccountPropertiesMosaicTransactionBuffer.addDeadline(builder, deadlineVector);
-				AccountPropertiesMosaicTransactionBuffer.addPropertyType(builder, this.propertyType);
-				AccountPropertiesMosaicTransactionBuffer.addModificationCount(builder, this.modifications.length);
-				AccountPropertiesMosaicTransactionBuffer.addModifications(builder, modificationVector);
-
-				// Calculate size
-				const codedAccountPropertiesMosaic = AccountPropertiesMosaicTransactionBuffer.endAccountPropertiesMosaicTransactionBuffer(builder);
-				builder.finish(codedAccountPropertiesMosaic);
-
-				const bytes = builder.asUint8Array();
-
-
-				return new AccountPropertiesMosaicTransaction(bytes, AccountPropertiesMosaicModificationTransactionSchema);
+				return new AccountPropertiesMosaicTransaction(bytes);
 			}
 		}
 

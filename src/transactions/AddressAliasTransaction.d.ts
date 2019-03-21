@@ -15,11 +15,22 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import {CommonBufferProperties} from "../buffers";
 
 export declare class AddressAliasTransaction extends VerifiableTransaction {
 }
 
 export declare module AddressAliasTransaction {
+
+    class BufferProperties extends CommonBufferProperties{
+    
+        getAliasAction(): Number;
+    
+        getNamespaceId(): Array;
+    
+        getAddress(): String;
+    }
+
     class Builder {
 
         addFee(fee): Builder;
