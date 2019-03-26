@@ -96,10 +96,15 @@ export default class VerifiableTransaction {
 	 */
 	toAggregateTransaction(_signer) {
 		const signer = convert.hexToUint8(_signer);
-		let resultBytes = this.bytes;
+		let resultBytes = Array.from(this.bytes);
+
+		// remove size, signature, signer
 		resultBytes.splice(0, 4 + 64 + 32);
 		resultBytes = Array.from(signer).concat(resultBytes);
+
+		// remove fee and deadline
 		resultBytes.splice(32 + 2 + 2, 16);
+
 		return Array.from((new Uint8Array([
 			(resultBytes.length + 4 & 0x000000ff),
 			(resultBytes.length + 4 & 0x0000ff00) >> 8,

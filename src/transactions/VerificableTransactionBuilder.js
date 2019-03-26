@@ -55,6 +55,6 @@ export default class VerifiableTransactionBuilder {
 	 * @returns {VerifiableTransaction} Returns VerifiableTransaction instance
 	 */
 	build() {
-		return new VerifiableTransaction(this.bytes, this.schema);
+		return new VerifiableTransaction(this.bytes);
 	}
 }
