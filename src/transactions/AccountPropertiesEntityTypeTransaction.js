@@ -23,7 +23,7 @@ import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AccountPropertiesEntityTypeTransactionBuffer,
-	CommonBufferProperties} from '../buffers';
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyModificationBuffer;
 
@@ -34,7 +34,9 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		return new this.BufferProperties(AccountPropertiesEntityTypeTransactionBufferData);
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(AccountPropertiesEntityTypeTransactionBufferData);
 	}
 
 	static loadFromPayload(payload){
@@ -44,9 +46,26 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 		return this.loadFromBinary(binary);
 	}
 
-	static get BufferProperties(){
+	static loadEmbeddedFromBinary(binary){
 
-		class BufferProperties extends CommonBufferProperties{
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(AccountPropertiesEntityTypeTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
 			constructor(accountPropertiesEntityTypeTransactionBuffer){
 				super(accountPropertiesEntityTypeTransactionBuffer);
 			}
@@ -71,8 +90,6 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 				return modificationsData;
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -132,8 +149,8 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 				accountPropertiesEntityTypeTransactionBuffer.setSigner("");
 				accountPropertiesEntityTypeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesEntityTypeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountPropertiesEntityTypeTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
-				accountPropertiesEntityTypeTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountPropertiesEntityTypeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountPropertiesEntityTypeTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				accountPropertiesEntityTypeTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
 				accountPropertiesEntityTypeTransactionBuffer.setModifications(modificationsArray);
 			

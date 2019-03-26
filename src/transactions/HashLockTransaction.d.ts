@@ -15,11 +15,32 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import {CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 export declare class HashLockTransaction extends VerifiableTransaction {
 }
 
 export declare module HashLockTransaction {
+
+    loadFromBinary(binary) : BufferProperties;
+
+    loadFromPayload(string): BufferProperties; 
+
+    loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    loadEmbeddedFromPayload(string): BufferProperties;
+    
+    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
+
+    class BufferProperties{
+
+        getMosaic(): Array;
+    
+        getDuration(): Array;
+    
+        getHash() : String;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

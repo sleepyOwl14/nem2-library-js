@@ -23,7 +23,7 @@ import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	MosaicPropertyTransactionBuffer,
-	CommonBufferProperties} from '../buffers';
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const MosaicPropertyModificationBuffer = MosaicPropertyTransactionBuffer.MosaicPropertyModificationBuffer;
 
@@ -34,7 +34,9 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var MosaicPropertyTransactionBufferData = MosaicPropertyTransactionBuffer.MosaicPropertyTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		return new this.BufferProperties(MosaicPropertyTransactionBufferData);
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(MosaicPropertyTransactionBufferData);
 	}
 
 	static loadFromPayload(payload){
@@ -44,9 +46,26 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 		return this.loadFromBinary(binary);
 	}
 
-	static get BufferProperties(){
+	static loadEmbeddedFromBinary(binary){
 
-		class BufferProperties extends CommonBufferProperties{
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicPropertyTransactionBufferData = MosaicPropertyTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(MosaicPropertyTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+	
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
 			constructor(accountPropertiesMosaicTransactionBuffer){
 				super(accountPropertiesMosaicTransactionBuffer);
 			}
@@ -63,7 +82,7 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 				for(var i = 0; i < modifications.length; i++){
 					var modification = {
 						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
-						value : bufferUtils.bufferArray_to_uintArray(modifications[i].value, 4),
+						value : bufferUtils.bufferArray_to_uint32Array(modifications[i].value),
 					};
 					modificationsData.push(modification);
 				}
@@ -71,8 +90,6 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 				return modificationsData;
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -122,7 +139,7 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 					var mosaicPropertyModificationBuffer = new MosaicPropertyModificationBuffer();
 
 					mosaicPropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType, 1));
-					mosaicPropertyModificationBuffer.setValue(bufferUtils.uintArray_to_bufferArray(modification.value, 4));
+					mosaicPropertyModificationBuffer.setValue(bufferUtils.uint32Array_to_bufferArray(modification.value));
 					modificationsArray.push(mosaicPropertyModificationBuffer);
 				});
 
@@ -132,8 +149,8 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 				accountPropertiesMosaicTransactionBuffer.setSigner("");
 				accountPropertiesMosaicTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesMosaicTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountPropertiesMosaicTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
-				accountPropertiesMosaicTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountPropertiesMosaicTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountPropertiesMosaicTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				accountPropertiesMosaicTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
 				accountPropertiesMosaicTransactionBuffer.setModifications(modificationsArray);
 			

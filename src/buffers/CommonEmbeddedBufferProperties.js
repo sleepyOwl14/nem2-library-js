@@ -1,7 +1,7 @@
 import convert from '../coders/convert';
 import {bufferUtils} from '../buffers';
 
-class CommonBufferProperties{
+class CommonEmbeddedBufferProperties{
 
     constructor(transactionBuffer){
         this.bufferClass = transactionBuffer;
@@ -9,10 +9,6 @@ class CommonBufferProperties{
 
     getSize(){
         return bufferUtils.buffer_to_uint(this.bufferClass.getSize());
-    }
-
-    getSignature(){
-        return convert.uint8ToHex(this.bufferClass.getSignature());
     }
 
     getSigner(){
@@ -34,14 +30,6 @@ class CommonBufferProperties{
     getTypeHex(){
         return bufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
     }
-
-    getFee(){
-        return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getFee(), 4);
-    }
-
-    getDeadline(){
-        return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getDeadline(), 4);
-    }
 }
 
-export default CommonBufferProperties;
+export default CommonEmbeddedBufferProperties;

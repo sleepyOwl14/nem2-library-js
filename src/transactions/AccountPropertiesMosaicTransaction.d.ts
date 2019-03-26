@@ -15,14 +15,24 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
-import {CommonBufferProperties} from "../buffers";
+import {CommonBufferProperties, CommonEmbeddedBufferProperties} from "../buffers";
 
 export declare class AccountPropertiesMosaicTransaction extends VerifiableTransaction {
 }
 
 export declare module AccountPropertiesMosaicTransaction {
 
-    class BufferProperties extends CommonBufferProperties{
+    loadFromBinary(binary) : BufferProperties;
+
+    loadFromPayload(string): BufferProperties; 
+
+    loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    loadEmbeddedFromPayload(string): BufferProperties;
+    
+    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
+
+    class BufferProperties{
     
         getPropertyType(): Number;
     

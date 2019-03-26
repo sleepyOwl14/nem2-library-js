@@ -20,7 +20,7 @@ import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AddressAliasTransactionBuffer,
-	CommonBufferProperties} from '../buffers';
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const addressEncoder = require('../coders/address').default;
 
@@ -34,7 +34,9 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.AddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		return new this.BufferProperties(AddressAliasTransactionBufferData);
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(AddressAliasTransactionBufferData);
 	}
 
 	static loadFromPayload(payload){
@@ -44,9 +46,26 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 		return this.loadFromBinary(binary);
 	}
 
-	static get BufferProperties(){
+	static loadEmbeddedFromBinary(binary){
 
-		class BufferProperties extends CommonBufferProperties{
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(AddressAliasTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
 			constructor(addressAliasTransactionBuffer){
 				super(addressAliasTransactionBuffer);
 			}
@@ -56,15 +75,13 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 			}
 		
 			getNamespaceId(){
-				return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getNamespaceid(), 4);
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
 			}
 		
 			getAddress(){
 				return addressEncoder.addressToString(this.bufferClass.getAddress());
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -119,10 +136,10 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 				addressAliasTransactionBuffer.setSigner("");
 				addressAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				addressAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				addressAliasTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
-				addressAliasTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				addressAliasTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				addressAliasTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				addressAliasTransactionBuffer.setAliasaction(bufferUtils.uint_to_buffer(this.actionType));
-				addressAliasTransactionBuffer.setNamespaceid(bufferUtils.uintArray_to_bufferArray(this.namespaceId, 4));
+				addressAliasTransactionBuffer.setNamespaceid(bufferUtils.uint32Array_to_bufferArray(this.namespaceId));
 				addressAliasTransactionBuffer.setAddress(this.address);
 
 				var bytes = addressAliasTransactionBuffer.serialize();

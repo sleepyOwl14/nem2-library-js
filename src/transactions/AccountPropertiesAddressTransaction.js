@@ -24,7 +24,7 @@ import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AccountPropertyAddressBuffer,
-	CommonBufferProperties} from '../buffers';
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const AddressPropertyModificationBuffer = AccountPropertyAddressBuffer.AddressPropertyModificationBuffer;
 
@@ -37,7 +37,9 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var AccountPropertyAddressTransactionBufferData = AccountPropertyAddressBuffer.AddressPropertyTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		return new this.BufferProperties(AccountPropertyAddressTransactionBufferData);
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(AccountPropertyAddressTransactionBufferData);
 	}
 
 	static loadFromPayload(payload){
@@ -47,9 +49,26 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 		return this.loadFromBinary(binary);
 	}
 
-	static get BufferProperties(){
+	static loadEmbeddedFromBinary(binary){
 
-		class BufferProperties extends CommonBufferProperties{
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AccountPropertyAddressTransactionBufferData = AccountPropertyAddressBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(AccountPropertyAddressTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
 			constructor(addressPropertyTransactionBuffer){
 				super(addressPropertyTransactionBuffer);
 			}
@@ -74,8 +93,6 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 				return modificationsData;
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -144,8 +161,8 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 				accountPropertiesAddressTransactionBuffer.setSigner("");
 				accountPropertiesAddressTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesAddressTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountPropertiesAddressTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
-				accountPropertiesAddressTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountPropertiesAddressTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountPropertiesAddressTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				accountPropertiesAddressTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
 				accountPropertiesAddressTransactionBuffer.setModifications(modificationsArray);
 			

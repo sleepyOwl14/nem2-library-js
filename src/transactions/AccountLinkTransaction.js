@@ -23,7 +23,7 @@ import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AccountLinkTransactionBuffer, 
-	CommonBufferProperties} from '../buffers';
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 export default class AccountLinkTransaction extends VerifiableTransaction {
 
@@ -32,7 +32,9 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.AccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		return new this.BufferProperties(AccountLinkTransactionBufferData);
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(AccountLinkTransactionBufferData);
 	}
 
 	static loadFromPayload(payload){
@@ -42,9 +44,26 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 		return this.loadFromBinary(binary);
 	}
 
-	static get BufferProperties(){
+	static loadEmbeddedFromBinary(binary){
 
-		class BufferProperties extends CommonBufferProperties{
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(AccountLinkTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
 			constructor(accountLinkTransactionBuffer){
 				super(accountLinkTransactionBuffer);
 			}
@@ -57,8 +76,6 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 				return bufferUtils.buffer_to_uint(this.bufferClass.getLinkaction());
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -108,8 +125,8 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 				accountLinkTransactionBuffer.setSigner("");
 				accountLinkTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountLinkTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountLinkTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
-				accountLinkTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				accountLinkTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountLinkTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				accountLinkTransactionBuffer.setRemoteaccountkey(this.remoteAccountKey);
 				accountLinkTransactionBuffer.setLinkaction(bufferUtils.uint_to_buffer(this.linkAction,1));
 			

@@ -72,6 +72,14 @@ class bufferUtils{
             return new Uint32Array(bufferArray.buffer);
         }   
     }
+
+    static uint32Array_to_bufferArray(data){
+        return this.uintArray_to_bufferArray( data , 4);
+    }
+
+    static bufferArray_to_uint32Array(data){
+        return Array.from(this.bufferArray_to_uintArray( data , 4));
+    }
 }
 
 export default bufferUtils;

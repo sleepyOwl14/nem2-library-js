@@ -18,14 +18,14 @@
  * @module transactions/TransferTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	TransferTransactionBuffer, 
 	UnresolvedMosaicBuffer,
-	CommonBufferProperties} from '../buffers';
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
+import convert from '../coders/convert';
 const address = require('../coders/address').default;
 
 export default class TransferTransaction extends VerifiableTransaction {
@@ -35,7 +35,9 @@ export default class TransferTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var TransferTransactionBufferData = TransferTransactionBuffer.TransferTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		return new this.BufferProperties(TransferTransactionBufferData);
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(TransferTransactionBufferData);
 	}
 
 	static loadFromPayload(payload){
@@ -45,9 +47,26 @@ export default class TransferTransaction extends VerifiableTransaction {
 		return this.loadFromBinary(binary);
 	}
 
-	static get BufferProperties(){
+	static loadEmbeddedFromBinary(binary){
 
-		class BufferProperties extends CommonBufferProperties{
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var TransferTransactionBufferData = TransferTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(TransferTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
 			constructor(transferTransactionBuffer){
 				super(transferTransactionBuffer);
 			}
@@ -70,8 +89,8 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 				for(var i = 0; i < mosaics.length; i++){
 					var mosaicData = {
-						mosaicId : bufferUtils.bufferArray_to_uintArray(mosaics[i].mosaicId, 4),
-						amount : bufferUtils.bufferArray_to_uintArray(mosaics[i].amount, 4),
+						mosaicId : bufferUtils.bufferArray_to_uint32Array(mosaics[i].mosaicId),
+						amount : bufferUtils.bufferArray_to_uint32Array(mosaics[i].amount),
 					};
 					mosaicsData.push(mosaicData);
 				}
@@ -79,8 +98,6 @@ export default class TransferTransaction extends VerifiableTransaction {
 				return mosaicsData;
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -143,8 +160,8 @@ export default class TransferTransaction extends VerifiableTransaction {
 				this.mosaics.forEach(mosaic => {
 					var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-					mosaicBuffer.setMosaicid(bufferUtils.uintArray_to_bufferArray(mosaic.id, 4));
-					mosaicBuffer.setAmount(bufferUtils.uintArray_to_bufferArray(mosaic.amount, 4));
+					mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(mosaic.id));
+					mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(mosaic.amount));
 					mosaics.push(mosaicBuffer);
 
 				});
@@ -165,8 +182,8 @@ export default class TransferTransaction extends VerifiableTransaction {
 				transferTransactionBuffer.setSigner("");
 				transferTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				transferTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				transferTransactionBuffer.setFee(bufferUtils.uintArray_to_bufferArray(this.fee, 4));
-				transferTransactionBuffer.setDeadline(bufferUtils.uintArray_to_bufferArray(this.deadline, 4));
+				transferTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				transferTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				transferTransactionBuffer.setRecipient(this.recipient);
 				transferTransactionBuffer.setMessage(bytePayload);
 				transferTransactionBuffer.setMosaics(mosaics);

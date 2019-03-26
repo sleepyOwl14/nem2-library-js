@@ -18,15 +18,81 @@
  * @module transactions/HashLockTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import * as HashLockTransactionBufferPackage from '../buffers/HashLockTransactionBuffer';
-import HashLockTransactionSchema from '../schema/HashLockTransactionSchema';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	HashLockTransactionBuffer, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+
+import uint64 from '../../src/coders/uint64';
 import convert from '../coders/convert';
 
-const { flatbuffers } = require('flatbuffers');
-
-const { HashLockTransactionBuffer } = HashLockTransactionBufferPackage.default.Buffers;
-
 export default class HashLockTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var HashLockTransactionBufferData = HashLockTransactionBuffer.HashLockTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(HashLockTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var HashLockTransactionBufferData = HashLockTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(HashLockTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(hashLockTransactionBufferData){
+				super(hashLockTransactionBufferData);
+			}
+		
+			getMosaic(){
+
+				var mosaic = this.bufferClass.getMosaic();
+
+				var mosaicData = {
+					mosaicId : uint64.fromBytes(mosaic.mosaicId),
+					amount : uint64.fromBytes(mosaic.amount),
+				};
+
+				return mosaicData;
+			}
+		
+			getDuration(){
+				return uint64.fromBytes(this.bufferClass.getDuration());
+			}
+		
+			getHash(){
+				return convert.uint8ToHex(this.bufferClass.getHash());
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -76,38 +142,29 @@ export default class HashLockTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
 
-				// Create vectors
-				const signatureVector = HashLockTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = HashLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = HashLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-				const feeVector = HashLockTransactionBuffer.createFeeVector(builder, this.fee);
-				const mosaicIdVector = HashLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
-				const mosaicAmountVector = HashLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
-				const durationVector = HashLockTransactionBuffer.createDurationVector(builder, this.duration);
-				const byteHash = convert.hexToUint8(this.hash);
-				const hashVector = HashLockTransactionBuffer.createHashVector(builder, byteHash);
+				var hashLockTransactionBuffer = new HashLockTransactionBuffer.HashLockTransactionBuffer();
 
-				HashLockTransactionBuffer.startHashLockTransactionBuffer(builder);
-				HashLockTransactionBuffer.addSize(builder, 176);
-				HashLockTransactionBuffer.addSignature(builder, signatureVector);
-				HashLockTransactionBuffer.addSigner(builder, signerVector);
-				HashLockTransactionBuffer.addVersion(builder, this.version);
-				HashLockTransactionBuffer.addType(builder, this.type);
-				HashLockTransactionBuffer.addFee(builder, feeVector);
-				HashLockTransactionBuffer.addDeadline(builder, deadlineVector);
-				HashLockTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-				HashLockTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);
-				HashLockTransactionBuffer.addDuration(builder, durationVector);
-				HashLockTransactionBuffer.addHash(builder, hashVector);
+				var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-				const codedHashLock = HashLockTransactionBuffer.endHashLockTransactionBuffer(builder);
-				builder.finish(codedHashLock);
+				mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
 
-				const bytes = builder.asUint8Array();
-				return new HashLockTransaction(bytes, HashLockTransactionSchema);
+				// does not need to be in order 
+				hashLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(176, 4));
+				hashLockTransactionBuffer.setSignature("");
+				hashLockTransactionBuffer.setSigner("");
+				hashLockTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				hashLockTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				hashLockTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				hashLockTransactionBuffer.setDeadline(bufferUtils.uintArrayuint32Array_to_bufferArray_to_bufferArray(this.deadline));
+				hashLockTransactionBuffer.setMosaic(mosaicBuffer);
+				hashLockTransactionBuffer.setDuration(bufferUtils.uint32Array_to_bufferArray(this.duration));
+				hashLockTransactionBuffer.setHash(convert.hexToUint8(this.hash));
+			
+				var bytes = hashLockTransactionBuffer.serialize();
+
+				return new HashLockTransaction(bytes);
 			}
 		}
 
