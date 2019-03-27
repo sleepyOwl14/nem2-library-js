@@ -15,17 +15,74 @@
  */
 
 import VerifiableTransaction from './VerifiableTransaction';
-import MosaicAliasTransactionSchema from '../schema/MosaicAliasTransactionSchema';
-import MosaicAliasTransactionBufferPackage from '../buffers/MosaicAliasTransactionBuffer';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	MosaicAliasTransactionBuffer, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const { MosaicAliasTransactionBuffer } = MosaicAliasTransactionBufferPackage.Buffers;
-
-const { flatbuffers } = require('flatbuffers');
-
+import convert from '../coders/convert';
 /**
  * @module transactions/MosaicAliasTransaction
  */
 export default class MosaicAliasTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicAliasTransactionBufferData = MosaicAliasTransactionBuffer.MosaicAliasTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(MosaicAliasTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicAliasTransactionBufferDataData = MosaicAliasTransactionBufferData.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(MosaicAliasTransactionBufferDataData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(mosaicAliasTransactionBufferDataData){
+				super(mosaicAliasTransactionBufferDataData);
+			}
+
+			getAliasAction(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getAliasaction());
+			}
+
+			getNamespaceId(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
+			}
+		
+			getMosaicId(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -70,42 +127,22 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
 
-				// Create vectors
-				const signatureVector = MosaicAliasTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = MosaicAliasTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = MosaicAliasTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = MosaicAliasTransactionBuffer
-					.createFeeVector(builder, this.fee);
-                const namespaceIdVector = MosaicAliasTransactionBuffer
-                    .createNamespaceIdVector(builder, this.namespaceId);
-				const mosaicIdVector = MosaicAliasTransactionBuffer
-					.createMosaicIdVector(builder, this.mosaicId);
+				var mosaicAliasTransactionBuffer = new MosaicAliasTransactionBuffer.MosaicAliasTransactionBuffer();
+				// does not need to be in order 
+				mosaicAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(137, 4));
+				mosaicAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				mosaicAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				mosaicAliasTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				mosaicAliasTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 
+				mosaicAliasTransactionBuffer.setAliasaction(bufferUtils.uint_to_buffer(this.actionType, 1));
+				mosaicAliasTransactionBuffer.setNamespaceid(bufferUtils.uint32Array_to_bufferArray(this.namespaceId));
+                mosaicAliasTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+			
+				var bytes = mosaicAliasTransactionBuffer.serialize();
 
-				MosaicAliasTransactionBuffer.startMosaicAliasTransactionBuffer(builder);
-				MosaicAliasTransactionBuffer.addSize(builder, 137);
-				MosaicAliasTransactionBuffer.addSignature(builder, signatureVector);
-				MosaicAliasTransactionBuffer.addSigner(builder, signerVector);
-				MosaicAliasTransactionBuffer.addVersion(builder, this.version);
-				MosaicAliasTransactionBuffer.addType(builder, this.type);
-				MosaicAliasTransactionBuffer.addFee(builder, feeVector);
-				MosaicAliasTransactionBuffer.addDeadline(builder, deadlineVector);
-				MosaicAliasTransactionBuffer.addActionType(builder, this.actionType);
-				MosaicAliasTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-                MosaicAliasTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-
-				// Calculate size
-				const codedMosaicChangeSupply = MosaicAliasTransactionBuffer.endMosaicAliasTransactionBuffer(builder);
-				builder.finish(codedMosaicChangeSupply);
-
-                const bytes = builder.asUint8Array();
-
-				return new MosaicAliasTransaction(bytes, MosaicAliasTransactionSchema);
+				return new MosaicAliasTransaction(bytes);
 			}
 		}
 

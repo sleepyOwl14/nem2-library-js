@@ -23,6 +23,6 @@ import convert from '../coders/convert';
  */
 export default class CosignatureTransaction extends VerifiableTransaction {
 	constructor(hash) {
-		super(convert.hexToUint8(hash), undefined);
+		super(convert.hexToUint8(hash));
 	}
 }

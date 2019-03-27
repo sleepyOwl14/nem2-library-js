@@ -15,12 +15,27 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import {CommonBufferProperties} from "../buffers";
 
 export declare class AggregateTransaction extends VerifiableTransaction {
     public signTransactionWithCosigners(initializer, cosigners): {payload: string, hash:string}
 }
 
 export declare module AggregateTransaction {
+
+    loadFromBinary(binary) : BufferProperties;
+
+    loadFromPayload(string): BufferProperties; 
+    
+    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
+
+    class BufferProperties{
+
+        getTransactionsSize(): number;
+    
+        getTransactions(): Array;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

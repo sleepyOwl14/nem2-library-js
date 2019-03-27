@@ -152,8 +152,6 @@ export default class HashLockTransaction extends VerifiableTransaction {
 
 				// does not need to be in order 
 				hashLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(176, 4));
-				hashLockTransactionBuffer.setSignature("");
-				hashLockTransactionBuffer.setSigner("");
 				hashLockTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				hashLockTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				hashLockTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

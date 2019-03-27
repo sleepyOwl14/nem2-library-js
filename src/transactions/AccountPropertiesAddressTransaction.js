@@ -157,8 +157,6 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 
 				// does not need to be in order 
 				accountPropertiesAddressTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (26 * this.modifications.length), 4));
-				accountPropertiesAddressTransactionBuffer.setSignature("");
-				accountPropertiesAddressTransactionBuffer.setSigner("");
 				accountPropertiesAddressTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesAddressTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountPropertiesAddressTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

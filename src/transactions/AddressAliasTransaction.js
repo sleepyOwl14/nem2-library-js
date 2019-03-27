@@ -132,8 +132,6 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 				var addressAliasTransactionBuffer = new AddressAliasTransactionBuffer.AddressAliasTransactionBuffer();
 
 				addressAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));
-				addressAliasTransactionBuffer.setSignature("");
-				addressAliasTransactionBuffer.setSigner("");
 				addressAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				addressAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				addressAliasTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

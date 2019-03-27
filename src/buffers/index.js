@@ -11,17 +11,21 @@ import MosaicPropertyTransactionBuffer from './AccountPropertiesMosaicTransactio
 import AddressAliasTransactionBuffer from './AddressAliasTransactionBuffer';
 import HashLockTransactionBuffer from './HashLockTransactionBuffer';
 import AggregateTransactionBuffer from './AggregateTransactionBuffer';
+import MosaicAliasTransactionBuffer from './MosaicAliasTransactionBuffer';
+import MosaicDefinitionTransactionBuffer from './MosaicDefinitionTransactionBuffer';
 import CommonBufferProperties from './CommonBufferProperties';
 import CommonEmbeddedBufferProperties from './CommonEmbeddedBufferProperties';
 import CommonBuffer from './CommonBuffer';
 
-AccountLinkTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedAccountLinkTransactionBuffer;
-AccountPropertyAddressBuffer.Embedded = HashLockTransactionBuffer.EmbeddedAddressPropertyTransactionBuffer;
-AccountPropertiesEntityTypeTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedTransactionTypePropertyTransactionBuffer;
-AddressAliasTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedAddressAliasTransactionBuffer;
+AccountLinkTransactionBuffer.Embedded = AccountLinkTransactionBuffer.EmbeddedAccountLinkTransactionBuffer;
+AccountPropertyAddressBuffer.Embedded = AccountPropertyAddressBuffer.EmbeddedAddressPropertyTransactionBuffer;
+AccountPropertiesEntityTypeTransactionBuffer.Embedded = AccountPropertiesEntityTypeTransactionBuffer.EmbeddedTransactionTypePropertyTransactionBuffer;
+AddressAliasTransactionBuffer.Embedded = AddressAliasTransactionBuffer.EmbeddedAddressAliasTransactionBuffer;
 HashLockTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedHashLockTransactionBuffer;
-MosaicPropertyTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedMosaicPropertyTransactionBuffer;
-TransferTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedTransferTransactionBuffer;
+MosaicPropertyTransactionBuffer.Embedded = MosaicPropertyTransactionBuffer.EmbeddedMosaicPropertyTransactionBuffer;
+MosaicAliasTransactionBuffer.Embedded = MosaicAliasTransactionBuffer.EmbeddedMosaicAliasTransactionBuffer;
+MosaicDefinitionTransactionBuffer.Embedded = MosaicDefinitionTransactionBuffer.EmbeddedMosaicDefinitionTransactionBuffer;
+TransferTransactionBuffer.Embedded = TransferTransactionBuffer.EmbeddedTransferTransactionBuffer;
 TransactionBuffer.Embedded = TransactionBuffer.EmbeddedTransactionBuffer;
 
 export{
@@ -37,6 +41,8 @@ export{
     AccountPropertyAddressBuffer,
     AccountPropertiesEntityTypeTransactionBuffer,
     MosaicPropertyTransactionBuffer,
+    MosaicAliasTransactionBuffer,
+    MosaicDefinitionTransactionBuffer,
     AddressAliasTransactionBuffer,
     HashLockTransactionBuffer,
     CommonBuffer,

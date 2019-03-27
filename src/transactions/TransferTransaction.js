@@ -166,20 +166,14 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 				});
 
-				var bytePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
+				var messagePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
 
 				// extra byte for message type
-				if(bytePayload.length == 0){
-					bytePayload = Uint8Array.of([0]);
-				}
-				else{
-					bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([0]), bytePayload);
-				}
+				var bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([this.message.type]), messagePayload);
+				
 
 				// does not need to be in order 
 				transferTransactionBuffer.setSize(bufferUtils.uint_to_buffer(148 + (16 * this.mosaics.length) + bytePayload.length, 4));
-				transferTransactionBuffer.setSignature("");
-				transferTransactionBuffer.setSigner("");
 				transferTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				transferTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				transferTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

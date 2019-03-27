@@ -45,25 +45,18 @@ class AggregateTransactionBuffer extends TransactionBuffer{
         object.transactionsSize = buffer_to_uint(consumableBuffer.get_bytes(4))
         object.transactions = [];
 
-        var transactionsConsumableBuffer = new Uint8ArrayConsumableBuffer(consumableBuffer.binary);
-
-        console.log("Buffer length :" + consumableBuffer.binary.length);
-        console.log("Buffer offset :" + consumableBuffer.offset);
-
+        var newArray = Array.from(consumableBuffer.binary);
+        newArray.splice(0, consumableBuffer.offset);
+        var transactionsConsumableBuffer = new Uint8ArrayConsumableBuffer(Uint8Array.from(newArray));
 
         while((consumableBuffer.offset) < consumableBuffer.binary.length){
-            
-            console.log("Buffer offset :" + consumableBuffer.offset);
 
             var startOffset = consumableBuffer.offset;
             var embeddedTransactionBuffer = EmbeddedTransactionBuffer.loadFromBinary(consumableBuffer);
             var endOffset = consumableBuffer.offset;
 
-            console.log("startOffset : "+ startOffset);
-            console.log("endOffset : "+ endOffset);
-
             var transactionSize = buffer_to_uint(embeddedTransactionBuffer.size);
-            console.log(embeddedTransactionBuffer.type);
+           
             // remove remaining bytes
             consumableBuffer.get_bytes( transactionSize - (endOffset - startOffset) );
 
@@ -77,10 +70,9 @@ class AggregateTransactionBuffer extends TransactionBuffer{
         return object;
     }
 
-    serialize = () => {
-        var transactionBuffer = new TransactionBuffer();
-        var transactionBytes = transactionBuffer.serialize();
-        
+    serializeAggregate = () => {
+        var transactionBytes = this.serialize();
+
         var newArray = Uint8Array.from(transactionBytes);
         
         newArray = concat_typedarrays(newArray, uint_to_buffer(this.transactions.length, 4));

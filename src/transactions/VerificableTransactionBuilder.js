@@ -16,38 +16,24 @@
 
 import VerifiableTransaction from './VerifiableTransaction';
 
-const { flatbuffers } = require('flatbuffers');
-
 /**
  * @module transactions/VerifiableTransactionBuilder
  */
 
 /**
- * @callback LambdaBuilder
- * @param {flatbuffers.Builder} builder
+ * @callback Lambda
  * @return {void}
  */
 
 export default class VerifiableTransactionBuilder {
 	/**
-	 * @param {LambdaBuilder} lambda Callback
+	 * @param {Lambda} lambda Callback
 	 * @returns {VerifiableTransactionBuilder} Returns self instance
 	 */
 	addTransaction(lambda) {
-		const builder = new flatbuffers.Builder(1);
 
-		lambda(builder);
+		this.bytes = lambda();
 
-		this.bytes = builder.asUint8Array();
-		return this;
-	}
-
-	/**
-	 * @param {module:schema/Schema} schema Schema corresponding with flatbuffers Schema used on addTransaction
-	 * @returns {VerifiableTransactionBuilder} Returns self instance
-	 */
-	addSchema(schema) {
-		this.schema = schema;
 		return this;
 	}
 

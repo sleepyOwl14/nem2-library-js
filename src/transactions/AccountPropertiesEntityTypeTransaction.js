@@ -145,8 +145,6 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 
 				// does not need to be in order 
 				accountPropertiesEntityTypeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (3 * this.modifications.length), 4));
-				accountPropertiesEntityTypeTransactionBuffer.setSignature("");
-				accountPropertiesEntityTypeTransactionBuffer.setSigner("");
 				accountPropertiesEntityTypeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesEntityTypeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountPropertiesEntityTypeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

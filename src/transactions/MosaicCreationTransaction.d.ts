@@ -20,6 +20,26 @@ export declare class MosaicCreationTransaction extends VerifiableTransaction {
 }
 
 export declare module MosaicCreationTransaction {
+
+    loadFromBinary(binary) : BufferProperties;
+
+    loadFromPayload(string): BufferProperties; 
+
+    loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    loadEmbeddedFromPayload(string): BufferProperties;
+    
+    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
+
+    class BufferProperties{
+
+        getRecipient(): String;
+    
+        getMessage(): String;
+    
+        getMosaics(): Array;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

@@ -145,8 +145,6 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 
 				// does not need to be in order 
 				accountPropertiesMosaicTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (9 * this.modifications.length), 4));
-				accountPropertiesMosaicTransactionBuffer.setSignature("");
-				accountPropertiesMosaicTransactionBuffer.setSigner("");
 				accountPropertiesMosaicTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesMosaicTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountPropertiesMosaicTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

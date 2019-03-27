@@ -18,14 +18,101 @@
  * @module transactions/MosaicCreationTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import MosaicCreationTransactionSchema from '../schema/MosaicCreationTransactionSchema';
-import MosaicCreationTransactionBufferPackage from '../buffers/MosaicCreationTransactionBuffer';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	MosaicDefinitionTransactionBuffer, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const { flatbuffers } = require('flatbuffers');
+import convert from '../coders/convert';
 
-const { MosaicCreationTransactionBuffer } = MosaicCreationTransactionBufferPackage.Buffers;
+const MosaicCreationTransactionBuffer = MosaicDefinitionTransactionBuffer;
+const MosaicPropertyBuffer = MosaicCreationTransactionBuffer.MosaicPropertyBuffer;
 
 export default class MosaicCreationTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicCreationTransactionBufferData = MosaicCreationTransactionBuffer.MosaicDefinitionTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(MosaicCreationTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicCreationTransactionBufferData = MosaicCreationTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(MosaicCreationTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(mosaicCreationTransactionBuffer){
+				super(mosaicCreationTransactionBuffer);
+			}
+
+			getMosaicNonce(){
+				return this.bufferClass.getMosaicnonce();
+			}
+		
+			getMosaicId(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
+			}
+		
+			getFlags(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getFlags());
+			}
+		
+			getDivisibility(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getDivisibility());
+			}
+		
+			getProperties(){
+				var properties = this.bufferClass.getProperties();
+
+				var propertiesData = [];
+
+				for(var i = 0; i < properties.length; i++){
+					var propertyData = {
+						id : bufferUtils.buffer_to_uint(properties[i].id),
+						value : bufferUtils.bufferArray_to_uint32Array(properties[i].value),
+					};
+
+					if(propertyData.id == 2){
+						propertyData.type = "duration";
+					}
+
+					propertiesData.push(propertyData);
+				}
+
+				return propertiesData;
+			}
+			
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -92,51 +179,32 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var mosaicCreationTransactionBuffer = new MosaicCreationTransactionBuffer.MosaicDefinitionTransactionBuffer();
 
-				// Create vectors
-				const signatureVector = MosaicCreationTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = MosaicCreationTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = MosaicCreationTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = MosaicCreationTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const nonceVector = MosaicCreationTransactionBuffer
-					.createNonceVector(builder, this.nonce);
-				const mosaicIdVector = MosaicCreationTransactionBuffer
-					.createMosaicIdVector(builder, this.mosaicId);
+				// does not need to be in order 
+				mosaicCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(144, 4));
+				mosaicCreationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				mosaicCreationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				mosaicCreationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				mosaicCreationTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				mosaicCreationTransactionBuffer.setMosaicnonce(this.nonce);
+				mosaicCreationTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicCreationTransactionBuffer.setFlags(bufferUtils.uint_to_buffer(this.flags, 1));
+				mosaicCreationTransactionBuffer.setDivisibility(bufferUtils.uint_to_buffer(this.divisibility, 1));
 
-				const durationVector = MosaicCreationTransactionBuffer
-					.createDurationVector(builder, this.duration);
+				var properties = [];
 
-				MosaicCreationTransactionBuffer.startMosaicCreationTransactionBuffer(builder);
-				MosaicCreationTransactionBuffer.addSize(builder, 144);
-				MosaicCreationTransactionBuffer.addSignature(builder, signatureVector);
-				MosaicCreationTransactionBuffer.addSigner(builder, signerVector);
-				MosaicCreationTransactionBuffer.addVersion(builder, this.version);
-				MosaicCreationTransactionBuffer.addType(builder, this.type);
-				MosaicCreationTransactionBuffer.addFee(builder, feeVector);
-				MosaicCreationTransactionBuffer.addDeadline(builder, deadlineVector);
-				MosaicCreationTransactionBuffer.addNonce(builder, nonceVector);
-				MosaicCreationTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-				MosaicCreationTransactionBuffer.addNumOptionalProperties(builder, 1);
-				MosaicCreationTransactionBuffer.addFlags(builder, this.flags);
+				var mosaicPropertyBuffer = new MosaicPropertyBuffer();
+				mosaicPropertyBuffer.setId(bufferUtils.uint_to_buffer(2 , 1));
+				mosaicPropertyBuffer.setValue(bufferUtils.uint32Array_to_bufferArray(this.duration));
 
-				MosaicCreationTransactionBuffer.addDivisibility(builder, this.divisibility);
+				properties.push(mosaicPropertyBuffer);
 
-				MosaicCreationTransactionBuffer.addIndicateDuration(builder, 2);
-				MosaicCreationTransactionBuffer.addDuration(builder, durationVector);
+				mosaicCreationTransactionBuffer.setProperties(properties);
+			
+				var bytes = mosaicCreationTransactionBuffer.serialize();
 
-
-				// Calculate size
-
-				const codedMosaicCreation = MosaicCreationTransactionBuffer.endMosaicCreationTransactionBuffer(builder);
-				builder.finish(codedMosaicCreation);
-
-				const bytes = builder.asUint8Array();
-				return new MosaicCreationTransaction(bytes, MosaicCreationTransactionSchema);
+				return new MosaicCreationTransaction(bytes);
 			}
 		}
 
