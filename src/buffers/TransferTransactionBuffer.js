@@ -1,6 +1,4 @@
-
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -320,8 +318,8 @@ class EmbeddedTransferTransactionBuffer {
 
 module.exports = {
     UnresolvedMosaicBuffer,
-    TransferTransactionBodyBuffer,
-    TransferTransactionBuffer,
-    EmbeddedTransferTransactionBuffer,
+    body : TransferTransactionBodyBuffer,
+    default : TransferTransactionBuffer,
+    embedded: EmbeddedTransferTransactionBuffer,
 };
 

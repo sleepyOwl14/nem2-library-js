@@ -22,15 +22,18 @@ import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountLinkTransactionBuffer, 
+	AccountLinkTransactionBufferPackage, 
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+
+const AccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.default;
+const EmbeddedAccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.embedded;
 
 export default class AccountLinkTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.AccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
+		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -47,7 +50,7 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var AccountLinkTransactionBufferData = EmbeddedAccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -116,8 +119,7 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 				return this;
 			}
 			build() {
-
-				var accountLinkTransactionBuffer = new AccountLinkTransactionBuffer.AccountLinkTransactionBuffer();
+				var accountLinkTransactionBuffer = new AccountLinkTransactionBuffer();
 
 				// does not need to be in this order 
 				accountLinkTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));

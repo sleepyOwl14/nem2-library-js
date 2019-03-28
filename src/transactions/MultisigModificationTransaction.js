@@ -15,21 +15,91 @@
  */
 
 import VerifiableTransaction from './VerifiableTransaction';
-import MultisigModificationTransactionSchema from '../schema/MultisigModificationTransactionSchema';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	ModifyMultisigAccountTransactionBufferPackage, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+
 import convert from '../coders/convert';
-import MultisigModificationTransactionBufferPackage from '../buffers/MultisigModificationTransactionBuffer';
 
-const { flatbuffers } = require('flatbuffers');
-
-const {
-	MultisigModificationTransactionBuffer,
-	CosignatoryModificationBuffer
-} = MultisigModificationTransactionBufferPackage.Buffers;
+const MultisigModificationTransactionBuffer = ModifyMultisigAccountTransactionBufferPackage.default;
+const EmbeddedMultisigModificationTransactionBuffer = ModifyMultisigAccountTransactionBufferPackage.embedded;
+const CosignatoryModificationBuffer = ModifyMultisigAccountTransactionBufferPackage.CosignatoryModificationBuffer;
 
 /**
  * @module transactions/MultisigModificationTransaction
  */
 export default class MultisigModificationTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var multisigModificationTransactionBufferData = MultisigModificationTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(multisigModificationTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var multisigModificationTransactionBufferData = EmbeddedMultisigModificationTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(multisigModificationTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(multisigModificationTransactionBuffer){
+				super(multisigModificationTransactionBuffer);
+			}
+		
+			getMinRemovalDelta(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getMinremovaldelta());
+			}
+		
+			getMinApprovalDelta(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getMinapprovaldelta());
+			}
+		
+			getModifications = () => {
+				var modifications = this.bufferClass.getModifications();
+
+				var modificationsData = [];
+
+				for(var i = 0; i < modifications.length; i++){
+					var modificationData = {
+						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						cosignatoryPublickey : convert.uint8ToHex(modifications[i].cosignatoryPublicKey),
+					};
+					modificationsData.push(modificationData);
+				}
+
+				return modificationsData;
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -74,52 +144,31 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var multisigModificationTransactionBuffer = new MultisigModificationTransactionBuffer();
 
-				// Create modifications
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {
-					const cosignatoryPublicKeyVector = CosignatoryModificationBuffer
-						.createCosignatoryPublicKeyVector(builder, convert.hexToUint8(modification.cosignatoryPublicKey));
-					CosignatoryModificationBuffer.startCosignatoryModificationBuffer(builder);
-					CosignatoryModificationBuffer.addType(builder, modification.type);
-					CosignatoryModificationBuffer.addCosignatoryPublicKey(builder, cosignatoryPublicKeyVector);
-					modificationsArray.push(CosignatoryModificationBuffer.endCosignatoryModificationBuffer(builder));
+					const cosignatoryModificationBuffer = new CosignatoryModificationBuffer();
+
+					cosignatoryModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.type, 1));
+					cosignatoryModificationBuffer.setCosignatorypublickey(convert.hexToUint8(modification.cosignatoryPublicKey));
+
+					modificationsArray.push(cosignatoryModificationBuffer);
 				});
 
-				// Create vectors
-				const signatureVector = MultisigModificationTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = MultisigModificationTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = MultisigModificationTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = MultisigModificationTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const modificationsVector = MultisigModificationTransactionBuffer
-					.createModificationsVector(builder, modificationsArray);
+				// does not need to be in order 
+				multisigModificationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(123 + (33 * this.modifications.length), 4));
+				multisigModificationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				multisigModificationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				multisigModificationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				multisigModificationTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				multisigModificationTransactionBuffer.setMinremovaldelta(bufferUtils.uint_to_buffer(this.minRemovalDelta, 1));
+				multisigModificationTransactionBuffer.setMinapprovaldelta(bufferUtils.uint_to_buffer(this.minApprovalDelta, 1));
+				multisigModificationTransactionBuffer.setModifications(modificationsArray);
 
-				MultisigModificationTransactionBuffer.startMultisigModificationTransactionBuffer(builder);
-				MultisigModificationTransactionBuffer.addSize(builder, 123 + (33 * this.modifications.length));
-				MultisigModificationTransactionBuffer.addSignature(builder, signatureVector);
-				MultisigModificationTransactionBuffer.addSigner(builder, signerVector);
-				MultisigModificationTransactionBuffer.addVersion(builder, this.version);
-				MultisigModificationTransactionBuffer.addType(builder, this.type);
-				MultisigModificationTransactionBuffer.addFee(builder, feeVector);
-				MultisigModificationTransactionBuffer.addDeadline(builder, deadlineVector);
-				MultisigModificationTransactionBuffer.addMinRemovalDelta(builder, this.minRemovalDelta);
-				MultisigModificationTransactionBuffer.addMinApprovalDelta(builder, this.minApprovalDelta);
-				MultisigModificationTransactionBuffer.addNumModifications(builder, this.modifications.length);
-				MultisigModificationTransactionBuffer.addModifications(builder, modificationsVector);
+				var bytes = multisigModificationTransactionBuffer.serialize();
 
-
-				// Calculate size
-				const codedMultisigAggregate = MultisigModificationTransactionBuffer
-					.endMultisigModificationTransactionBuffer(builder);
-				builder.finish(codedMultisigAggregate);
-
-				const bytes = builder.asUint8Array();
-				return new MultisigModificationTransaction(bytes, MultisigModificationTransactionSchema);
+				return new MultisigModificationTransaction(bytes);
 			}
 		}
 

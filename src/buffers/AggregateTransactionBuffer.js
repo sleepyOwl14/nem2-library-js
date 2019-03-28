@@ -1,6 +1,9 @@
-import {TransactionBuffer, EmbeddedTransactionBuffer} from './TransactionBuffer';
+import TransactionBufferPackage from './TransactionBuffer';
 import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
 import bufferUtils from './BufferUtils';
+
+const TransactionBuffer = TransactionBufferPackage.default;
+const EmbeddedTransactionBuffer = TransactionBufferPackage.embedded;
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
 var fit_bytearray = bufferUtils.fit_bytearray;
@@ -29,11 +32,11 @@ class AggregateTransactionBuffer extends TransactionBuffer{
         this.transactions = transactions;
     }
 
-    static loadFromBinary(consumableBuffer) {
+    static loadAggregateFromBinary(consumableBuffer) {
 
         var object = new AggregateTransactionBuffer();
 
-        var transactionBuffer = TransactionBuffer.loadFromBinary(consumableBuffer);
+        var transactionBuffer = this.loadFromBinary(consumableBuffer);
 
         object.size = transactionBuffer.getSize();
         object.signature = transactionBuffer.getSignature();
@@ -83,6 +86,6 @@ class AggregateTransactionBuffer extends TransactionBuffer{
 }
 
 module.exports = {
-    AggregateTransactionBuffer,
+    default : AggregateTransactionBuffer,
     TransactionBuffer,
 }

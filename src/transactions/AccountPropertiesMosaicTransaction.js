@@ -22,17 +22,19 @@ import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	MosaicPropertyTransactionBuffer,
+	MosaicPropertyTransactionBufferPackage,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const MosaicPropertyModificationBuffer = MosaicPropertyTransactionBuffer.MosaicPropertyModificationBuffer;
+const MosaicPropertyModificationBuffer = MosaicPropertyTransactionBufferPackage.MosaicPropertyModificationBuffer;
+const AccountPropertiesMosaicTransactionBuffer = MosaicPropertyTransactionBufferPackage.default;
+const EmbeddedAccountPropertiesMosaicTransactionBuffer = MosaicPropertyTransactionBufferPackage.embedded;
 
 export default class AccountPropertiesMosaicTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicPropertyTransactionBufferData = MosaicPropertyTransactionBuffer.MosaicPropertyTransactionBuffer.loadFromBinary(consumableBuffer);
+		var MosaicPropertyTransactionBufferData = AccountPropertiesMosaicTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -49,7 +51,7 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicPropertyTransactionBufferData = MosaicPropertyTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var MosaicPropertyTransactionBufferData = EmbeddedAccountPropertiesMosaicTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -131,7 +133,7 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 			}
 
 			build() {
-				var accountPropertiesMosaicTransactionBuffer = new MosaicPropertyTransactionBuffer.MosaicPropertyTransactionBuffer();
+				var accountPropertiesMosaicTransactionBuffer = new AccountPropertiesMosaicTransactionBuffer();
 
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {

@@ -15,17 +15,77 @@
  */
 
 import VerifiableTransaction from './VerifiableTransaction';
-import MosaicSupplyChangeTransactionSchema from '../schema/MosaicSupplyChangeTransactionSchema';
-import MosaicSupplyChangeTransactionBufferPackage from '../buffers/MosaicSupplyChangeTransactionBuffer';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	MosaicSupplyChangeTransactionBufferPackage,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const { MosaicSupplyChangeTransactionBuffer } = MosaicSupplyChangeTransactionBufferPackage.Buffers;
+import convert from '../coders/convert';
 
-const { flatbuffers } = require('flatbuffers');
+const MosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.default;
+const EmbeddedMosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.embedded;
 
 /**
  * @module transactions/MosaicSupplyChangeTransaction
  */
 export default class MosaicSupplyChangeTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicSupplyChangeTransactionBufferData = MosaicSupplyChangeTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(MosaicSupplyChangeTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var MosaicSupplyChangeTransactionBufferData = EmbeddedMosaicSupplyChangeTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(MosaicSupplyChangeTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(mosaicSupplyChangeTransactionBuffer){
+				super(mosaicSupplyChangeTransactionBuffer);
+			}
+
+			getMosaicId(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
+			}
+
+			getDirection(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getDirection());
+			}
+		
+			getDelta(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDelta());
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -70,41 +130,21 @@ export default class MosaicSupplyChangeTransaction extends VerifiableTransaction
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var mosaicSupplyChangeTransactionBuffer = new MosaicSupplyChangeTransactionBuffer();
 
-				// Create vectors
-				const signatureVector = MosaicSupplyChangeTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = MosaicSupplyChangeTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = MosaicSupplyChangeTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = MosaicSupplyChangeTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const mosaicIdVector = MosaicSupplyChangeTransactionBuffer
-					.createFeeVector(builder, this.mosaicId);
-				const deltaVector = MosaicSupplyChangeTransactionBuffer
-					.createFeeVector(builder, this.delta);
+				// does not need to be in order 
+				mosaicSupplyChangeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(137 , 4));
+				mosaicSupplyChangeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				mosaicSupplyChangeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				mosaicSupplyChangeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				mosaicSupplyChangeTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				mosaicSupplyChangeTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicSupplyChangeTransactionBuffer.setDirection(bufferUtils.uint_to_buffer(this.direction, 1));
+				mosaicSupplyChangeTransactionBuffer.setDelta(bufferUtils.uint32Array_to_bufferArray(this.delta));
+			
+				var bytes = mosaicSupplyChangeTransactionBuffer.serialize();
 
-
-				MosaicSupplyChangeTransactionBuffer.startMosaicSupplyChangeTransactionBuffer(builder);
-				MosaicSupplyChangeTransactionBuffer.addSize(builder, 137);
-				MosaicSupplyChangeTransactionBuffer.addSignature(builder, signatureVector);
-				MosaicSupplyChangeTransactionBuffer.addSigner(builder, signerVector);
-				MosaicSupplyChangeTransactionBuffer.addVersion(builder, this.version);
-				MosaicSupplyChangeTransactionBuffer.addType(builder, this.type);
-				MosaicSupplyChangeTransactionBuffer.addFee(builder, feeVector);
-				MosaicSupplyChangeTransactionBuffer.addDeadline(builder, deadlineVector);
-				MosaicSupplyChangeTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-				MosaicSupplyChangeTransactionBuffer.addDirection(builder, this.direction);
-				MosaicSupplyChangeTransactionBuffer.addDelta(builder, deltaVector);
-
-				// Calculate size
-				const codedMosaicChangeSupply = MosaicSupplyChangeTransactionBuffer.endMosaicSupplyChangeTransactionBuffer(builder);
-				builder.finish(codedMosaicChangeSupply);
-
-				const bytes = builder.asUint8Array();
-				return new MosaicSupplyChangeTransaction(bytes, MosaicSupplyChangeTransactionSchema);
+				return new MosaicSupplyChangeTransaction(bytes);
 			}
 		}
 

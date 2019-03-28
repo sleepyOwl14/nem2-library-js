@@ -17,9 +17,32 @@
 import {VerifiableTransaction} from "./VerifiableTransaction";
 
 export declare class SecretLockTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module SecretLockTransaction {
+
+    class BufferProperties{
+
+        getMosaic(): object;
+
+        getDuration(): Array;
+
+        getHashAlgorithm(): number;
+    
+        getSecret(): String;
+    
+        getRecipient(): String;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

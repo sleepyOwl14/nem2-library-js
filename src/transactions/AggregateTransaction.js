@@ -27,21 +27,29 @@ import AddressAliasTransaction from './AddressAliasTransaction';
 import HashLockTransaction from './HashLockTransaction';
 import TransferTransaction from './TransferTransaction';
 import MosaicAliasTransaction from './MosaicAliasTransaction';
+import MosaicCreationTransaction from './MosaicCreationTransaction';
+import MosaicSupplyChangeTransaction from './MosaicSupplyChangeTransaction';
+import MultisigModificationTransaction from './MultisigModificationTransaction';
+import NamespaceCreationTransaction from './NamespaceCreationTransaction';
+import SecretLockTransaction from './SecretLockTransaction';
+import SecretProofTransaction from './SecretProofTransaction';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AggregateTransactionBuffer, 
+	AggregateTransactionBufferPackage, 
 	UnresolvedMosaicBuffer,
 	CommonBufferProperties} from '../buffers';
 
 import convert from '../coders/convert';
+
+const AggregateTransactionBuffer = AggregateTransactionBufferPackage.default;
 
 export default class AggregateTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AggregateTransactionBufferData = AggregateTransactionBuffer.AggregateTransactionBuffer.loadFromBinary(consumableBuffer);
+		var AggregateTransactionBufferData = AggregateTransactionBuffer.loadAggregateFromBinary(consumableBuffer);
 
 		return new this.BufferProperties(AggregateTransactionBufferData);
 	}
@@ -77,19 +85,22 @@ export default class AggregateTransaction extends VerifiableTransaction {
 					switch (transactionType) {
 						case 0x414D:
 							// Mosaic Definition
+							transanctionData = MosaicCreationTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x424D:
 							// Mosaic Supply Change
+							transactionData = MosaicSupplyChangeTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x414E:
 							// Register Namespace
+							transactionData = NamespaceCreationTransaction.loadEmbeddedFromBinary(  transactions[i].bytes );
 							break;
 
 						case 0x424E:
-							transactionData = AddressAliasTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							// Address Alias
+							transactionData = AddressAliasTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x434E:
@@ -98,47 +109,48 @@ export default class AggregateTransaction extends VerifiableTransaction {
 							break;
 
 						case 0x4154:
-							transactionData = TransferTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							// Transfer
+							transactionData = TransferTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4155:
 							// Modify Multisig Account
+							transactionData = MultisigModificationTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4148:
-							transactionData = HashLockTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							// Hash Lock
+							transactionData = HashLockTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4150:
-							transactionData = AccountPropertiesAddressTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							// Account Properties Address 
+							transactionData = AccountPropertiesAddressTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4250:
-							transactionData = AccountPropertiesMosaicTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							// Account Properties Mosaic 
+							transactionData = AccountPropertiesMosaicTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4350:
-							transactionData = AccountPropertiesEntityTypeTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							// Account Properties Entity Type 
+							transactionData = AccountPropertiesEntityTypeTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4152:
-
 							// Secret Lock
+							transactionData = SecretLockTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x4252:
-
-							// Secret Proof 
+							// Secret Proof
+							transactionData = SecretProofTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						case 0x414C:
-							transactionData = AccountLinkTransaction.loadFromBinary( transactions[i].bytes );
 							// Account Link
+							transactionData = AccountLinkTransaction.loadFromBinary( transactions[i].bytes );
 							break;
 
 						default:
@@ -194,7 +206,7 @@ export default class AggregateTransaction extends VerifiableTransaction {
 
 			build() {
 
-				var aggregateTransactionBuffer = new AggregateTransactionBuffer.AggregateTransactionBuffer();
+				var aggregateTransactionBuffer = new AggregateTransactionBuffer();
 
 				// does not need to be in order 
 				aggregateTransactionBuffer.setSize(bufferUtils.uint_to_buffer(120 + 4 + this.transactions.length, 4));

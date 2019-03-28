@@ -17,9 +17,28 @@
 import {VerifiableTransaction} from "./VerifiableTransaction";
 
 export declare class MosaicSupplyChangeTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MosaicSupplyChangeTransaction {
+
+    class BufferProperties{
+
+        getMosaicId(): Array;
+    
+        getDirection(): number;
+    
+        getDelta(): Array;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

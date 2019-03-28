@@ -18,15 +18,99 @@
  * @module transactions/NamespaceCreationTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import NamespaceCreationTransactionSchema from '../schema/NamespaceCreationTransactionSchema';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	RegisterNamespaceTransactionBufferPackage, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+
 import convert from '../coders/convert';
-import * as NamespaceCreationTransactionBufferPackage from '../buffers/NamespaceCreationTransactionBuffer';
 
-const { NamespaceCreationTransactionBuffer } = NamespaceCreationTransactionBufferPackage.default.Buffers;
-
-const { flatbuffers } = require('flatbuffers');
+const NamespaceCreationTransactionBuffer = RegisterNamespaceTransactionBufferPackage.default;
+const EmbeddedNamespaceCreationTransactionBuffer = RegisterNamespaceTransactionBufferPackage.embedded;
+const NamespaceType = RegisterNamespaceTransactionBufferPackage.NamespaceType;
 
 export default class NamespaceCreationTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var NamespaceCreationTransactionBufferData = NamespaceCreationTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(NamespaceCreationTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var NamespaceCreationTransactionBuffer = EmbeddedNamespaceCreationTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(NamespaceCreationTransactionBuffer);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(namespaceCreationTransactionBuffer){
+				super(namespaceCreationTransactionBuffer);
+			}
+		
+			getNamespaceType(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getNamespacetype());
+			}
+		
+			getDuration(){
+
+				var duration = this.bufferClass.getDuration();
+
+				if(duration !== undefined){
+					return bufferUtils.bufferArray_to_uint32Array(duration);
+				}
+				else{
+					return null;
+				}
+			}
+		
+			getParentId(){
+				var parentId = this.bufferClass.getParentid();
+
+				if(parentId !== undefined){
+					return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getParentid());
+				}
+				else{
+					return null;
+				}
+			}
+		
+			getNamespaceId(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
+			}
+		
+			getName(){
+				return convert.hexToUtf8(convert.uint8ToHex(this.bufferClass.getName()));
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -80,48 +164,38 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 				return this;
 			}
 
-			build() {
-				const builder = new flatbuffers.Builder(1);
+			build() {			
+				var namespaceCreationTransactionBuffer = new NamespaceCreationTransactionBuffer();
+				// does not need to be in order 
 
-				const namespaceNameLength = convert.utf8ToHex(this.namespaceName).length / 2;
+				var namespaceNameLength = convert.utf8ToHex(this.namespaceName).length / 2;
 
-				// create vectors
-				const signatureVector = NamespaceCreationTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = NamespaceCreationTransactionBuffer
-					.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = NamespaceCreationTransactionBuffer
-					.createDeadlineVector(builder, this.deadline);
-				const feeVector = NamespaceCreationTransactionBuffer
-					.createFeeVector(builder, this.fee);
-				const parentIdVector = 1 === this.namespaceType ? this.parentId : this.duration;
-				const durationParentIdVector = NamespaceCreationTransactionBuffer
-					.createDurationParentIdVector(builder, parentIdVector);
-				const namespaceIdVector = NamespaceCreationTransactionBuffer
-					.createNamespaceIdVector(builder, this.namespaceId);
+				namespaceCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(138 + namespaceNameLength, 4));
+				namespaceCreationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				namespaceCreationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				namespaceCreationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				namespaceCreationTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				namespaceCreationTransactionBuffer.setNamespacetype(bufferUtils.uint_to_buffer(this.namespaceType, 1));
 
-				const name = builder.createString(this.namespaceName);
+				switch (this.namespaceType) {
+					case NamespaceType.root:
+						namespaceCreationTransactionBuffer.setDuration(bufferUtils.uint32Array_to_bufferArray(this.duration));
+						break;
+					case NamespaceType.child:
+						namespaceCreationTransactionBuffer.setParentid(bufferUtils.uint32Array_to_bufferArray(this.parentId));
+						break;
+				
+					default:
+						throw "Incorrect namespaceType added";
+						break;
+				}
+				
+				namespaceCreationTransactionBuffer.setNamespaceid(bufferUtils.uint32Array_to_bufferArray(this.namespaceId));
+				namespaceCreationTransactionBuffer.setName(convert.hexToUint8(convert.utf8ToHex(this.namespaceName)));
 
-				NamespaceCreationTransactionBuffer.startNamespaceCreationTransactionBuffer(builder);
-				NamespaceCreationTransactionBuffer.addSize(builder, 138 + namespaceNameLength);
-				NamespaceCreationTransactionBuffer.addSignature(builder, signatureVector);
-				NamespaceCreationTransactionBuffer.addSigner(builder, signerVector);
-				NamespaceCreationTransactionBuffer.addVersion(builder, this.version);
-				NamespaceCreationTransactionBuffer.addType(builder, this.type);
-				NamespaceCreationTransactionBuffer.addFee(builder, feeVector);
-				NamespaceCreationTransactionBuffer.addDeadline(builder, deadlineVector);
-				NamespaceCreationTransactionBuffer.addNamespaceType(builder, this.namespaceType);
-				NamespaceCreationTransactionBuffer.addDurationParentId(builder, durationParentIdVector);
-				NamespaceCreationTransactionBuffer.addNamespaceId(builder, namespaceIdVector);
-				NamespaceCreationTransactionBuffer.addNamespaceNameSize(builder, namespaceNameLength);
-				NamespaceCreationTransactionBuffer.addNamespaceName(builder, name);
+				var bytes = namespaceCreationTransactionBuffer.serialize();
 
-				// Calculate size
-				const codedNamespace = NamespaceCreationTransactionBuffer.endNamespaceCreationTransactionBuffer(builder);
-				builder.finish(codedNamespace);
-
-				const bytes = builder.asUint8Array();
-				return new NamespaceCreationTransaction(bytes, NamespaceCreationTransactionSchema);
+				return new NamespaceCreationTransaction(bytes);
 			}
 		}
 

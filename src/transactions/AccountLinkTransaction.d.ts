@@ -15,22 +15,20 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
-import {CommonBufferProperties, CommonEmbeddedBufferProperties} from "../buffers";
 
 export declare class AccountLinkTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AccountLinkTransaction {
-
-    loadFromBinary(binary) : BufferProperties;
-
-    loadFromPayload(string): BufferProperties; 
-
-    loadEmbeddedFromBinary(binary): BufferProperties; 
-
-    loadEmbeddedFromPayload(string): BufferProperties;
-    
-    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
 
     class BufferProperties{
     

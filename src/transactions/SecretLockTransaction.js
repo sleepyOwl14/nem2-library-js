@@ -18,16 +18,91 @@
  * @module transactions/SecretLockTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import * as SecretLockTransactionBufferPackage from '../buffers/SecretLockTransactionBuffer';
-import SecretLockTransactionSchema from '../schema/SecretLockTransactionSchema';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	SecretLockTransactionBufferPackage, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 import address from '../coders/address';
+import uint64 from '../../src/coders/uint64';
 import convert from '../coders/convert';
 
-const { flatbuffers } = require('flatbuffers');
-
-const { SecretLockTransactionBuffer } = SecretLockTransactionBufferPackage.default.Buffers;
+const SecretLockTransactionBuffer = SecretLockTransactionBufferPackage.default;
+const EmbeddedSecretLockTransactionBuffer = SecretLockTransactionBufferPackage.embedded;
 
 export default class SecretLockTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var SecretLockTransactionBufferData = SecretLockTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(SecretLockTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var SecretLockTransactionBufferData = EmbeddedSecretLockTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(SecretLockTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(secretLockTransactionBuffer){
+				super(secretLockTransactionBuffer);
+			}
+
+			getMosaic(){
+				var mosaic = this.bufferClass.getMosaic();
+
+				var mosaicData = {
+					mosaicId : uint64.fromBytes(mosaic.mosaicId),
+					amount : uint64.fromBytes(mosaic.amount),
+				};
+
+				return mosaicData;
+			}
+		
+			getDuration(){
+				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDuration());
+			}
+
+			getHashAlgorithm(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getHashalgorithm());
+			}
+		
+			getSecret(){
+				return convert.uint8ToHex(this.bufferClass.getSecret())
+			}
+		
+			getRecipient(){
+				return address.addressToString(this.bufferClass.getRecipient());
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -87,41 +162,28 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var secretLockTransactionBuffer = new SecretLockTransactionBuffer();
 
-				// Create vectors
-				const signatureVector = SecretLockTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = SecretLockTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = SecretLockTransactionBuffer.createDeadlineVector(builder, this.deadline);
-				const feeVector = SecretLockTransactionBuffer.createFeeVector(builder, this.fee);
-				const mosaicIdVector = SecretLockTransactionBuffer.createMosaicIdVector(builder, this.mosaicId);
-				const mosaicAmountVector = SecretLockTransactionBuffer.createMosaicAmountVector(builder, this.mosaicAmount);
-				const durationVector = SecretLockTransactionBuffer.createDurationVector(builder, this.duration);
-				const byteSecret = convert.hexToUint8(this.secret);
-				const secretVector = SecretLockTransactionBuffer.createSecretVector(builder, byteSecret);
-				const recipientVector = SecretLockTransactionBuffer.createRecipientVector(builder, this.recipient);
+				var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-				SecretLockTransactionBuffer.startSecretLockTransactionBuffer(builder);
-				SecretLockTransactionBuffer.addSize(builder, 202);
-				SecretLockTransactionBuffer.addSignature(builder, signatureVector);
-				SecretLockTransactionBuffer.addSigner(builder, signerVector);
-				SecretLockTransactionBuffer.addVersion(builder, this.version);
-				SecretLockTransactionBuffer.addType(builder, this.type);
-				SecretLockTransactionBuffer.addFee(builder, feeVector);
-				SecretLockTransactionBuffer.addDeadline(builder, deadlineVector);
-				SecretLockTransactionBuffer.addMosaicId(builder, mosaicIdVector);
-				SecretLockTransactionBuffer.addMosaicAmount(builder, mosaicAmountVector);
-				SecretLockTransactionBuffer.addDuration(builder, durationVector);
-				SecretLockTransactionBuffer.addHashAlgorithm(builder, this.hashAlgorithm);
-				SecretLockTransactionBuffer.addSecret(builder, secretVector);
-				SecretLockTransactionBuffer.addRecipient(builder, recipientVector);
+				mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
 
-				const codedSecretLock = SecretLockTransactionBuffer.endSecretLockTransactionBuffer(builder);
-				builder.finish(codedSecretLock);
+				// does not need to be in order 
+				secretLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(202, 4));
+				secretLockTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				secretLockTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				secretLockTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				secretLockTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				secretLockTransactionBuffer.setMosaic(mosaicBuffer);
+				secretLockTransactionBuffer.setDuration(bufferUtils.uint32Array_to_bufferArray(this.duration));
+				secretLockTransactionBuffer.setHashalgorithm(bufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
+				secretLockTransactionBuffer.setSecret(convert.hexToUint8(this.secret));
+				secretLockTransactionBuffer.setRecipient(this.recipient);
+	
+				var bytes = secretLockTransactionBuffer.serialize();
 
-				const bytes = builder.asUint8Array();
-				return new SecretLockTransaction(bytes, SecretLockTransactionSchema);
+				return new SecretLockTransaction(bytes);
 			}
 		}
 

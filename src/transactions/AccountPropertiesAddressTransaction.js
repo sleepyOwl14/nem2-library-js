@@ -23,10 +23,12 @@ import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountPropertyAddressBuffer,
+	AccountPropertyAddressBufferPackage,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const AddressPropertyModificationBuffer = AccountPropertyAddressBuffer.AddressPropertyModificationBuffer;
+const AddressPropertyModificationBuffer = AccountPropertyAddressBufferPackage.AddressPropertyModificationBuffer;
+const AccountPropertiesAddressTransactionBuffer = AccountPropertyAddressBufferPackage.default;
+const EmbeddedAccountPropertiesAddressTransactionBuffer = AccountPropertyAddressBufferPackage.embedded;
 
 const address = require('../coders/address').default;
 
@@ -35,7 +37,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertyAddressTransactionBufferData = AccountPropertyAddressBuffer.AddressPropertyTransactionBuffer.loadFromBinary(consumableBuffer);
+		var AccountPropertyAddressTransactionBufferData = AccountPropertiesAddressTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -52,7 +54,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertyAddressTransactionBufferData = AccountPropertyAddressBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var AccountPropertyAddressTransactionBufferData = EmbeddedAccountPropertiesAddressTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -134,7 +136,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 			}
 
 			build() {
-				var accountPropertiesAddressTransactionBuffer = new AccountPropertyAddressBuffer.AddressPropertyTransactionBuffer();
+				var accountPropertiesAddressTransactionBuffer = new AccountPropertiesAddressTransactionBuffer();
 
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {

@@ -21,19 +21,22 @@ import VerifiableTransaction from './VerifiableTransaction';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	TransferTransactionBuffer, 
+	TransferTransactionBufferPackage, 
 	UnresolvedMosaicBuffer,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 import convert from '../coders/convert';
 const address = require('../coders/address').default;
 
+const TransferTransactionBuffer = TransferTransactionBufferPackage.default;
+const EmbeddedTransferTransactionBuffer = TransferTransactionBufferPackage.embedded;
+
 export default class TransferTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var TransferTransactionBufferData = TransferTransactionBuffer.TransferTransactionBuffer.loadFromBinary(consumableBuffer);
+		var TransferTransactionBufferData = TransferTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -50,7 +53,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var TransferTransactionBufferData = TransferTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var TransferTransactionBufferData = EmbeddedTransferTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -154,7 +157,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				var transferTransactionBuffer = new TransferTransactionBuffer.TransferTransactionBuffer();
+				var transferTransactionBuffer = new TransferTransactionBuffer();
 
 				const mosaics = [];
 				this.mosaics.forEach(mosaic => {

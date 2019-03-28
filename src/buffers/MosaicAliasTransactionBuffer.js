@@ -285,8 +285,8 @@ class EmbeddedMosaicAliasTransactionBuffer {
 }
 
 module.exports = {
-    MosaicAliasTransactionBodyBuffer,
-    MosaicAliasTransactionBuffer,
-    EmbeddedMosaicAliasTransactionBuffer,
+    body : MosaicAliasTransactionBodyBuffer,
+    default : MosaicAliasTransactionBuffer,
+    embedded : EmbeddedMosaicAliasTransactionBuffer,
 };
 

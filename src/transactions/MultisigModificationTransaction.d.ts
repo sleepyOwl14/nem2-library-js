@@ -17,9 +17,28 @@
 import {VerifiableTransaction} from "./VerifiableTransaction";
 
 export declare class MultisigModificationTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MultisigModificationTransaction {
+
+    class BufferProperties{
+
+        getMinRemovalDelta(): number;
+    
+        getMinApprovalDelta(): number;
+    
+        getModifications(): Array;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

@@ -15,19 +15,18 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
-import {CommonBufferProperties} from "../buffers";
 
 export declare class AggregateTransaction extends VerifiableTransaction {
     public signTransactionWithCosigners(initializer, cosigners): {payload: string, hash:string}
+
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AggregateTransaction {
-
-    loadFromBinary(binary) : BufferProperties;
-
-    loadFromPayload(string): BufferProperties; 
-    
-    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
 
     class BufferProperties{
 

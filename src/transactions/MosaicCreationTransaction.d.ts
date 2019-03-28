@@ -17,27 +17,30 @@
 import {VerifiableTransaction} from "./VerifiableTransaction";
 
 export declare class MosaicCreationTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MosaicCreationTransaction {
 
-    loadFromBinary(binary) : BufferProperties;
-
-    loadFromPayload(string): BufferProperties; 
-
-    loadEmbeddedFromBinary(binary): BufferProperties; 
-
-    loadEmbeddedFromPayload(string): BufferProperties;
-    
-    createBufferProperties(CommonBufferProperties | CommonEmbeddedBufferProperties) : BufferProperties;
-
     class BufferProperties{
 
-        getRecipient(): String;
+        getMosaicNonce(): Array;
     
-        getMessage(): String;
+        getMosaicId(): Array;
     
-        getMosaics(): Array;
+        getFlags(): number;
+
+        getDivisibility(): number; 
+
+        getProperties(): Array;
     }
 
     class Builder {

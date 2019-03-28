@@ -15,7 +15,7 @@
  */
 
 import expect from 'expect.js';
-import { sha3_512 } from 'js-sha3';
+import { sha3_256 } from 'js-sha3';
 import SecretLockTransaction from '../../src/transactions/SecretLockTransaction';
 import deadline from '../../src/transactions/Deadline';
 import uint64 from '../../src/coders/uint64';
@@ -27,7 +27,7 @@ describe('SecretLockTransaction', () => {
 	};
 
 	it('should create secret lock transaction', () => {
-		const hash = sha3_512.create();
+		const hash = sha3_256.create();
 		hash.update('secret');
 		const secretLockTransaction = {
 			deadline: deadline(),
@@ -48,14 +48,15 @@ describe('SecretLockTransaction', () => {
 			.addRecipient(secretLockTransaction.recipient)
 			.build();
 
+		console.log(secretLockTransaction.secret);
+
 		const transactionPayload = verifiableTransaction.signTransaction(keyPair);
 
 		expect(transactionPayload.payload.substring(
 			240,
 			transactionPayload.payload.length
 		)).to.be.equal('29CF5FD941AD25D58096980000000000640000000000000000' +
-			'B778A39A3663719DFC5E48C9D78431B1E45C2AF9DF538782BF199C189DABE' +
-			'AC7680ADA57DCEC8EEE91C4E3BF3BFA9AF6FFDE90CD1D249D1C6121D7B759' +
-			'A001B190E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC');
+			'F5A5207A8729B1F709CB710311751EB2FC8ACAD5A1FB8AC991B736E69B6529A3' +
+			'90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC');
 	});
 });

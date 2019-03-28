@@ -1,34 +1,10 @@
+import PropertyModificationBuffer from './PropertyModificationBuffer';
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
 var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
-
-class PropertyModificationBuffer {
-    getModificationtype = () => {
-        return this.modificationType
-    }
-
-    setModificationtype = (modificationType) => {
-        this.modificationType = modificationType
-    }
-
-    static loadFromBinary(consumableBuffer) {
-        var object = new PropertyModificationBuffer()
-        var modificationType = consumableBuffer.get_bytes(1)
-        object.modificationType = modificationType
-        return object
-    }
-
-    serialize = () => {
-        var newArray = new Uint8Array()
-        var fitArraymodificationType = fit_bytearray(this.modificationType, 1)
-        newArray = concat_typedarrays(newArray, fitArraymodificationType)
-        return newArray
-    }
-
-}
 
 class TransactionTypePropertyModificationBuffer {
     getModificationtype = () => {
@@ -337,8 +313,8 @@ class EmbeddedTransactionTypePropertyTransactionBuffer {
 module.exports = {
     PropertyModificationBuffer,
     TransactionTypePropertyModificationBuffer,
-    TransactionTypePropertyTransactionBodyBuffer,
-    TransactionTypePropertyTransactionBuffer,
-    EmbeddedTransactionTypePropertyTransactionBuffer,
+    body : TransactionTypePropertyTransactionBodyBuffer,
+    default : TransactionTypePropertyTransactionBuffer,
+    embedded : EmbeddedTransactionTypePropertyTransactionBuffer,
 };
 

@@ -1,4 +1,3 @@
-import PropertyModificationBuffer from './PropertyModificationBuffer';
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -6,7 +5,7 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class AddressPropertyModificationBuffer {
+class CosignatoryModificationBuffer {
     getModificationtype = () => {
         return this.modificationType
     }
@@ -15,20 +14,20 @@ class AddressPropertyModificationBuffer {
         this.modificationType = modificationType
     }
 
-    getValue = () => {
-        return this.value
+    getCosignatorypublickey = () => {
+        return this.cosignatoryPublicKey
     }
 
-    setValue = (value) => {
-        this.value = value
+    setCosignatorypublickey = (cosignatoryPublicKey) => {
+        this.cosignatoryPublicKey = cosignatoryPublicKey
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AddressPropertyModificationBuffer()
+        var object = new CosignatoryModificationBuffer()
         var modificationType = consumableBuffer.get_bytes(1)
         object.modificationType = modificationType
-        var value = consumableBuffer.get_bytes(25)
-        object.value = value
+        var cosignatoryPublicKey = consumableBuffer.get_bytes(32)
+        object.cosignatoryPublicKey = cosignatoryPublicKey
         return object
     }
 
@@ -36,20 +35,28 @@ class AddressPropertyModificationBuffer {
         var newArray = new Uint8Array()
         var fitArraymodificationType = fit_bytearray(this.modificationType, 1)
         newArray = concat_typedarrays(newArray, fitArraymodificationType)
-        var fitArrayvalue = fit_bytearray(this.value, 25)
-        newArray = concat_typedarrays(newArray, fitArrayvalue)
+        var fitArraycosignatoryPublicKey = fit_bytearray(this.cosignatoryPublicKey, 32)
+        newArray = concat_typedarrays(newArray, fitArraycosignatoryPublicKey)
         return newArray
     }
 
 }
 
-class AddressPropertyTransactionBodyBuffer {
-    getPropertytype = () => {
-        return this.propertyType
+class ModifyMultisigAccountTransactionBodyBuffer {
+    getMinremovaldelta = () => {
+        return this.minRemovalDelta
     }
 
-    setPropertytype = (propertyType) => {
-        this.propertyType = propertyType
+    setMinremovaldelta = (minRemovalDelta) => {
+        this.minRemovalDelta = minRemovalDelta
+    }
+
+    getMinapprovaldelta = () => {
+        return this.minApprovalDelta
+    }
+
+    setMinapprovaldelta = (minApprovalDelta) => {
+        this.minApprovalDelta = minApprovalDelta
     }
 
     getModifications = () => {
@@ -61,14 +68,16 @@ class AddressPropertyTransactionBodyBuffer {
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AddressPropertyTransactionBodyBuffer()
-        var propertyType = consumableBuffer.get_bytes(1)
-        object.propertyType = propertyType
+        var object = new ModifyMultisigAccountTransactionBodyBuffer()
+        var minRemovalDelta = consumableBuffer.get_bytes(1)
+        object.minRemovalDelta = minRemovalDelta
+        var minApprovalDelta = consumableBuffer.get_bytes(1)
+        object.minApprovalDelta = minApprovalDelta
         var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
         object.modifications = []
         var i
         for (i = 0; i < modificationsCount; i++) {
-            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            var newmodifications = CosignatoryModificationBuffer.loadFromBinary(consumableBuffer)
             object.modifications.push(newmodifications)
         }
         return object
@@ -76,8 +85,10 @@ class AddressPropertyTransactionBodyBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
-        var fitArraypropertyType = fit_bytearray(this.propertyType, 1)
-        newArray = concat_typedarrays(newArray, fitArraypropertyType)
+        var fitArrayminRemovalDelta = fit_bytearray(this.minRemovalDelta, 1)
+        newArray = concat_typedarrays(newArray, fitArrayminRemovalDelta)
+        var fitArrayminApprovalDelta = fit_bytearray(this.minApprovalDelta, 1)
+        newArray = concat_typedarrays(newArray, fitArrayminApprovalDelta)
         newArray = concat_typedarrays(newArray, uint_to_buffer(this.modifications.length, 1))
         var i
         for (i in this.modifications) {
@@ -88,7 +99,7 @@ class AddressPropertyTransactionBodyBuffer {
 
 }
 
-class AddressPropertyTransactionBuffer {
+class ModifyMultisigAccountTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -145,12 +156,20 @@ class AddressPropertyTransactionBuffer {
         this.deadline = deadline
     }
 
-    getPropertytype = () => {
-        return this.propertyType
+    getMinremovaldelta = () => {
+        return this.minRemovalDelta
     }
 
-    setPropertytype = (propertyType) => {
-        this.propertyType = propertyType
+    setMinremovaldelta = (minRemovalDelta) => {
+        this.minRemovalDelta = minRemovalDelta
+    }
+
+    getMinapprovaldelta = () => {
+        return this.minApprovalDelta
+    }
+
+    setMinapprovaldelta = (minApprovalDelta) => {
+        this.minApprovalDelta = minApprovalDelta
     }
 
     getModifications = () => {
@@ -162,7 +181,7 @@ class AddressPropertyTransactionBuffer {
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new AddressPropertyTransactionBuffer()
+        var object = new ModifyMultisigAccountTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -177,13 +196,15 @@ class AddressPropertyTransactionBuffer {
         object.fee = fee
         var deadline = consumableBuffer.get_bytes(8)
         object.deadline = deadline
-        var propertyType = consumableBuffer.get_bytes(1)
-        object.propertyType = propertyType
+        var minRemovalDelta = consumableBuffer.get_bytes(1)
+        object.minRemovalDelta = minRemovalDelta
+        var minApprovalDelta = consumableBuffer.get_bytes(1)
+        object.minApprovalDelta = minApprovalDelta
         var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
         object.modifications = []
         var i
         for (i = 0; i < modificationsCount; i++) {
-            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            var newmodifications = CosignatoryModificationBuffer.loadFromBinary(consumableBuffer)
             object.modifications.push(newmodifications)
         }
         return object
@@ -205,8 +226,10 @@ class AddressPropertyTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayfee)
         var fitArraydeadline = fit_bytearray(this.deadline, 8)
         newArray = concat_typedarrays(newArray, fitArraydeadline)
-        var fitArraypropertyType = fit_bytearray(this.propertyType, 1)
-        newArray = concat_typedarrays(newArray, fitArraypropertyType)
+        var fitArrayminRemovalDelta = fit_bytearray(this.minRemovalDelta, 1)
+        newArray = concat_typedarrays(newArray, fitArrayminRemovalDelta)
+        var fitArrayminApprovalDelta = fit_bytearray(this.minApprovalDelta, 1)
+        newArray = concat_typedarrays(newArray, fitArrayminApprovalDelta)
         newArray = concat_typedarrays(newArray, uint_to_buffer(this.modifications.length, 1))
         var i
         for (i in this.modifications) {
@@ -217,7 +240,7 @@ class AddressPropertyTransactionBuffer {
 
 }
 
-class EmbeddedAddressPropertyTransactionBuffer {
+class EmbeddedModifyMultisigAccountTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -250,12 +273,20 @@ class EmbeddedAddressPropertyTransactionBuffer {
         this.type = type
     }
 
-    getPropertytype = () => {
-        return this.propertyType
+    getMinremovaldelta = () => {
+        return this.minRemovalDelta
     }
 
-    setPropertytype = (propertyType) => {
-        this.propertyType = propertyType
+    setMinremovaldelta = (minRemovalDelta) => {
+        this.minRemovalDelta = minRemovalDelta
+    }
+
+    getMinapprovaldelta = () => {
+        return this.minApprovalDelta
+    }
+
+    setMinapprovaldelta = (minApprovalDelta) => {
+        this.minApprovalDelta = minApprovalDelta
     }
 
     getModifications = () => {
@@ -267,7 +298,7 @@ class EmbeddedAddressPropertyTransactionBuffer {
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedAddressPropertyTransactionBuffer()
+        var object = new EmbeddedModifyMultisigAccountTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -276,13 +307,15 @@ class EmbeddedAddressPropertyTransactionBuffer {
         object.version = version
         var type = consumableBuffer.get_bytes(2)
         object.type = type
-        var propertyType = consumableBuffer.get_bytes(1)
-        object.propertyType = propertyType
+        var minRemovalDelta = consumableBuffer.get_bytes(1)
+        object.minRemovalDelta = minRemovalDelta
+        var minApprovalDelta = consumableBuffer.get_bytes(1)
+        object.minApprovalDelta = minApprovalDelta
         var modificationsCount = buffer_to_uint(consumableBuffer.get_bytes(1))
         object.modifications = []
         var i
         for (i = 0; i < modificationsCount; i++) {
-            var newmodifications = AddressPropertyModificationBuffer.loadFromBinary(consumableBuffer)
+            var newmodifications = CosignatoryModificationBuffer.loadFromBinary(consumableBuffer)
             object.modifications.push(newmodifications)
         }
         return object
@@ -298,8 +331,10 @@ class EmbeddedAddressPropertyTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayversion)
         var fitArraytype = fit_bytearray(this.type, 2)
         newArray = concat_typedarrays(newArray, fitArraytype)
-        var fitArraypropertyType = fit_bytearray(this.propertyType, 1)
-        newArray = concat_typedarrays(newArray, fitArraypropertyType)
+        var fitArrayminRemovalDelta = fit_bytearray(this.minRemovalDelta, 1)
+        newArray = concat_typedarrays(newArray, fitArrayminRemovalDelta)
+        var fitArrayminApprovalDelta = fit_bytearray(this.minApprovalDelta, 1)
+        newArray = concat_typedarrays(newArray, fitArrayminApprovalDelta)
         newArray = concat_typedarrays(newArray, uint_to_buffer(this.modifications.length, 1))
         var i
         for (i in this.modifications) {
@@ -311,10 +346,9 @@ class EmbeddedAddressPropertyTransactionBuffer {
 }
 
 module.exports = {
-    PropertyModificationBuffer,
-    AddressPropertyModificationBuffer,
-    body : AddressPropertyTransactionBodyBuffer,
-    default : AddressPropertyTransactionBuffer,
-    embedded : EmbeddedAddressPropertyTransactionBuffer,
+    CosignatoryModificationBuffer,
+    body : ModifyMultisigAccountTransactionBodyBuffer,
+    default : ModifyMultisigAccountTransactionBuffer,
+    embedded: EmbeddedModifyMultisigAccountTransactionBuffer,
 };
 

@@ -22,17 +22,19 @@ import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountPropertiesEntityTypeTransactionBuffer,
+	AccountPropertiesEntityTypeTransactionBufferPackage,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyModificationBuffer;
+const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.TransactionTypePropertyModificationBuffer;
+const AccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.default;
+const EmbeddedAccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.embedded;
 
 export default class AccountPropertiesEntityTypeTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyTransactionBuffer.loadFromBinary(consumableBuffer);
+		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -49,7 +51,7 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var AccountPropertiesEntityTypeTransactionBufferData = EmbeddedAccountPropertiesEntityTypeTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -131,7 +133,7 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 			}
 
 			build() {
-				var accountPropertiesEntityTypeTransactionBuffer = new AccountPropertiesEntityTypeTransactionBuffer.TransactionTypePropertyTransactionBuffer();
+				var accountPropertiesEntityTypeTransactionBuffer = new AccountPropertiesEntityTypeTransactionBuffer();
 
 				const modificationsArray = [];
 				this.modifications.forEach(modification => {

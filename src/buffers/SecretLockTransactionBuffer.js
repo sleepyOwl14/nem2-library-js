@@ -1,5 +1,4 @@
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -7,7 +6,7 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class HashLockTransactionBodyBuffer {
+class SecretLockTransactionBodyBuffer {
     getMosaic = () => {
         return this.mosaic
     }
@@ -24,22 +23,42 @@ class HashLockTransactionBodyBuffer {
         this.duration = duration
     }
 
-    getHash = () => {
-        return this.hash
+    getHashalgorithm = () => {
+        return this.hashAlgorithm
     }
 
-    setHash = (hash) => {
-        this.hash = hash
+    setHashalgorithm = (hashAlgorithm) => {
+        this.hashAlgorithm = hashAlgorithm
+    }
+
+    getSecret = () => {
+        return this.secret
+    }
+
+    setSecret = (secret) => {
+        this.secret = secret
+    }
+
+    getRecipient = () => {
+        return this.recipient
+    }
+
+    setRecipient = (recipient) => {
+        this.recipient = recipient
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new HashLockTransactionBodyBuffer()
+        var object = new SecretLockTransactionBodyBuffer()
         var mosaic = UnresolvedMosaicBuffer.loadFromBinary(consumableBuffer)
         object.mosaic = mosaic
         var duration = consumableBuffer.get_bytes(8)
         object.duration = duration
-        var hash = consumableBuffer.get_bytes(32)
-        object.hash = hash
+        var hashAlgorithm = consumableBuffer.get_bytes(1)
+        object.hashAlgorithm = hashAlgorithm
+        var secret = consumableBuffer.get_bytes(32)
+        object.secret = secret
+        var recipient = consumableBuffer.get_bytes(25)
+        object.recipient = recipient
         return object
     }
 
@@ -48,14 +67,18 @@ class HashLockTransactionBodyBuffer {
         newArray = concat_typedarrays(newArray, this.mosaic.serialize())
         var fitArrayduration = fit_bytearray(this.duration, 8)
         newArray = concat_typedarrays(newArray, fitArrayduration)
-        var fitArrayhash = fit_bytearray(this.hash, 32)
-        newArray = concat_typedarrays(newArray, fitArrayhash)
+        var fitArrayhashAlgorithm = fit_bytearray(this.hashAlgorithm, 1)
+        newArray = concat_typedarrays(newArray, fitArrayhashAlgorithm)
+        var fitArraysecret = fit_bytearray(this.secret, 32)
+        newArray = concat_typedarrays(newArray, fitArraysecret)
+        var fitArrayrecipient = fit_bytearray(this.recipient, 25)
+        newArray = concat_typedarrays(newArray, fitArrayrecipient)
         return newArray
     }
 
 }
 
-class HashLockTransactionBuffer {
+class SecretLockTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -128,16 +151,32 @@ class HashLockTransactionBuffer {
         this.duration = duration
     }
 
-    getHash = () => {
-        return this.hash
+    getHashalgorithm = () => {
+        return this.hashAlgorithm
     }
 
-    setHash = (hash) => {
-        this.hash = hash
+    setHashalgorithm = (hashAlgorithm) => {
+        this.hashAlgorithm = hashAlgorithm
+    }
+
+    getSecret = () => {
+        return this.secret
+    }
+
+    setSecret = (secret) => {
+        this.secret = secret
+    }
+
+    getRecipient = () => {
+        return this.recipient
+    }
+
+    setRecipient = (recipient) => {
+        this.recipient = recipient
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new HashLockTransactionBuffer()
+        var object = new SecretLockTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -156,8 +195,12 @@ class HashLockTransactionBuffer {
         object.mosaic = mosaic
         var duration = consumableBuffer.get_bytes(8)
         object.duration = duration
-        var hash = consumableBuffer.get_bytes(32)
-        object.hash = hash
+        var hashAlgorithm = consumableBuffer.get_bytes(1)
+        object.hashAlgorithm = hashAlgorithm
+        var secret = consumableBuffer.get_bytes(32) 
+        object.secret = secret
+        var recipient = consumableBuffer.get_bytes(25)
+        object.recipient = recipient
         return object
     }
 
@@ -180,14 +223,18 @@ class HashLockTransactionBuffer {
         newArray = concat_typedarrays(newArray, this.mosaic.serialize())
         var fitArrayduration = fit_bytearray(this.duration, 8)
         newArray = concat_typedarrays(newArray, fitArrayduration)
-        var fitArrayhash = fit_bytearray(this.hash, 32)
-        newArray = concat_typedarrays(newArray, fitArrayhash)
+        var fitArrayhashAlgorithm = fit_bytearray(this.hashAlgorithm, 1)
+        newArray = concat_typedarrays(newArray, fitArrayhashAlgorithm)
+        var fitArraysecret = fit_bytearray(this.secret, 32)
+        newArray = concat_typedarrays(newArray, fitArraysecret)
+        var fitArrayrecipient = fit_bytearray(this.recipient, 25)
+        newArray = concat_typedarrays(newArray, fitArrayrecipient)
         return newArray
     }
 
 }
 
-class EmbeddedHashLockTransactionBuffer {
+class EmbeddedSecretLockTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -236,16 +283,32 @@ class EmbeddedHashLockTransactionBuffer {
         this.duration = duration
     }
 
-    getHash = () => {
-        return this.hash
+    getHashalgorithm = () => {
+        return this.hashAlgorithm
     }
 
-    setHash = (hash) => {
-        this.hash = hash
+    setHashalgorithm = (hashAlgorithm) => {
+        this.hashAlgorithm = hashAlgorithm
+    }
+
+    getSecret = () => {
+        return this.secret
+    }
+
+    setSecret = (secret) => {
+        this.secret = secret
+    }
+
+    getRecipient = () => {
+        return this.recipient
+    }
+
+    setRecipient = (recipient) => {
+        this.recipient = recipient
     }
 
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedHashLockTransactionBuffer()
+        var object = new EmbeddedSecretLockTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -258,8 +321,12 @@ class EmbeddedHashLockTransactionBuffer {
         object.mosaic = mosaic
         var duration = consumableBuffer.get_bytes(8)
         object.duration = duration
-        var hash = consumableBuffer.get_bytes(32)
-        object.hash = hash
+        var hashAlgorithm = consumableBuffer.get_bytes(1)
+        object.hashAlgorithm = hashAlgorithm
+        var secret = consumableBuffer.get_bytes(32)
+        object.secret = secret
+        var recipient = consumableBuffer.get_bytes(25)
+        object.recipient = recipient
         return object
     }
 
@@ -276,15 +343,20 @@ class EmbeddedHashLockTransactionBuffer {
         newArray = concat_typedarrays(newArray, this.mosaic.serialize())
         var fitArrayduration = fit_bytearray(this.duration, 8)
         newArray = concat_typedarrays(newArray, fitArrayduration)
-        var fitArrayhash = fit_bytearray(this.hash, 32)
-        newArray = concat_typedarrays(newArray, fitArrayhash)
+        var fitArrayhashAlgorithm = fit_bytearray(this.hashAlgorithm, 1)
+        newArray = concat_typedarrays(newArray, fitArrayhashAlgorithm)
+        var fitArraysecret = fit_bytearray(this.secret, 32)
+        newArray = concat_typedarrays(newArray, fitArraysecret)
+        var fitArrayrecipient = fit_bytearray(this.recipient, 25)
+        newArray = concat_typedarrays(newArray, fitArrayrecipient)
         return newArray
     }
 
 }
 
 module.exports = {
-    body : HashLockTransactionBodyBuffer,
-    default : HashLockTransactionBuffer,
-    embedded : EmbeddedHashLockTransactionBuffer,
+    body : SecretLockTransactionBodyBuffer,
+    default : SecretLockTransactionBuffer,
+    embedded : EmbeddedSecretLockTransactionBuffer,
 };
+

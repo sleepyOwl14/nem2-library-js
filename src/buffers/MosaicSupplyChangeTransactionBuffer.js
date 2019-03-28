@@ -1,5 +1,3 @@
-import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -7,7 +5,56 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class TransactionBuffer {
+class MosaicSupplyChangeTransactionBodyBuffer {
+    getMosaicid = () => {
+        return this.mosaicId
+    }
+
+    setMosaicid = (mosaicId) => {
+        this.mosaicId = mosaicId
+    }
+
+    getDirection = () => {
+        return this.direction
+    }
+
+    setDirection = (direction) => {
+        this.direction = direction
+    }
+
+    getDelta = () => {
+        return this.delta
+    }
+
+    setDelta = (delta) => {
+        this.delta = delta
+    }
+
+    static loadFromBinary(consumableBuffer) {
+        var object = new MosaicSupplyChangeTransactionBodyBuffer()
+        var mosaicId = consumableBuffer.get_bytes(8)
+        object.mosaicId = mosaicId
+        var direction = consumableBuffer.get_bytes(1)
+        object.direction = direction
+        var delta = consumableBuffer.get_bytes(8)
+        object.delta = delta
+        return object
+    }
+
+    serialize = () => {
+        var newArray = new Uint8Array()
+        var fitArraymosaicId = fit_bytearray(this.mosaicId, 8)
+        newArray = concat_typedarrays(newArray, fitArraymosaicId)
+        var fitArraydirection = fit_bytearray(this.direction, 1)
+        newArray = concat_typedarrays(newArray, fitArraydirection)
+        var fitArraydelta = fit_bytearray(this.delta, 8)
+        newArray = concat_typedarrays(newArray, fitArraydelta)
+        return newArray
+    }
+
+}
+
+class MosaicSupplyChangeTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -64,8 +111,32 @@ class TransactionBuffer {
         this.deadline = deadline
     }
 
+    getMosaicid = () => {
+        return this.mosaicId
+    }
+
+    setMosaicid = (mosaicId) => {
+        this.mosaicId = mosaicId
+    }
+
+    getDirection = () => {
+        return this.direction
+    }
+
+    setDirection = (direction) => {
+        this.direction = direction
+    }
+
+    getDelta = () => {
+        return this.delta
+    }
+
+    setDelta = (delta) => {
+        this.delta = delta
+    }
+
     static loadFromBinary(consumableBuffer) {
-        var object = new TransactionBuffer()
+        var object = new MosaicSupplyChangeTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -80,6 +151,12 @@ class TransactionBuffer {
         object.fee = fee
         var deadline = consumableBuffer.get_bytes(8)
         object.deadline = deadline
+        var mosaicId = consumableBuffer.get_bytes(8)
+        object.mosaicId = mosaicId
+        var direction = consumableBuffer.get_bytes(1)
+        object.direction = direction
+        var delta = consumableBuffer.get_bytes(8)
+        object.delta = delta
         return object
     }
 
@@ -99,12 +176,18 @@ class TransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayfee)
         var fitArraydeadline = fit_bytearray(this.deadline, 8)
         newArray = concat_typedarrays(newArray, fitArraydeadline)
+        var fitArraymosaicId = fit_bytearray(this.mosaicId, 8)
+        newArray = concat_typedarrays(newArray, fitArraymosaicId)
+        var fitArraydirection = fit_bytearray(this.direction, 1)
+        newArray = concat_typedarrays(newArray, fitArraydirection)
+        var fitArraydelta = fit_bytearray(this.delta, 8)
+        newArray = concat_typedarrays(newArray, fitArraydelta)
         return newArray
     }
 
 }
 
-class EmbeddedTransactionBuffer {
+class EmbeddedMosaicSupplyChangeTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -137,8 +220,32 @@ class EmbeddedTransactionBuffer {
         this.type = type
     }
 
+    getMosaicid = () => {
+        return this.mosaicId
+    }
+
+    setMosaicid = (mosaicId) => {
+        this.mosaicId = mosaicId
+    }
+
+    getDirection = () => {
+        return this.direction
+    }
+
+    setDirection = (direction) => {
+        this.direction = direction
+    }
+
+    getDelta = () => {
+        return this.delta
+    }
+
+    setDelta = (delta) => {
+        this.delta = delta
+    }
+
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedTransactionBuffer()
+        var object = new EmbeddedMosaicSupplyChangeTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -147,6 +254,12 @@ class EmbeddedTransactionBuffer {
         object.version = version
         var type = consumableBuffer.get_bytes(2)
         object.type = type
+        var mosaicId = consumableBuffer.get_bytes(8)
+        object.mosaicId = mosaicId
+        var direction = consumableBuffer.get_bytes(1)
+        object.direction = direction
+        var delta = consumableBuffer.get_bytes(8)
+        object.delta = delta
         return object
     }
 
@@ -160,12 +273,20 @@ class EmbeddedTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayversion)
         var fitArraytype = fit_bytearray(this.type, 2)
         newArray = concat_typedarrays(newArray, fitArraytype)
+        var fitArraymosaicId = fit_bytearray(this.mosaicId, 8)
+        newArray = concat_typedarrays(newArray, fitArraymosaicId)
+        var fitArraydirection = fit_bytearray(this.direction, 1)
+        newArray = concat_typedarrays(newArray, fitArraydirection)
+        var fitArraydelta = fit_bytearray(this.delta, 8)
+        newArray = concat_typedarrays(newArray, fitArraydelta)
         return newArray
     }
 
 }
 
 module.exports = {
-    default : TransactionBuffer,
-    embedded : EmbeddedTransactionBuffer,
+    body : MosaicSupplyChangeTransactionBodyBuffer,
+    default : MosaicSupplyChangeTransactionBuffer,
+    embedded : EmbeddedMosaicSupplyChangeTransactionBuffer,
 };
+

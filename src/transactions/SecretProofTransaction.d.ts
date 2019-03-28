@@ -17,9 +17,28 @@
 import {VerifiableTransaction} from "./VerifiableTransaction";
 
 export declare class SecretProofTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module SecretProofTransaction {
+
+    class BufferProperties{
+
+        getHashAlgorithm(): number;
+    
+        getSecret(): string;
+    
+        getProof(): string;
+    }
+
     class Builder {
 
         addFee(fee): Builder;

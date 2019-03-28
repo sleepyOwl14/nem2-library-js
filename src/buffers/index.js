@@ -2,48 +2,48 @@
 import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
 import bufferUtils from './BufferUtils';
-import TransactionBuffer from './TransactionBuffer';
-import TransferTransactionBuffer from './TransferTransactionBuffer';
-import AccountLinkTransactionBuffer from './AccountLinkTransactionBuffer';
-import AccountPropertyAddressBuffer from './AccountPropertyAddressTransactionBuffer';
-import AccountPropertiesEntityTypeTransactionBuffer from './AccountPropertiesEntityTypeTransactionBuffer';
-import MosaicPropertyTransactionBuffer from './AccountPropertiesMosaicTransactionBuffer';
-import AddressAliasTransactionBuffer from './AddressAliasTransactionBuffer';
-import HashLockTransactionBuffer from './HashLockTransactionBuffer';
-import AggregateTransactionBuffer from './AggregateTransactionBuffer';
-import MosaicAliasTransactionBuffer from './MosaicAliasTransactionBuffer';
-import MosaicDefinitionTransactionBuffer from './MosaicDefinitionTransactionBuffer';
+import TransactionBufferPackage from './TransactionBuffer';
+import TransferTransactionBufferPackage from './TransferTransactionBuffer';
+import AccountLinkTransactionBufferPackage from './AccountLinkTransactionBuffer';
+import AccountPropertyAddressBufferPackage from './AccountPropertyAddressTransactionBuffer';
+import AccountPropertiesEntityTypeTransactionBufferPackage from './AccountPropertiesEntityTypeTransactionBuffer';
+import MosaicPropertyTransactionBufferPackage from './AccountPropertiesMosaicTransactionBuffer';
+import AddressAliasTransactionBufferPackage from './AddressAliasTransactionBuffer';
+import HashLockTransactionBufferPackage from './HashLockTransactionBuffer';
+import AggregateTransactionBufferPackage from './AggregateTransactionBuffer';
+import MosaicAliasTransactionBufferPackage from './MosaicAliasTransactionBuffer';
+import MosaicDefinitionTransactionBufferPackage from './MosaicDefinitionTransactionBuffer';
+import MosaicSupplyChangeTransactionBufferPackage from './MosaicSupplyChangeTransactionBuffer';
+import ModifyMultisigAccountTransactionBufferPackage from './ModifyMultisigAccountTransactionBuffer';
+import RegisterNamespaceTransactionBufferPackage from './RegisterNamespaceTransactionBuffer';
+import SecretLockTransactionBufferPackage from './SecretLockTransactionBuffer';
+import SecretProofTransactionBufferPackage from './SecretProofTransactionBuffer';
+import CommonBufferPackage from './CommonBuffer';
 import CommonBufferProperties from './CommonBufferProperties';
 import CommonEmbeddedBufferProperties from './CommonEmbeddedBufferProperties';
-import CommonBuffer from './CommonBuffer';
-
-AccountLinkTransactionBuffer.Embedded = AccountLinkTransactionBuffer.EmbeddedAccountLinkTransactionBuffer;
-AccountPropertyAddressBuffer.Embedded = AccountPropertyAddressBuffer.EmbeddedAddressPropertyTransactionBuffer;
-AccountPropertiesEntityTypeTransactionBuffer.Embedded = AccountPropertiesEntityTypeTransactionBuffer.EmbeddedTransactionTypePropertyTransactionBuffer;
-AddressAliasTransactionBuffer.Embedded = AddressAliasTransactionBuffer.EmbeddedAddressAliasTransactionBuffer;
-HashLockTransactionBuffer.Embedded = HashLockTransactionBuffer.EmbeddedHashLockTransactionBuffer;
-MosaicPropertyTransactionBuffer.Embedded = MosaicPropertyTransactionBuffer.EmbeddedMosaicPropertyTransactionBuffer;
-MosaicAliasTransactionBuffer.Embedded = MosaicAliasTransactionBuffer.EmbeddedMosaicAliasTransactionBuffer;
-MosaicDefinitionTransactionBuffer.Embedded = MosaicDefinitionTransactionBuffer.EmbeddedMosaicDefinitionTransactionBuffer;
-TransferTransactionBuffer.Embedded = TransferTransactionBuffer.EmbeddedTransferTransactionBuffer;
-TransactionBuffer.Embedded = TransactionBuffer.EmbeddedTransactionBuffer;
 
 export{
-    AggregateTransactionBuffer,
-    CommonBufferProperties,
-    CommonEmbeddedBufferProperties,
+    bufferUtils,
     Uint8ArrayConsumableBuffer,
     UnresolvedMosaicBuffer,
-    bufferUtils,
-    TransferTransactionBuffer,
-    TransactionBuffer,
-    AccountLinkTransactionBuffer,
-    AccountPropertyAddressBuffer,
-    AccountPropertiesEntityTypeTransactionBuffer,
-    MosaicPropertyTransactionBuffer,
-    MosaicAliasTransactionBuffer,
-    MosaicDefinitionTransactionBuffer,
-    AddressAliasTransactionBuffer,
-    HashLockTransactionBuffer,
-    CommonBuffer,
+    CommonBufferProperties,
+    CommonEmbeddedBufferProperties,
+    CommonBufferPackage,
+    AccountLinkTransactionBufferPackage,
+    AccountPropertyAddressBufferPackage,
+    AccountPropertiesEntityTypeTransactionBufferPackage,
+    AddressAliasTransactionBufferPackage,
+    AggregateTransactionBufferPackage,
+    HashLockTransactionBufferPackage,
+    MosaicPropertyTransactionBufferPackage,
+    MosaicAliasTransactionBufferPackage,
+    MosaicDefinitionTransactionBufferPackage,
+    MosaicSupplyChangeTransactionBufferPackage,
+    ModifyMultisigAccountTransactionBufferPackage,
+    RegisterNamespaceTransactionBufferPackage,
+    SecretLockTransactionBufferPackage,
+    SecretProofTransactionBufferPackage,
+    TransferTransactionBufferPackage,
+    TransactionBufferPackage,
+    
 }

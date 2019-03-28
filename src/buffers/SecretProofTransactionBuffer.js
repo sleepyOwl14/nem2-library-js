@@ -1,5 +1,3 @@
-import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-
 import bufferUtils from './BufferUtils';
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -7,7 +5,57 @@ var fit_bytearray = bufferUtils.fit_bytearray;
 var buffer_to_uint = bufferUtils.buffer_to_uint;
 var uint_to_buffer = bufferUtils.uint_to_buffer;
 
-class TransactionBuffer {
+class SecretProofTransactionBodyBuffer {
+    getHashalgorithm = () => {
+        return this.hashAlgorithm
+    }
+
+    setHashalgorithm = (hashAlgorithm) => {
+        this.hashAlgorithm = hashAlgorithm
+    }
+
+    getSecret = () => {
+        return this.secret
+    }
+
+    setSecret = (secret) => {
+        this.secret = secret
+    }
+
+    getProof = () => {
+        return this.proof
+    }
+
+    setProof = (proof) => {
+        this.proof = proof
+    }
+
+    static loadFromBinary(consumableBuffer) {
+        var object = new SecretProofTransactionBodyBuffer()
+        var hashAlgorithm = consumableBuffer.get_bytes(1)
+        object.hashAlgorithm = hashAlgorithm
+        var secret = consumableBuffer.get_bytes(32)
+        object.secret = secret
+        var proofSize = buffer_to_uint(consumableBuffer.get_bytes(2))
+        var proof = consumableBuffer.get_bytes(proofSize)
+        object.proof = proof
+        return object
+    }
+
+    serialize = () => {
+        var newArray = new Uint8Array()
+        var fitArrayhashAlgorithm = fit_bytearray(this.hashAlgorithm, 1)
+        newArray = concat_typedarrays(newArray, fitArrayhashAlgorithm)
+        var fitArraysecret = fit_bytearray(this.secret, 32)
+        newArray = concat_typedarrays(newArray, fitArraysecret)
+        newArray = concat_typedarrays(newArray, uint_to_buffer(this.proof.length, 2))
+        newArray = concat_typedarrays(newArray, this.proof)
+        return newArray
+    }
+
+}
+
+class SecretProofTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -64,8 +112,32 @@ class TransactionBuffer {
         this.deadline = deadline
     }
 
+    getHashalgorithm = () => {
+        return this.hashAlgorithm
+    }
+
+    setHashalgorithm = (hashAlgorithm) => {
+        this.hashAlgorithm = hashAlgorithm
+    }
+
+    getSecret = () => {
+        return this.secret
+    }
+
+    setSecret = (secret) => {
+        this.secret = secret
+    }
+
+    getProof = () => {
+        return this.proof
+    }
+
+    setProof = (proof) => {
+        this.proof = proof
+    }
+
     static loadFromBinary(consumableBuffer) {
-        var object = new TransactionBuffer()
+        var object = new SecretProofTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signature = consumableBuffer.get_bytes(64)
@@ -80,6 +152,13 @@ class TransactionBuffer {
         object.fee = fee
         var deadline = consumableBuffer.get_bytes(8)
         object.deadline = deadline
+        var hashAlgorithm = consumableBuffer.get_bytes(1)
+        object.hashAlgorithm = hashAlgorithm
+        var secret = consumableBuffer.get_bytes(32)
+        object.secret = secret
+        var proofSize = buffer_to_uint(consumableBuffer.get_bytes(2))
+        var proof = consumableBuffer.get_bytes(proofSize)
+        object.proof = proof
         return object
     }
 
@@ -99,12 +178,18 @@ class TransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayfee)
         var fitArraydeadline = fit_bytearray(this.deadline, 8)
         newArray = concat_typedarrays(newArray, fitArraydeadline)
+        var fitArrayhashAlgorithm = fit_bytearray(this.hashAlgorithm, 1)
+        newArray = concat_typedarrays(newArray, fitArrayhashAlgorithm)
+        var fitArraysecret = fit_bytearray(this.secret, 32)
+        newArray = concat_typedarrays(newArray, fitArraysecret)
+        newArray = concat_typedarrays(newArray, uint_to_buffer(this.proof.length, 2))
+        newArray = concat_typedarrays(newArray, this.proof)
         return newArray
     }
 
 }
 
-class EmbeddedTransactionBuffer {
+class EmbeddedSecretProofTransactionBuffer {
     getSize = () => {
         return this.size
     }
@@ -137,8 +222,32 @@ class EmbeddedTransactionBuffer {
         this.type = type
     }
 
+    getHashalgorithm = () => {
+        return this.hashAlgorithm
+    }
+
+    setHashalgorithm = (hashAlgorithm) => {
+        this.hashAlgorithm = hashAlgorithm
+    }
+
+    getSecret = () => {
+        return this.secret
+    }
+
+    setSecret = (secret) => {
+        this.secret = secret
+    }
+
+    getProof = () => {
+        return this.proof
+    }
+
+    setProof = (proof) => {
+        this.proof = proof
+    }
+
     static loadFromBinary(consumableBuffer) {
-        var object = new EmbeddedTransactionBuffer()
+        var object = new EmbeddedSecretProofTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
         object.size = size
         var signer = consumableBuffer.get_bytes(32)
@@ -147,6 +256,13 @@ class EmbeddedTransactionBuffer {
         object.version = version
         var type = consumableBuffer.get_bytes(2)
         object.type = type
+        var hashAlgorithm = consumableBuffer.get_bytes(1)
+        object.hashAlgorithm = hashAlgorithm
+        var secret = consumableBuffer.get_bytes(32)
+        object.secret = secret
+        var proofSize = buffer_to_uint(consumableBuffer.get_bytes(2))
+        var proof = consumableBuffer.get_bytes(proofSize)
+        object.proof = proof
         return object
     }
 
@@ -160,12 +276,20 @@ class EmbeddedTransactionBuffer {
         newArray = concat_typedarrays(newArray, fitArrayversion)
         var fitArraytype = fit_bytearray(this.type, 2)
         newArray = concat_typedarrays(newArray, fitArraytype)
+        var fitArrayhashAlgorithm = fit_bytearray(this.hashAlgorithm, 1)
+        newArray = concat_typedarrays(newArray, fitArrayhashAlgorithm)
+        var fitArraysecret = fit_bytearray(this.secret, 32)
+        newArray = concat_typedarrays(newArray, fitArraysecret)
+        newArray = concat_typedarrays(newArray, uint_to_buffer(this.proof.length, 2))
+        newArray = concat_typedarrays(newArray, this.proof)
         return newArray
     }
 
 }
 
 module.exports = {
-    default : TransactionBuffer,
-    embedded : EmbeddedTransactionBuffer,
+    body : SecretProofTransactionBodyBuffer,
+    default : SecretProofTransactionBuffer,
+    embedded : EmbeddedSecretProofTransactionBuffer,
 };
+

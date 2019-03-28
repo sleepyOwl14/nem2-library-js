@@ -36,11 +36,11 @@ class CommonBufferProperties{
     }
 
     getFee(){
-        return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getFee(), 4);
+        return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getFee());
     }
 
     getDeadline(){
-        return bufferUtils.bufferArray_to_uintArray(this.bufferClass.getDeadline(), 4);
+        return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDeadline());
     }
 }
 

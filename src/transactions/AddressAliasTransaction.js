@@ -19,11 +19,13 @@ import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AddressAliasTransactionBuffer,
+	AddressAliasTransactionBufferPackage,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const addressEncoder = require('../coders/address').default;
 
+const AddressAliasTransactionBuffer = AddressAliasTransactionBufferPackage.default;
+const EmbeddedAddressAliasTransactionBuffer = AddressAliasTransactionBufferPackage.embedded;
 /**
  * @module transactions/AddressAliasTransaction
  */
@@ -32,7 +34,7 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.AddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
+		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -49,7 +51,7 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var AddressAliasTransactionBufferData = EmbeddedAddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -129,7 +131,7 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 
 			build() {
 
-				var addressAliasTransactionBuffer = new AddressAliasTransactionBuffer.AddressAliasTransactionBuffer();
+				var addressAliasTransactionBuffer = new AddressAliasTransactionBuffer();
 
 				addressAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));
 				addressAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));

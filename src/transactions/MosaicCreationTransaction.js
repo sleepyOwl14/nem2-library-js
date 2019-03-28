@@ -21,21 +21,21 @@ import VerifiableTransaction from './VerifiableTransaction';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	MosaicDefinitionTransactionBuffer, 
-	UnresolvedMosaicBuffer,
+	MosaicDefinitionTransactionBufferPackage,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 import convert from '../coders/convert';
 
-const MosaicCreationTransactionBuffer = MosaicDefinitionTransactionBuffer;
-const MosaicPropertyBuffer = MosaicCreationTransactionBuffer.MosaicPropertyBuffer;
+const MosaicCreationTransactionBuffer = MosaicDefinitionTransactionBufferPackage.default;
+const EmbeddedMosaicCreationTransactionBuffer = MosaicDefinitionTransactionBufferPackage.embedded;
+const MosaicPropertyBuffer = MosaicDefinitionTransactionBufferPackage.MosaicPropertyBuffer;
 
 export default class MosaicCreationTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicCreationTransactionBufferData = MosaicCreationTransactionBuffer.MosaicDefinitionTransactionBuffer.loadFromBinary(consumableBuffer);
+		var MosaicCreationTransactionBufferData = MosaicCreationTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -52,7 +52,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicCreationTransactionBufferData = MosaicCreationTransactionBuffer.Embedded.loadFromBinary(consumableBuffer);
+		var MosaicCreationTransactionBufferData = EmbeddedMosaicCreationTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -100,8 +100,13 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 						value : bufferUtils.bufferArray_to_uint32Array(properties[i].value),
 					};
 
-					if(propertyData.id == 2){
-						propertyData.type = "duration";
+					switch (propertyData.id) {
+						case 2:
+							propertyData.type = "duration";
+							break;
+					
+						default:
+							break;
 					}
 
 					propertiesData.push(propertyData);
@@ -179,7 +184,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				var mosaicCreationTransactionBuffer = new MosaicCreationTransactionBuffer.MosaicDefinitionTransactionBuffer();
+				var mosaicCreationTransactionBuffer = new MosaicCreationTransactionBuffer();
 
 				// does not need to be in order 
 				mosaicCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(144, 4));

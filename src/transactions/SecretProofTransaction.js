@@ -18,15 +18,74 @@
  * @module transactions/SecretProofTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
-import * as SecretProofTransactionBufferPackage from '../buffers/SecretProofTransactionBuffer';
-import SecretProofTransactionSchema from '../schema/SecretProofTransactionSchema';
+import {
+	Uint8ArrayConsumableBuffer,
+    bufferUtils,
+	SecretProofTransactionBufferPackage, 
+	UnresolvedMosaicBuffer,
+	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 import convert from '../coders/convert';
 
-const { flatbuffers } = require('flatbuffers');
-
-const { SecretProofTransactionBuffer } = SecretProofTransactionBufferPackage.default.Buffers;
+const SecretProofTransactionBuffer = SecretProofTransactionBufferPackage.default;
+const EmbeddedSecretProofTransactionBuffer = SecretProofTransactionBufferPackage.embedded;
 
 export default class SecretProofTransaction extends VerifiableTransaction {
+
+	static loadFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var SecretProofTransactionBufferData = SecretProofTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+
+		return new BufferProperties(SecretProofTransactionBufferData);
+	}
+
+	static loadFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary);
+	}
+
+	static loadEmbeddedFromBinary(binary){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var SecretProofTransactionBufferData = EmbeddedSecretProofTransactionBuffer.loadFromBinary(consumableBuffer);
+
+		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+
+		return new BufferProperties(SecretProofTransactionBufferData);
+	}
+
+	static loadEmbeddedFromPayload(payload){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary);
+	}
+
+	static createBufferProperties(ExtendingClass){
+
+		return class BufferProperties extends ExtendingClass{
+			constructor(secretProofTransactionBuffer){
+				super(secretProofTransactionBuffer);
+			}
+
+			getHashAlgorithm(){
+				return bufferUtils.buffer_to_uint(this.bufferClass.getHashalgorithm());
+			}
+		
+			getSecret(){
+				return convert.uint8ToHex(this.bufferClass.getSecret());
+			}
+		
+			getProof(){
+				return convert.uint8ToHex(this.bufferClass.getProof());
+			}
+		}
+	}
+
 	static get Builder() {
 		class Builder {
 			constructor() {
@@ -71,37 +130,24 @@ export default class SecretProofTransaction extends VerifiableTransaction {
 			}
 
 			build() {
-				const builder = new flatbuffers.Builder(1);
+				var secretProofTransactionBuffer = new SecretProofTransactionBuffer();
 
-				// Create vectors
-				const signatureVector = SecretProofTransactionBuffer
-					.createSignatureVector(builder, Array(...Array(64)).map(Number.prototype.valueOf, 0));
-				const signerVector = SecretProofTransactionBuffer.createSignerVector(builder, Array(...Array(32)).map(Number.prototype.valueOf, 0));
-				const deadlineVector = SecretProofTransactionBuffer.createDeadlineVector(builder, this.deadline);
-				const feeVector = SecretProofTransactionBuffer.createFeeVector(builder, this.fee);
-				const byteSecret = convert.hexToUint8(this.secret);
-				const secretVector = SecretProofTransactionBuffer.createSecretVector(builder, byteSecret);
-				const byteProof = convert.hexToUint8(this.proof);
-				const proofVector = SecretProofTransactionBuffer.createProofVector(builder, byteProof);
+				var byteProof = convert.hexToUint8(this.proof);
 
-				SecretProofTransactionBuffer.startSecretProofTransactionBuffer(builder);
-				SecretProofTransactionBuffer.addSize(builder, 155 + byteProof.length);
-				SecretProofTransactionBuffer.addSignature(builder, signatureVector);
-				SecretProofTransactionBuffer.addSigner(builder, signerVector);
-				SecretProofTransactionBuffer.addVersion(builder, this.version);
-				SecretProofTransactionBuffer.addType(builder, this.type);
-				SecretProofTransactionBuffer.addFee(builder, feeVector);
-				SecretProofTransactionBuffer.addDeadline(builder, deadlineVector);
-				SecretProofTransactionBuffer.addHashAlgorithm(builder, this.hashAlgorithm);
-				SecretProofTransactionBuffer.addSecret(builder, secretVector);
-				SecretProofTransactionBuffer.addProofSize(builder, byteProof.length);
-				SecretProofTransactionBuffer.addProof(builder, proofVector);
+				// does not need to be in order 
+				secretProofTransactionBuffer.setSize(bufferUtils.uint_to_buffer(155 + byteProof.length, 4));
+				secretProofTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
+				secretProofTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
+				secretProofTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
+				secretProofTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				
+				secretProofTransactionBuffer.setHashalgorithm(bufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
+				secretProofTransactionBuffer.setSecret(convert.hexToUint8(this.secret));
+				secretProofTransactionBuffer.setProof(byteProof);
+	
+				var bytes = secretProofTransactionBuffer.serialize();
 
-				const codedSecretProof = SecretProofTransactionBuffer.endSecretProofTransactionBuffer(builder);
-				builder.finish(codedSecretProof);
-
-				const bytes = builder.asUint8Array();
-				return new SecretProofTransaction(bytes, SecretProofTransactionSchema);
+				return new SecretProofTransaction(bytes);
 			}
 		}
 

@@ -249,8 +249,8 @@ class EmbeddedAccountLinkTransactionBuffer {
 }
 
 module.exports = {
-    AccountLinkTransactionBodyBuffer,
-    AccountLinkTransactionBuffer,
-    EmbeddedAccountLinkTransactionBuffer,
+    body : AccountLinkTransactionBodyBuffer,
+    default : AccountLinkTransactionBuffer,
+    embedded : EmbeddedAccountLinkTransactionBuffer,
 };
 

@@ -18,9 +18,12 @@ import VerifiableTransaction from './VerifiableTransaction';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	MosaicAliasTransactionBuffer, 
+	MosaicAliasTransactionBufferPackage, 
 	UnresolvedMosaicBuffer,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+
+const MosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.default;
+const EmbeddedMosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.embedded;
 
 import convert from '../coders/convert';
 /**
@@ -31,7 +34,7 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 	static loadFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicAliasTransactionBufferData = MosaicAliasTransactionBuffer.MosaicAliasTransactionBuffer.loadFromBinary(consumableBuffer);
+		var MosaicAliasTransactionBufferData = MosaicAliasTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
 
@@ -48,7 +51,7 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 	static loadEmbeddedFromBinary(binary){
 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicAliasTransactionBufferDataData = MosaicAliasTransactionBufferData.Embedded.loadFromBinary(consumableBuffer);
+		var MosaicAliasTransactionBufferDataData = EmbeddedMosaicAliasTransactionBuffer.loadFromBinary(consumableBuffer);
 
 		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
 
@@ -128,7 +131,7 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 
 			build() {
 
-				var mosaicAliasTransactionBuffer = new MosaicAliasTransactionBuffer.MosaicAliasTransactionBuffer();
+				var mosaicAliasTransactionBuffer = new MosaicAliasTransactionBuffer();
 				// does not need to be in order 
 				mosaicAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(137, 4));
 				mosaicAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));

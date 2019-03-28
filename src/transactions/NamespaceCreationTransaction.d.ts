@@ -17,9 +17,32 @@
 import {VerifiableTransaction} from "./VerifiableTransaction";
 
 export declare class NamespaceCreationTransaction extends VerifiableTransaction {
+    static loadFromBinary(binary): BufferProperties;
+
+    static loadFromPayload(string): BufferProperties; 
+
+    static loadEmbeddedFromBinary(binary): BufferProperties; 
+
+    static loadEmbeddedFromPayload(string): BufferProperties;
+    
+    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module NamespaceCreationTransaction {
+
+    class BufferProperties{
+
+        getNamespacetype(): number;
+    
+        getDuration(): Array | null;
+    
+        getParentid(): Array | null;
+    
+        getNamespaceid(): Array;
+    
+        getName() : String;
+    }
+
     class Builder {
 
         addFee(fee): Builder;
