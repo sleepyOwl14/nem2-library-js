@@ -48,5 +48,12 @@ describe('SecretProofTransaction', () => {
 			transactionPayload.payload.length
 		)).to.be.equal('00F5A5207A8729B1F709CB710311751EB2FC8ACAD5A1FB8AC991B736E69B6529A3' +
 			'04009A493664');
+
+		const SecretProofTransactionBufferData = SecretProofTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(SecretProofTransactionBufferData.getDeadline()).to.eql(secretProofTransaction.deadline);
+		expect(SecretProofTransactionBufferData.getHashAlgorithm()).to.be.equal(secretProofTransaction.hashAlgorithm);
+		expect(SecretProofTransactionBufferData.getSecret()).to.be.equal(secretProofTransaction.secret.toUpperCase());
+		expect(SecretProofTransactionBufferData.getProof()).to.be.equal(secretProofTransaction.proof.toUpperCase());
 	});
 });

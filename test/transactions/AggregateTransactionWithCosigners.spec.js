@@ -74,5 +74,18 @@ describe('AggregateTransactionWithCosigners', () => {
 			.to.be.equal('5900000059000000B694186EE4AB0558CA4AFCFDD43B42114AE71094F5A1FC4A913FE9971CACD21D039' +
 			'054419050B9837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142050001007465737429CF5FD941AD25D5640000000' +
 			'000000068b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763');
+		
+		const AggregateTransactionBufferData = AggregateTransaction.loadFromPayload(transactionPayload.payload);
+
+		expect(AggregateTransactionBufferData.getDeadline()).to.eql(aggregateTransaction.deadline);
+		expect(AggregateTransactionBufferData.getTransactions()[0].getRecipient()).to.eql('SBILTA367K2LX2FEXG5TFWAS7GEFYAGY7QLFBYKC');
+		expect(AggregateTransactionBufferData.getTransactions()[0].getMessage()).to.eql({
+			type: 0,
+			payload: 'test'
+		});
+		expect(AggregateTransactionBufferData.getTransactions()[0].getMosaics()).to.eql([{
+			id: [3646934825, 3576016193],
+			amount: [100, 0]
+		}]);
 	});
 });

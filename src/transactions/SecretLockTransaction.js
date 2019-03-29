@@ -25,7 +25,6 @@ import {
 	UnresolvedMosaicBuffer,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 import address from '../coders/address';
-import uint64 from '../../src/coders/uint64';
 import convert from '../coders/convert';
 
 const SecretLockTransactionBuffer = SecretLockTransactionBufferPackage.default;
@@ -78,11 +77,19 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 				var mosaic = this.bufferClass.getMosaic();
 
 				var mosaicData = {
-					mosaicId : uint64.fromBytes(mosaic.mosaicId),
-					amount : uint64.fromBytes(mosaic.amount),
+					mosaicId : bufferUtils.bufferArray_to_uint32Array(mosaic.mosaicId),
+					amount : bufferUtils.bufferArray_to_uint32Array(mosaic.amount),
 				};
 
 				return mosaicData;
+			}
+
+			getMosaicId(){
+				return this.getMosaic().mosaicId;
+			}
+
+			getMosaicAmount(){
+				return this.getMosaic().amount;
 			}
 		
 			getDuration(){

@@ -48,5 +48,13 @@ describe('HashLockTransaction', () => {
 			transactionPayload.payload.length
 		)).to.be.equal('29CF5FD941AD25D580969800000000006400000000000000' +
 			'8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B');
+
+		const HashLockTransactionBufferData = HashLockTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(HashLockTransactionBufferData.getDeadline()).to.eql(hashLockTransaction.deadline);
+		expect(HashLockTransactionBufferData.getDuration()).to.eql(hashLockTransaction.duration);
+		expect(HashLockTransactionBufferData.getHash()).to.be.equal(hashLockTransaction.hash);
+		expect(HashLockTransactionBufferData.getMosaicAmount()).to.eql(hashLockTransaction.mosaicAmount);
+		expect(HashLockTransactionBufferData.getMosaicId()).to.eql(hashLockTransaction.mosaicId);
 	});
 });

@@ -43,5 +43,12 @@ describe('AddressAliasTransaction', () => {
 		const transactionPayload = transaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('004F1B65BA5F7F49B1907D96D592DE9CB19B6C60905DFA7A5B8B231C9A71323EAF6E');
+
+		const AddressAliasTransactionBufferData = AddressAliasTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(AddressAliasTransactionBufferData.getDeadline()).to.eql(addressAliasTransaction.deadline);
+		expect(AddressAliasTransactionBufferData.getAliasAction()).to.be.equal(addressAliasTransaction.actionType);
+		expect(AddressAliasTransactionBufferData.getAddress()).to.be.equal(addressAliasTransaction.address);
+		expect(AddressAliasTransactionBufferData.getNamespaceId()).to.eql(addressAliasTransaction.namespaceId);
 	});
 });

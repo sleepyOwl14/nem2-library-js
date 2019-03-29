@@ -77,12 +77,24 @@ export default class TransferTransaction extends VerifiableTransaction {
 			getRecipient(){
 				return address.addressToString(this.bufferClass.getRecipient());
 			}
+
+			getAliasAsRecipient(){
+				return address.recipientToAlias(this.bufferClass.getRecipient());
+			}
 		
 			getMessage(){
-				var message = convert.hexToUtf8(convert.uint8ToHex(this.bufferClass.getMessage()));
 
+				var messageBytes = this.bufferClass.getMessage();
+
+				var message = convert.hexToUtf8(convert.uint8ToHex(messageBytes.subarray(1)));
+				var messageType = bufferUtils.buffer_to_uint(messageBytes.subarray(0, 1));
+
+				var messageObj = {
+					type: messageType,
+					payload: message,
+				};
 				// remove the appended message type included in the message buffer
-				return message.substr(1); 
+				return messageObj; 
 			}
 		
 			getMosaics(){
@@ -92,7 +104,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 				for(var i = 0; i < mosaics.length; i++){
 					var mosaicData = {
-						mosaicId : bufferUtils.bufferArray_to_uint32Array(mosaics[i].mosaicId),
+						id : bufferUtils.bufferArray_to_uint32Array(mosaics[i].mosaicId),
 						amount : bufferUtils.bufferArray_to_uint32Array(mosaics[i].amount),
 					};
 					mosaicsData.push(mosaicData);
@@ -173,7 +185,6 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 				// extra byte for message type
 				var bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([this.message.type]), messagePayload);
-				
 
 				// does not need to be in order 
 				transferTransactionBuffer.setSize(bufferUtils.uint_to_buffer(148 + (16 * this.mosaics.length) + bytePayload.length, 4));

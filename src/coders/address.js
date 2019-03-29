@@ -59,6 +59,18 @@ const address = {
 	},
 
 	/**
+	 * Format recipient field value into valid namespaceId *alias* 
+	 * @param {Uint8Array} The padded hexadecimal notation of the alias
+	 * @returns {string} namespaceId The hexadecimal namespaceId
+	 */
+	recipientToAlias: recipientUint8Array => {
+		const aliasBytes = recipientUint8Array.subarray(1, 9).reverse();
+
+		const alias = convert.uint8ToHex(aliasBytes);
+		return alias;
+	},
+
+	/**
 	 * Converts a decoded address to an encoded address string.
 	 * @param {Uint8Array} decoded The decoded address.
 	 * @returns {string} The encoded address string corresponding to the input.

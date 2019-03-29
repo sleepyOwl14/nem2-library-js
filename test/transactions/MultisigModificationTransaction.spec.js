@@ -31,10 +31,10 @@ describe('MultisigModificationTransaction', () => {
 			minApprovalDelta: 2,
 			modifications: [{
 				type: 0,
-				cosignatoryPublicKey: '68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763'
+				cosignatoryPublicKey: '68b3fbb18729c1fde225c57f8ce080fa828f0067e451a3fd81fa628842b0b763'.toUpperCase()
 			}, {
 				type: 0,
-				cosignatoryPublicKey: 'cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb'
+				cosignatoryPublicKey: 'cf893ffcc47c33e7f68ab1db56365c156b0736824a0c1e273f9e00b8df8f01eb'.toUpperCase()
 			}]
 		};
 		const verifiableTransaction = new MultisigModificationTransaction.Builder()
@@ -48,5 +48,12 @@ describe('MultisigModificationTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('0102020068B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B' +
 			'0B76300CF893FFCC47C33E7F68AB1DB56365C156B0736824A0C1E273F9E00B8DF8F01EB');
+
+		const MultisigModificationTransactionBufferData = MultisigModificationTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(MultisigModificationTransactionBufferData.getDeadline()).to.eql(multisigAggregateTransaction.deadline);
+		expect(MultisigModificationTransactionBufferData.getMinRemovalDelta()).to.eql(multisigAggregateTransaction.minRemovalDelta);
+		expect(MultisigModificationTransactionBufferData.getMinApprovalDelta()).to.be.equal(multisigAggregateTransaction.minApprovalDelta);
+		expect(MultisigModificationTransactionBufferData.getModifications()).to.eql(multisigAggregateTransaction.modifications);
 	});
 });

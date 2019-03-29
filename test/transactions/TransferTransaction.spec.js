@@ -18,6 +18,8 @@ import expect from 'expect.js';
 import TransferTransaction from '../../src/transactions/TransferTransaction';
 import deadline from '../../src/transactions/Deadline';
 
+import convert from '../../src/coders/convert';
+
 describe('TransferTransaction', () => {
 	const keyPair = {
 		publicKey: '9a49366406aca952b88badf5f1e9be6ce4968141035a60be503273ea65456b24',
@@ -51,14 +53,20 @@ describe('TransferTransaction', () => {
 			.build();
 
 		const transactionPayload = verifiableTransaction.signTransaction(keyPair);
-
 		expect(transactionPayload.payload.substring(
 			240,
 			transactionPayload.payload.length
 		)).to.be.equal('90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC030003003' +
 			'030002F00FA0DEDD9086400000000000000443F6D806C05543A640000000000000029C' +
 			'F5FD941AD25D56400000000000000');
-	});
+
+		const TransferTransactionBufferData = TransferTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(TransferTransactionBufferData.getDeadline()).to.eql(transferTransaction.deadline);
+		expect(TransferTransactionBufferData.getMosaics()).to.eql(transferTransaction.mosaics);
+		expect(TransferTransactionBufferData.getRecipient()).to.be.equal(transferTransaction.recipient);
+		expect(TransferTransactionBufferData.getMessage()).to.eql(transferTransaction.message);
+	});	
 
 	it('should create transfer transaction with void', () => {
 		const transferTransaction = {
@@ -94,6 +102,13 @@ describe('TransferTransaction', () => {
 		)).to.be.equal('90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC01000300002F0' +
 			'0FA0DEDD9086400000000000000443F6D806C05543A640000000000000029CF5FD941AD25D' +
 			'56400000000000000');
+
+		const TransferTransactionBufferData = TransferTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(TransferTransactionBufferData.getDeadline()).to.eql(transferTransaction.deadline);
+		expect(TransferTransactionBufferData.getMosaics()).to.eql(transferTransaction.mosaics);
+		expect(TransferTransactionBufferData.getRecipient()).to.be.equal(transferTransaction.recipient);
+		expect(TransferTransactionBufferData.getMessage()).to.eql(transferTransaction.message);
 	});
 
 	it('should create transfer transaction with alias recipient padded on 25 bytes', () => {
@@ -130,5 +145,12 @@ describe('TransferTransaction', () => {
 		)).to.be.equal('9144B262C46CEABB8500000000000000000000000000000000030003003030002F00FA' +
 			'0DEDD9086400000000000000443F6D806C05543A640000000000000029CF5FD941AD25' +
 			'D56400000000000000');
+
+		const TransferTransactionBufferData = TransferTransaction.loadFromPayload(transactionPayload.payload);
+
+		expect(TransferTransactionBufferData.getDeadline()).to.eql(transferTransaction.deadline);
+		expect(TransferTransactionBufferData.getMosaics()).to.eql(transferTransaction.mosaics);
+		expect(TransferTransactionBufferData.getAliasAsRecipient()).to.be.equal(transferTransaction.recipient.toUpperCase());
+		expect(TransferTransactionBufferData.getMessage()).to.eql(transferTransaction.message);
 	});
 });

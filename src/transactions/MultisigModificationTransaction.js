@@ -89,8 +89,8 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 
 				for(var i = 0; i < modifications.length; i++){
 					var modificationData = {
-						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
-						cosignatoryPublickey : convert.uint8ToHex(modifications[i].cosignatoryPublicKey),
+						type : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						cosignatoryPublicKey : convert.uint8ToHex(modifications[i].cosignatoryPublicKey),
 					};
 					modificationsData.push(modificationData);
 				}

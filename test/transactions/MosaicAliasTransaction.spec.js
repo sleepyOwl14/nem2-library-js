@@ -43,5 +43,12 @@ describe('MosaicAliasTransaction', () => {
 		const transactionPayload = transaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('004F1B65BA5F7F49B118C5AFC0A842D83A');
+
+		const MosaicAliasTransactionBufferData = MosaicAliasTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(MosaicAliasTransactionBufferData.getDeadline()).to.eql(mosaicAliasTransaction.deadline);
+		expect(MosaicAliasTransactionBufferData.getAliasAction()).to.be.equal(mosaicAliasTransaction.actionType);
+		expect(MosaicAliasTransactionBufferData.getNamespaceId()).to.eql(mosaicAliasTransaction.namespaceId);
+		expect(MosaicAliasTransactionBufferData.getMosaicId()).to.eql(mosaicAliasTransaction.mosaicId);
 	});
 });

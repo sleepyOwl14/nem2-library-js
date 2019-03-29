@@ -46,6 +46,14 @@ describe('NamespaceCreationTransaction', () => {
 		const transactionPayload = verifiableTransaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('0010270000000000007EE9B3B8AFDF53C00C6E65776E616D657370616365');
+
+		const NamespaceCreationTransactionBufferData = NamespaceCreationTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(NamespaceCreationTransactionBufferData.getDeadline()).to.eql(namespaceCreationTransaction.deadline);
+		expect(NamespaceCreationTransactionBufferData.getNamespaceType()).to.be.equal(namespaceCreationTransaction.namespaceType);
+		expect(NamespaceCreationTransactionBufferData.getDuration()).to.eql(namespaceCreationTransaction.duration);
+		expect(NamespaceCreationTransactionBufferData.getNamespaceId()).to.eql(namespaceCreationTransaction.namespaceId);
+		expect(NamespaceCreationTransactionBufferData.getName()).to.be.equal(namespaceCreationTransaction.namespaceName);
 	});
 
 	it('should create provision subnamespace transaction', () => {
@@ -70,5 +78,13 @@ describe('NamespaceCreationTransaction', () => {
 
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('017EE9B3B8AFDF53C028ED7825B972AC9D0473756232');
+
+		const NamespaceCreationTransactionBufferData = NamespaceCreationTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(NamespaceCreationTransactionBufferData.getDeadline()).to.eql(namespaceCreationTransaction.deadline);
+		expect(NamespaceCreationTransactionBufferData.getNamespaceType()).to.be.equal(namespaceCreationTransaction.namespaceType);
+		expect(NamespaceCreationTransactionBufferData.getParentId()).to.eql(namespaceCreationTransaction.parentId);
+		expect(NamespaceCreationTransactionBufferData.getNamespaceId()).to.eql(namespaceCreationTransaction.namespaceId);
+		expect(NamespaceCreationTransactionBufferData.getName()).to.be.equal(namespaceCreationTransaction.namespaceName);
 	});
 });

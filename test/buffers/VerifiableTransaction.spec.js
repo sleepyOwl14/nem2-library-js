@@ -16,7 +16,7 @@
 
 import expect from 'expect.js';
 import VerifiableTransactionBuilder from '../../src/transactions/VerificableTransactionBuilder';
-import {TransferTransactionBuffer, UnresolvedMosaicBuffer, bufferUtils} from '../../src/buffers';
+import {TransferTransactionBufferPackage, UnresolvedMosaicBuffer, bufferUtils} from '../../src/buffers';
 
 import convert from '../../src/coders/convert';
 
@@ -36,7 +36,7 @@ describe('VerifiableTransaction', () => {
 		const verifiableTransaction = new VerifiableTransactionBuilder()
 			.addTransaction(() => {
 
-				var transferTransactionBuffer = new TransferTransactionBuffer.TransferTransactionBuffer();
+				var transferTransactionBuffer = new TransferTransactionBufferPackage.default();
 
 				const mosaics = [];
 				transfer.mosaics.forEach(mosaic => {

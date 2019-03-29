@@ -50,16 +50,17 @@ class AggregateTransactionBuffer extends TransactionBuffer{
 
         var newArray = Array.from(consumableBuffer.binary);
         newArray.splice(0, consumableBuffer.offset);
+
         var transactionsConsumableBuffer = new Uint8ArrayConsumableBuffer(Uint8Array.from(newArray));
 
-        while((consumableBuffer.offset) < consumableBuffer.binary.length){
+        while((consumableBuffer.offset) < consumableBuffer.binary.length && transactionsConsumableBuffer.offset < object.transactionsSize ){
 
             var startOffset = consumableBuffer.offset;
             var embeddedTransactionBuffer = EmbeddedTransactionBuffer.loadFromBinary(consumableBuffer);
             var endOffset = consumableBuffer.offset;
 
             var transactionSize = buffer_to_uint(embeddedTransactionBuffer.size);
-           
+            
             // remove remaining bytes
             consumableBuffer.get_bytes( transactionSize - (endOffset - startOffset) );
 

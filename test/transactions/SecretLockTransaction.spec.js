@@ -48,8 +48,6 @@ describe('SecretLockTransaction', () => {
 			.addRecipient(secretLockTransaction.recipient)
 			.build();
 
-		console.log(secretLockTransaction.secret);
-
 		const transactionPayload = verifiableTransaction.signTransaction(keyPair);
 
 		expect(transactionPayload.payload.substring(
@@ -58,5 +56,15 @@ describe('SecretLockTransaction', () => {
 		)).to.be.equal('29CF5FD941AD25D58096980000000000640000000000000000' +
 			'F5A5207A8729B1F709CB710311751EB2FC8ACAD5A1FB8AC991B736E69B6529A3' +
 			'90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC');
+
+		const SecretLockTransactionBufferData = SecretLockTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(SecretLockTransactionBufferData.getDeadline()).to.eql(secretLockTransaction.deadline);
+		expect(SecretLockTransactionBufferData.getMosaicId()).to.eql(secretLockTransaction.mosaicId);
+		expect(SecretLockTransactionBufferData.getMosaicAmount()).to.eql(secretLockTransaction.mosaicAmount);
+		expect(SecretLockTransactionBufferData.getDuration()).to.be.eql(secretLockTransaction.duration);
+		expect(SecretLockTransactionBufferData.getHashAlgorithm()).to.be.equal(secretLockTransaction.hashAlgorithm);
+		expect(SecretLockTransactionBufferData.getSecret()).to.be.equal(secretLockTransaction.secret.toUpperCase());
+		expect(SecretLockTransactionBufferData.getRecipient()).to.be.equal(secretLockTransaction.recipient);
 	});
 });

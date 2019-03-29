@@ -227,6 +227,7 @@ export default class AggregateTransaction extends VerifiableTransaction {
 
 	signTransactionWithCosigners(initializer, cosigners) {
 		const signedTransaction = this.signTransaction(initializer);
+
 		cosigners.forEach(cosigner => {
 			const signatureTransaction = new CosignatureTransaction(signedTransaction.hash);
 			const signatureCosignTransaction = signatureTransaction.signCosignatoriesTransaction(cosigner);

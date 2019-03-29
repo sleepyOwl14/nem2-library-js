@@ -41,5 +41,11 @@ describe('AccountPropertiesAddressTransaction', () => {
 		const transactionPayload = transaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('01010090E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC');
+
+		const AccountPropertiesAddressTransactionBufferData = AccountPropertiesAddressTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(AccountPropertiesAddressTransactionBufferData.getDeadline()).to.eql(accountPropertiesAddressTransaction.deadline);
+		expect(AccountPropertiesAddressTransactionBufferData.getPropertyType()).to.be.equal(accountPropertiesAddressTransaction.propertyType);
+		expect(AccountPropertiesAddressTransactionBufferData.getModifications()).to.eql(accountPropertiesAddressTransaction.modifications);
 	});
 });

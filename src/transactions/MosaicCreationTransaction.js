@@ -114,7 +114,16 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 
 				return propertiesData;
 			}
-			
+
+			getDuration(){
+				const properties = this.getProperties();
+
+				for(var i = 0; i < properties.length; i++){
+					if(properties[i].id == 2){
+						return properties[i].value;
+					}
+				}
+			}
 		}
 	}
 

@@ -42,5 +42,11 @@ describe('AccountLinkTransaction', () => {
 			240,
 			transactionPayload.payload.length
 		)).to.be.equal('9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B2400');
+
+		const AccountLinkTransactionBufferData = AccountLinkTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(AccountLinkTransactionBufferData.getDeadline()).to.eql(accountLinkTransaction.deadline);
+		expect(AccountLinkTransactionBufferData.getRemoteAccountKey()).to.be.equal(accountLinkTransaction.remoteAccountKey.toUpperCase());
+		expect(AccountLinkTransactionBufferData.getLinkAction()).to.eql(accountLinkTransaction.linkAction);
 	});
 });

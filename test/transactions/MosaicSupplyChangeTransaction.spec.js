@@ -43,5 +43,12 @@ describe('MosaicSupplyChangeTransaction', () => {
 		const transactionPayload = transaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('18C5AFC0A842D83A010A00000000000000');
+
+		const MosaicSupplyChangeTransactionBufferData = MosaicSupplyChangeTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(MosaicSupplyChangeTransactionBufferData.getDeadline()).to.eql(mosaicSupplyChangeTransaction.deadline);
+		expect(MosaicSupplyChangeTransactionBufferData.getMosaicId()).to.eql(mosaicSupplyChangeTransaction.mosaicId);
+		expect(MosaicSupplyChangeTransactionBufferData.getDirection()).to.be.equal(mosaicSupplyChangeTransaction.direction);
+		expect(MosaicSupplyChangeTransactionBufferData.getDelta()).to.eql(mosaicSupplyChangeTransaction.delta);
 	});
 });

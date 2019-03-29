@@ -76,7 +76,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 			}
 		
 			getPropertyType(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertyType());
+				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
 			}
 		
 			getModifications(){
@@ -87,7 +87,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 				for(var i = 0; i < modifications.length; i++){
 					var modification = {
 						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
-						value : convert.uint8ToHex(modifications[i].value),
+						value : address.addressToString(modifications[i].value),
 					};
 					modificationsData.push(modification);
 				}

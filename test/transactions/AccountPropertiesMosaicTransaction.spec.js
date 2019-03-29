@@ -41,5 +41,11 @@ describe('AccountPropertiesMosaicTransaction', () => {
 		const transactionPayload = transaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('02010018C5AFC0A842D83A');
+
+		const AccountPropertiesMosaicTransactionBufferData = AccountPropertiesMosaicTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(AccountPropertiesMosaicTransactionBufferData.getDeadline()).to.eql(model.deadline);
+		expect(AccountPropertiesMosaicTransactionBufferData.getPropertyType()).to.be.equal(model.propertyType);
+		expect(AccountPropertiesMosaicTransactionBufferData.getModifications()).to.eql(model.modifications);
 	});
 });

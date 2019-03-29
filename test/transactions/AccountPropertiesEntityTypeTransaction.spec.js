@@ -41,5 +41,11 @@ describe('AccountPropertiesEntityTypeTransaction', () => {
 		const transactionPayload = transaction.signTransaction(keyPair);
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('0401004841');
+
+		const AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransaction.loadFromPayload(transactionPayload.payload);
+		
+		expect(AccountPropertiesEntityTypeTransactionBufferData.getDeadline()).to.eql(model.deadline);
+		expect(AccountPropertiesEntityTypeTransactionBufferData.getPropertyType()).to.be.equal(model.propertyType);
+		expect(AccountPropertiesEntityTypeTransactionBufferData.getModifications()).to.eql(model.modifications);
 	});
 });
