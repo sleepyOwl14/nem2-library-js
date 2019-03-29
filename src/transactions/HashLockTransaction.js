@@ -18,6 +18,7 @@
  * @module transactions/HashLockTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
+import BaseBuilder from './BaseBuilder';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
@@ -104,31 +105,12 @@ export default class HashLockTransaction extends VerifiableTransaction {
 	}
 
 	static get Builder() {
-		class Builder {
-			constructor() {
+		class Builder extends BaseBuilder {
+			constructor(){
+				super();
 				this.fee = [0, 0];
 				this.version = 36867;
 				this.type = 0x414C;
-			}
-
-			addFee(fee) {
-				this.fee = fee;
-				return this;
-			}
-
-			addVersion(version) {
-				this.version = version;
-				return this;
-			}
-
-			addType(type) {
-				this.type = type;
-				return this;
-			}
-
-			addDeadline(deadline) {
-				this.deadline = deadline;
-				return this;
 			}
 
 			addMosaicId(mosaicId) {

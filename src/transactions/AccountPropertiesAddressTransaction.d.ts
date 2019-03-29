@@ -15,6 +15,7 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import BaseBuilder from './BaseBuilder';
 
 export declare class AccountPropertiesAddressTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
@@ -37,16 +38,8 @@ export declare module AccountPropertiesAddressTransaction {
         getModifications():  Array;
     }
 
-    class Builder {
-
-        addFee(fee): Builder;
-
-        addVersion(version): Builder;
-
-        addType(type): Builder;
-
-        addDeadline(deadline): Builder;
-
+    class Builder extends BaseBuilder{
+        
         addPropertyType(propertyType): Builder;
 
         addModifications(modifications): Builder;

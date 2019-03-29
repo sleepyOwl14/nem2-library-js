@@ -15,6 +15,7 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import BaseBuilder from './BaseBuilder';
 
 export declare class HashLockTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
@@ -33,21 +34,17 @@ export declare module HashLockTransaction {
     class BufferProperties{
 
         getMosaic(): Array;
+
+        getMosaicId(): Array;
+
+        getMosaicAmount(): Array;
     
         getDuration(): Array;
     
         getHash() : String;
     }
 
-    class Builder {
-
-        addFee(fee): Builder;
-
-        addVersion(version): Builder;
-
-        addType(type): Builder;
-
-        addDeadline(deadline): Builder;
+    class Builder extends BaseBuilder{
 
         addMosaicId(mosaicId): Builder;
 

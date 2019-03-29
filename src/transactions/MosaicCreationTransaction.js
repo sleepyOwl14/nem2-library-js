@@ -18,6 +18,7 @@
  * @module transactions/MosaicCreationTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
+import BaseBuilder from './BaseBuilder';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
@@ -128,8 +129,9 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 	}
 
 	static get Builder() {
-		class Builder {
+		class Builder extends BaseBuilder {
 			constructor() {
+				super();
 				this.flags = 0;
 				this.fee = [0, 0];
 				this.version = 36867;
@@ -137,28 +139,8 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 				this.nonce = 0;
 			}
 
-			addFee(fee) {
-				this.fee = fee;
-				return this;
-			}
-
-			addVersion(version) {
-				this.version = version;
-				return this;
-			}
-
-			addType(type) {
-				this.type = type;
-				return this;
-			}
-
 			addNonce(nonce) {
 				this.nonce = nonce;
-				return this;
-			}
-
-			addDeadline(deadline) {
-				this.deadline = deadline;
 				return this;
 			}
 

@@ -18,6 +18,8 @@
  * @module transactions/AggregateTransaction
  */
 import VerifiableTransaction from './VerifiableTransaction';
+import BaseBuilder from './BaseBuilder';
+
 import CosignatureTransaction from './CosignatureTransaction';
 import AccountLinkTransaction from './AccountLinkTransaction';
 import AccountPropertiesAddressTransaction from './AccountPropertiesAddressTransaction';
@@ -168,31 +170,12 @@ export default class AggregateTransaction extends VerifiableTransaction {
 	}
 
 	static get Builder() {
-		class Builder {
+		class Builder extends BaseBuilder{
 			constructor() {
+				super();
 				this.fee = [0, 0];
 				this.version = 36867;
 				this.type = 0x4141;
-			}
-
-			addFee(fee) {
-				this.fee = fee;
-				return this;
-			}
-
-			addVersion(version) {
-				this.version = version;
-				return this;
-			}
-
-			addType(type) {
-				this.type = type;
-				return this;
-			}
-
-			addDeadline(deadline) {
-				this.deadline = deadline;
-				return this;
 			}
 
 			addTransactions(transactions) {

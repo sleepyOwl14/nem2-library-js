@@ -15,6 +15,7 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import BaseBuilder from './BaseBuilder';
 
 export declare class AccountLinkTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
@@ -37,15 +38,7 @@ export declare module AccountLinkTransaction {
         getLinkAction(): Number;
     }
 
-    class Builder {
-
-        addFee(fee): Builder;
-
-        addVersion(version): Builder;
-
-        addType(type): Builder;
-
-        addDeadline(deadline): Builder;
+    class Builder extends BaseBuilder{
 
         addRemoteAccountKey(remoteAccountKey): Builder;
 

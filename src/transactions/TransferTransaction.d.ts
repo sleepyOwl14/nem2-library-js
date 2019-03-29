@@ -15,6 +15,7 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import BaseBuilder from './BaseBuilder';
 
 export declare class TransferTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
@@ -39,15 +40,7 @@ export declare module TransferTransaction {
         getMosaics(): Array;
     }
 
-    class Builder {
-
-        addFee(fee): Builder;
-
-        addVersion(version): Builder;
-
-        addType(type): Builder;
-
-        addDeadline(deadline): Builder;
+    class Builder extends BaseBuilder {
 
         addRecipient(recipient): Builder;
 

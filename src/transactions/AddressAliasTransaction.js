@@ -15,6 +15,8 @@
  */
 
 import VerifiableTransaction from './VerifiableTransaction';
+import BaseBuilder from './BaseBuilder';
+
 import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
@@ -87,31 +89,12 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 	}
 
 	static get Builder() {
-		class Builder {
+		class Builder extends BaseBuilder{
 			constructor() {
+				super();
 				this.fee = [0, 0];
 				this.version = 36865;
 				this.type = 0x424E;
-			}
-
-			addFee(fee) {
-				this.fee = fee;
-				return this;
-			}
-
-			addVersion(version) {
-				this.version = version;
-				return this;
-			}
-
-			addType(type) {
-				this.type = type;
-				return this;
-			}
-
-			addDeadline(deadline) {
-				this.deadline = deadline;
-				return this;
 			}
 
 			addActionType(actionType) {

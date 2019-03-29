@@ -15,6 +15,7 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import BaseBuilder from './BaseBuilder';
 
 export declare class SecretLockTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
@@ -34,6 +35,10 @@ export declare module SecretLockTransaction {
 
         getMosaic(): object;
 
+        getMosaicId(): Array;
+
+        getMosaicAmount(): Array;
+
         getDuration(): Array;
 
         getHashAlgorithm(): number;
@@ -43,15 +48,7 @@ export declare module SecretLockTransaction {
         getRecipient(): String;
     }
 
-    class Builder {
-
-        addFee(fee): Builder;
-
-        addVersion(version): Builder;
-
-        addType(type): Builder;
-
-        addDeadline(deadline): Builder;
+    class Builder extends BaseBuilder {
 
         addMosaicId(mosaicId): Builder;
 

@@ -15,6 +15,7 @@
  */
 
 import {VerifiableTransaction} from "./VerifiableTransaction";
+import BaseBuilder from './BaseBuilder';
 
 export declare class AggregateTransaction extends VerifiableTransaction {
     public signTransactionWithCosigners(initializer, cosigners): {payload: string, hash:string}
@@ -35,15 +36,7 @@ export declare module AggregateTransaction {
         getTransactions(): Array;
     }
 
-    class Builder {
-
-        addFee(fee): Builder;
-
-        addVersion(version): Builder;
-
-        addType(type): Builder;
-
-        addDeadline(deadline): Builder;
+    class Builder extends BaseBuilder{
 
         addTransactions(transactions): Builder;
 
