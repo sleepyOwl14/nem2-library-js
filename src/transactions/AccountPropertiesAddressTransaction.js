@@ -25,12 +25,12 @@ import convert from '../coders/convert';
 import {
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountPropertyAddressBufferPackage,
+	AccountPropertiesAddressBufferPackage,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const AddressPropertyModificationBuffer = AccountPropertyAddressBufferPackage.AddressPropertyModificationBuffer;
-const AccountPropertiesAddressTransactionBuffer = AccountPropertyAddressBufferPackage.default;
-const EmbeddedAccountPropertiesAddressTransactionBuffer = AccountPropertyAddressBufferPackage.embedded;
+const AddressPropertyModificationBuffer = AccountPropertiesAddressBufferPackage.AddressPropertyModificationBuffer;
+const AccountPropertiesAddressTransactionBuffer = AccountPropertiesAddressBufferPackage.default;
+const EmbeddedAccountPropertiesAddressTransactionBuffer = AccountPropertiesAddressBufferPackage.embedded;
 
 const address = require('../coders/address').default;
 

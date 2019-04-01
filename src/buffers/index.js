@@ -5,7 +5,7 @@ import bufferUtils from './BufferUtils';
 import TransactionBufferPackage from './TransactionBuffer';
 import TransferTransactionBufferPackage from './TransferTransactionBuffer';
 import AccountLinkTransactionBufferPackage from './AccountLinkTransactionBuffer';
-import AccountPropertyAddressBufferPackage from './AccountPropertyAddressTransactionBuffer';
+import AccountPropertiesAddressBufferPackage from './AccountPropertiesAddressTransactionBuffer';
 import AccountPropertiesEntityTypeTransactionBufferPackage from './AccountPropertiesEntityTypeTransactionBuffer';
 import MosaicPropertyTransactionBufferPackage from './AccountPropertiesMosaicTransactionBuffer';
 import AddressAliasTransactionBufferPackage from './AddressAliasTransactionBuffer';
@@ -30,7 +30,7 @@ export{
     CommonEmbeddedBufferProperties,
     CommonBufferPackage,
     AccountLinkTransactionBufferPackage,
-    AccountPropertyAddressBufferPackage,
+    AccountPropertiesAddressBufferPackage,
     AccountPropertiesEntityTypeTransactionBufferPackage,
     AddressAliasTransactionBufferPackage,
     AggregateTransactionBufferPackage,
