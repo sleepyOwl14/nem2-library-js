@@ -27,7 +27,7 @@ import {
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 import convert from '../coders/convert';
 
-const SecretProofTransactionBuffer = SecretProofTransactionBufferPackage.default;
+const SecretProofTransactionBuffer = SecretProofTransactionBufferPackage.main;
 const EmbeddedSecretProofTransactionBuffer = SecretProofTransactionBufferPackage.embedded;
 
 export default class SecretProofTransaction extends VerifiableTransaction {

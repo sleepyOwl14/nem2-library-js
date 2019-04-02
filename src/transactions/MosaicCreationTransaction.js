@@ -27,7 +27,7 @@ import {
 
 import convert from '../coders/convert';
 
-const MosaicCreationTransactionBuffer = MosaicDefinitionTransactionBufferPackage.default;
+const MosaicCreationTransactionBuffer = MosaicDefinitionTransactionBufferPackage.main;
 const EmbeddedMosaicCreationTransactionBuffer = MosaicDefinitionTransactionBufferPackage.embedded;
 const MosaicPropertyBuffer = MosaicDefinitionTransactionBufferPackage.MosaicPropertyBuffer;
 

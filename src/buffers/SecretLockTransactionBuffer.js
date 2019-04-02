@@ -372,7 +372,7 @@ class EmbeddedSecretLockTransactionBuffer {
 
 module.exports = {
     body : SecretLockTransactionBodyBuffer,
-    default : SecretLockTransactionBuffer,
+    main : SecretLockTransactionBuffer,
     embedded : EmbeddedSecretLockTransactionBuffer,
 };
 

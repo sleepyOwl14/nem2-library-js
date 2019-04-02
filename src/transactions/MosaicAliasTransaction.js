@@ -23,7 +23,7 @@ import {
 	UnresolvedMosaicBuffer,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const MosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.default;
+const MosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.main;
 const EmbeddedMosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.embedded;
 
 import convert from '../coders/convert';

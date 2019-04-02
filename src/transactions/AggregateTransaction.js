@@ -44,7 +44,7 @@ import {
 
 import convert from '../coders/convert';
 
-const AggregateTransactionBuffer = AggregateTransactionBufferPackage.default;
+const AggregateTransactionBuffer = AggregateTransactionBufferPackage.main;
 
 export default class AggregateTransaction extends VerifiableTransaction {
 

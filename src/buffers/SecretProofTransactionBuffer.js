@@ -305,7 +305,7 @@ class EmbeddedSecretProofTransactionBuffer {
 
 module.exports = {
     body : SecretProofTransactionBodyBuffer,
-    default : SecretProofTransactionBuffer,
+    main : SecretProofTransactionBuffer,
     embedded : EmbeddedSecretProofTransactionBuffer,
 };
 

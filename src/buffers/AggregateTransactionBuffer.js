@@ -18,7 +18,7 @@ import TransactionBufferPackage from './TransactionBuffer';
 import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
 import bufferUtils from './BufferUtils';
 
-const TransactionBuffer = TransactionBufferPackage.default;
+const TransactionBuffer = TransactionBufferPackage.main;
 const EmbeddedTransactionBuffer = TransactionBufferPackage.embedded;
 
 var concat_typedarrays = bufferUtils.concat_typedarrays;
@@ -103,6 +103,6 @@ class AggregateTransactionBuffer extends TransactionBuffer{
 }
 
 module.exports = {
-    default : AggregateTransactionBuffer,
+    main : AggregateTransactionBuffer,
     TransactionBuffer,
 }

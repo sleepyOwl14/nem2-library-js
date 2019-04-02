@@ -302,7 +302,7 @@ class EmbeddedMosaicSupplyChangeTransactionBuffer {
 
 module.exports = {
     body : MosaicSupplyChangeTransactionBodyBuffer,
-    default : MosaicSupplyChangeTransactionBuffer,
+    main : MosaicSupplyChangeTransactionBuffer,
     embedded : EmbeddedMosaicSupplyChangeTransactionBuffer,
 };
 

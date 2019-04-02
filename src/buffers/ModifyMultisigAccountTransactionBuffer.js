@@ -364,7 +364,7 @@ class EmbeddedModifyMultisigAccountTransactionBuffer {
 module.exports = {
     CosignatoryModificationBuffer,
     body : ModifyMultisigAccountTransactionBodyBuffer,
-    default : ModifyMultisigAccountTransactionBuffer,
+    main : ModifyMultisigAccountTransactionBuffer,
     embedded: EmbeddedModifyMultisigAccountTransactionBuffer,
 };
 

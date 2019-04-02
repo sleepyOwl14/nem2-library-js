@@ -29,7 +29,7 @@ import {
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const AddressPropertyModificationBuffer = AccountPropertiesAddressBufferPackage.AddressPropertyModificationBuffer;
-const AccountPropertiesAddressTransactionBuffer = AccountPropertiesAddressBufferPackage.default;
+const AccountPropertiesAddressTransactionBuffer = AccountPropertiesAddressBufferPackage.main;
 const EmbeddedAccountPropertiesAddressTransactionBuffer = AccountPropertiesAddressBufferPackage.embedded;
 
 const address = require('../coders/address').default;

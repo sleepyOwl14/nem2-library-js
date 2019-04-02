@@ -29,7 +29,7 @@ import {
 import convert from '../coders/convert';
 const address = require('../coders/address').default;
 
-const TransferTransactionBuffer = TransferTransactionBufferPackage.default;
+const TransferTransactionBuffer = TransferTransactionBufferPackage.main;
 const EmbeddedTransferTransactionBuffer = TransferTransactionBufferPackage.embedded;
 
 export default class TransferTransaction extends VerifiableTransaction {

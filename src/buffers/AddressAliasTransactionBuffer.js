@@ -302,7 +302,7 @@ class EmbeddedAddressAliasTransactionBuffer {
 
 module.exports = {
     body : AddressAliasTransactionBodyBuffer,
-    default : AddressAliasTransactionBuffer,
+    main : AddressAliasTransactionBuffer,
     embedded : EmbeddedAddressAliasTransactionBuffer,
 };
 

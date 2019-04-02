@@ -82,7 +82,6 @@ import ConfirmedTransactionsListener from './listeners/ConfirmedTransactionsList
 import PartialTransactionsListener from './listeners/PartialTransactionsListener';
 import TransactionStatusListener from './listeners/TransactionStatusListener';
 import UnconfirmedTransactionsListener from './listeners/UnconfirmedTransactionsListener';
-import Schema from './schema/Schema';
 import AccountLinkTransaction from './transactions/AccountLinkTransaction';
 import AccountPropertiesAddressTransaction from './transactions/AccountPropertiesAddressTransaction';
 import AccountPropertiesMosaicTransaction from './transactions/AccountPropertiesMosaicTransaction';

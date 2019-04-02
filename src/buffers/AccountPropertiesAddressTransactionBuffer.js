@@ -330,7 +330,7 @@ module.exports = {
     PropertyModificationBuffer,
     AddressPropertyModificationBuffer,
     body : AddressPropertyTransactionBodyBuffer,
-    default : AddressPropertyTransactionBuffer,
+    main : AddressPropertyTransactionBuffer,
     embedded : EmbeddedAddressPropertyTransactionBuffer,
 };
 

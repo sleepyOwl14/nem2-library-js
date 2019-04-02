@@ -28,7 +28,7 @@ import {
 
 import convert from '../coders/convert';
 
-const HashLockTransactionBuffer = HashLockTransactionBufferPackage.default;
+const HashLockTransactionBuffer = HashLockTransactionBufferPackage.main;
 const EmbeddedHashLockTransactionBuffer = HashLockTransactionBufferPackage.embedded;
 
 export default class HashLockTransaction extends VerifiableTransaction {

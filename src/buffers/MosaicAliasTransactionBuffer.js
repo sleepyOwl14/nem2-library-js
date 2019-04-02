@@ -302,7 +302,7 @@ class EmbeddedMosaicAliasTransactionBuffer {
 
 module.exports = {
     body : MosaicAliasTransactionBodyBuffer,
-    default : MosaicAliasTransactionBuffer,
+    main : MosaicAliasTransactionBuffer,
     embedded : EmbeddedMosaicAliasTransactionBuffer,
 };
 

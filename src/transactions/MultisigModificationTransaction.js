@@ -25,7 +25,7 @@ import {
 
 import convert from '../coders/convert';
 
-const MultisigModificationTransactionBuffer = ModifyMultisigAccountTransactionBufferPackage.default;
+const MultisigModificationTransactionBuffer = ModifyMultisigAccountTransactionBufferPackage.main;
 const EmbeddedMultisigModificationTransactionBuffer = ModifyMultisigAccountTransactionBufferPackage.embedded;
 const CosignatoryModificationBuffer = ModifyMultisigAccountTransactionBufferPackage.CosignatoryModificationBuffer;
 

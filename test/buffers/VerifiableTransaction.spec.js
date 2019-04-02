@@ -36,7 +36,7 @@ describe('VerifiableTransaction', () => {
 		const verifiableTransaction = new VerifiableTransactionBuilder()
 			.addTransaction(() => {
 
-				var transferTransactionBuffer = new TransferTransactionBufferPackage.default();
+				var transferTransactionBuffer = new TransferTransactionBufferPackage.main();
 
 				const mosaics = [];
 				transfer.mosaics.forEach(mosaic => {

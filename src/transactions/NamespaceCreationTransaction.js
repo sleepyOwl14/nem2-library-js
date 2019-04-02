@@ -28,7 +28,7 @@ import {
 
 import convert from '../coders/convert';
 
-const NamespaceCreationTransactionBuffer = RegisterNamespaceTransactionBufferPackage.default;
+const NamespaceCreationTransactionBuffer = RegisterNamespaceTransactionBufferPackage.main;
 const EmbeddedNamespaceCreationTransactionBuffer = RegisterNamespaceTransactionBufferPackage.embedded;
 const NamespaceType = RegisterNamespaceTransactionBufferPackage.NamespaceType;
 

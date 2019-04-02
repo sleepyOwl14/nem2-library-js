@@ -301,6 +301,6 @@ class EmbeddedHashLockTransactionBuffer {
 
 module.exports = {
     body : HashLockTransactionBodyBuffer,
-    default : HashLockTransactionBuffer,
+    main : HashLockTransactionBuffer,
     embedded : EmbeddedHashLockTransactionBuffer,
 };

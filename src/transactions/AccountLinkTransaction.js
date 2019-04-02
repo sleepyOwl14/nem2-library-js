@@ -27,7 +27,7 @@ import {
 	AccountLinkTransactionBufferPackage, 
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
-const AccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.default;
+const AccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.main;
 const EmbeddedAccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.embedded;
 
 export default class AccountLinkTransaction extends VerifiableTransaction {

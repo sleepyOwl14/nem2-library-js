@@ -180,6 +180,6 @@ class EmbeddedTransactionBuffer {
 }
 
 module.exports = {
-    default : TransactionBuffer,
+    main : TransactionBuffer,
     embedded : EmbeddedTransactionBuffer,
 };

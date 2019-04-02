@@ -26,7 +26,7 @@ import {
 
 const addressEncoder = require('../coders/address').default;
 
-const AddressAliasTransactionBuffer = AddressAliasTransactionBufferPackage.default;
+const AddressAliasTransactionBuffer = AddressAliasTransactionBufferPackage.main;
 const EmbeddedAddressAliasTransactionBuffer = AddressAliasTransactionBufferPackage.embedded;
 /**
  * @module transactions/AddressAliasTransaction

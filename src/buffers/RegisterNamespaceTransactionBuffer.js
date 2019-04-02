@@ -429,7 +429,7 @@ class EmbeddedRegisterNamespaceTransactionBuffer {
 
 module.exports = {
     embedded : EmbeddedRegisterNamespaceTransactionBuffer,
-    default : RegisterNamespaceTransactionBuffer,
+    main : RegisterNamespaceTransactionBuffer,
     body : RegisterNamespaceTransactionBodyBuffer,
     NamespaceType
 };

@@ -330,7 +330,7 @@ module.exports = {
     PropertyModificationBuffer,
     TransactionTypePropertyModificationBuffer,
     body : TransactionTypePropertyTransactionBodyBuffer,
-    default : TransactionTypePropertyTransactionBuffer,
+    main : TransactionTypePropertyTransactionBuffer,
     embedded : EmbeddedTransactionTypePropertyTransactionBuffer,
 };
 

@@ -28,7 +28,7 @@ import {
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.TransactionTypePropertyModificationBuffer;
-const AccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.default;
+const AccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.main;
 const EmbeddedAccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.embedded;
 
 export default class AccountPropertiesEntityTypeTransaction extends VerifiableTransaction {

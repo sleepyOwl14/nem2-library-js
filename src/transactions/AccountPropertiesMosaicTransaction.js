@@ -28,7 +28,7 @@ import {
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 const MosaicPropertyModificationBuffer = MosaicPropertyTransactionBufferPackage.MosaicPropertyModificationBuffer;
-const AccountPropertiesMosaicTransactionBuffer = MosaicPropertyTransactionBufferPackage.default;
+const AccountPropertiesMosaicTransactionBuffer = MosaicPropertyTransactionBufferPackage.main;
 const EmbeddedAccountPropertiesMosaicTransactionBuffer = MosaicPropertyTransactionBufferPackage.embedded;
 
 export default class AccountPropertiesMosaicTransaction extends VerifiableTransaction {

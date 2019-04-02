@@ -436,7 +436,7 @@ class EmbeddedMosaicDefinitionTransactionBuffer {
 module.exports = {
     MosaicPropertyBuffer,
     body : MosaicDefinitionTransactionBodyBuffer,
-    default : MosaicDefinitionTransactionBuffer,
+    main : MosaicDefinitionTransactionBuffer,
     embedded : EmbeddedMosaicDefinitionTransactionBuffer,
 };
 

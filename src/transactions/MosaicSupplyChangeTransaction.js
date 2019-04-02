@@ -24,7 +24,7 @@ import {
 
 import convert from '../coders/convert';
 
-const MosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.default;
+const MosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.main;
 const EmbeddedMosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.embedded;
 
 /**

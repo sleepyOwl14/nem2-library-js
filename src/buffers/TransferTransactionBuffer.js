@@ -335,7 +335,6 @@ class EmbeddedTransferTransactionBuffer {
 module.exports = {
     UnresolvedMosaicBuffer,
     body : TransferTransactionBodyBuffer,
-    default : TransferTransactionBuffer,
+    main : TransferTransactionBuffer,
     embedded: EmbeddedTransferTransactionBuffer,
 };
-

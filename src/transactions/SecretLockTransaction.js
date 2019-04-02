@@ -28,7 +28,7 @@ import {
 import address from '../coders/address';
 import convert from '../coders/convert';
 
-const SecretLockTransactionBuffer = SecretLockTransactionBufferPackage.default;
+const SecretLockTransactionBuffer = SecretLockTransactionBufferPackage.main;
 const EmbeddedSecretLockTransactionBuffer = SecretLockTransactionBufferPackage.embedded;
 
 export default class SecretLockTransaction extends VerifiableTransaction {

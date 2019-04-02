@@ -330,7 +330,7 @@ module.exports = {
     PropertyModificationBuffer,
     MosaicPropertyModificationBuffer,
     body : MosaicPropertyTransactionBodyBuffer,
-    default : MosaicPropertyTransactionBuffer,
+    main : MosaicPropertyTransactionBuffer,
     embedded : EmbeddedMosaicPropertyTransactionBuffer,
 };
 
