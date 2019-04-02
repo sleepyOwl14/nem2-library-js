@@ -56,6 +56,8 @@ export declare module NamespaceCreationTransaction {
 
         addNamespaceName(namespaceName): Builder;
 
+        getSize(): number;
+
         build(): NamespaceCreationTransaction;
 
     }

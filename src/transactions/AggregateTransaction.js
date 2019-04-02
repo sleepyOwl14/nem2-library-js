@@ -36,10 +36,10 @@ import NamespaceCreationTransaction from './NamespaceCreationTransaction';
 import SecretLockTransaction from './SecretLockTransaction';
 import SecretProofTransaction from './SecretProofTransaction';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AggregateTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
 	CommonBufferProperties} from '../buffers';
 
 import convert from '../coders/convert';
@@ -187,12 +187,16 @@ export default class AggregateTransaction extends VerifiableTransaction {
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.AggregateBaseSize.main + this.transactions.length;
+			}
+
 			build() {
 
 				var aggregateTransactionBuffer = new AggregateTransactionBuffer();
 
 				// does not need to be in order 
-				aggregateTransactionBuffer.setSize(bufferUtils.uint_to_buffer(120 + 4 + this.transactions.length, 4));
+				aggregateTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				aggregateTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				aggregateTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				aggregateTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

@@ -23,6 +23,7 @@ import BaseBuilder from './BaseBuilder';
 import convert from '../coders/convert';
 
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AccountPropertiesAddressBufferPackage,
@@ -118,6 +119,10 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.AddressPropertyBaseSize.main + (BufferSize.AddressPropertyModification * this.modifications.length);
+			}
+
 			build() {
 				var accountPropertiesAddressTransactionBuffer = new AccountPropertiesAddressTransactionBuffer();
 
@@ -141,7 +146,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 				});
 
 				// does not need to be in order 
-				accountPropertiesAddressTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (26 * this.modifications.length), 4));
+				accountPropertiesAddressTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				accountPropertiesAddressTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesAddressTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountPropertiesAddressTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

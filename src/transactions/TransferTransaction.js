@@ -20,11 +20,13 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	TransferTransactionBufferPackage, 
 	UnresolvedMosaicBuffer,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	CommonBufferProperties, 
+	CommonEmbeddedBufferProperties} from '../buffers';
 
 import convert from '../coders/convert';
 const address = require('../coders/address').default;
@@ -150,6 +152,14 @@ export default class TransferTransaction extends VerifiableTransaction {
 				return this;
 			}
 
+			setBytePayload(bytePayload){
+				this.bytePayload = bytePayload;
+			}
+
+			getSize(){
+				return BufferSize.TransferBaseSize.main + (BufferSize.UnresolvedMosaic * this.mosaics.length) + this.bytePayload.length;
+			}
+
 			build() {
 				var transferTransactionBuffer = new TransferTransactionBuffer();
 
@@ -168,14 +178,16 @@ export default class TransferTransaction extends VerifiableTransaction {
 				// extra byte for message type
 				var bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([this.message.type]), messagePayload);
 
+				this.setBytePayload(bytePayload);
+
 				// does not need to be in order 
-				transferTransactionBuffer.setSize(bufferUtils.uint_to_buffer(148 + (16 * this.mosaics.length) + bytePayload.length, 4));
+				transferTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				transferTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				transferTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				transferTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
 				transferTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				transferTransactionBuffer.setRecipient(this.recipient);
-				transferTransactionBuffer.setMessage(bytePayload);
+				transferTransactionBuffer.setMessage(this.bytePayload);
 				transferTransactionBuffer.setMosaics(mosaics);
 			
 				var bytes = transferTransactionBuffer.serialize();

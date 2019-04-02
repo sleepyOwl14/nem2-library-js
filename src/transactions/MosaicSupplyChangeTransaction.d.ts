@@ -48,6 +48,8 @@ export declare module MosaicSupplyChangeTransaction {
 
         addDelta(delta): Builder;
 
+        getSize(): number;
+
         build(): MosaicSupplyChangeTransaction;
 
     }

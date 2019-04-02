@@ -16,10 +16,10 @@
 
 import bufferUtils from './BufferUtils';
 
-var concat_typedarrays = bufferUtils.concat_typedarrays;
-var fit_bytearray = bufferUtils.fit_bytearray;
-var buffer_to_uint = bufferUtils.buffer_to_uint;
-var uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = bufferUtils.concat_typedarrays;
+const fit_bytearray = bufferUtils.fit_bytearray;
+const buffer_to_uint = bufferUtils.buffer_to_uint;
+const uint_to_buffer = bufferUtils.uint_to_buffer;
 
 class MosaicSupplyChangeTransactionBodyBuffer {
     getMosaicid = () => {

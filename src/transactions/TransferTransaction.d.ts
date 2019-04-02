@@ -48,6 +48,10 @@ export declare module TransferTransaction {
 
         addMosaics(mosaics): Builder;
 
+        setBytePayload(bytePayload): void;
+
+        getSize(): number;
+
         build(): TransferTransaction;
 
     }

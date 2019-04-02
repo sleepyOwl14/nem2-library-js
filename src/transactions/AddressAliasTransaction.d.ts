@@ -48,6 +48,8 @@ export declare module AddressAliasTransaction {
 
         addAddress(address): Builder;
 
+        getSize(): number;
+
         build(): AddressAliasTransaction;
 
     }

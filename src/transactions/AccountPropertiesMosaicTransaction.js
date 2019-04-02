@@ -22,6 +22,7 @@ import BaseBuilder from './BaseBuilder';
 
 import convert from '../coders/convert';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	MosaicPropertyTransactionBufferPackage,
@@ -115,6 +116,10 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.MosaicPropertyBaseSize.main + (BufferSize.MosaicPropertyModification * this.modifications.length);
+			}
+
 			build() {
 				var accountPropertiesMosaicTransactionBuffer = new AccountPropertiesMosaicTransactionBuffer();
 
@@ -129,7 +134,7 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 				});
 
 				// does not need to be in order 
-				accountPropertiesMosaicTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (9 * this.modifications.length), 4));
+				accountPropertiesMosaicTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				accountPropertiesMosaicTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesMosaicTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountPropertiesMosaicTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

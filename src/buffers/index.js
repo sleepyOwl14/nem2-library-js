@@ -36,6 +36,7 @@ import SecretProofTransactionBufferPackage from './SecretProofTransactionBuffer'
 import CommonBufferPackage from './CommonBuffer';
 import CommonBufferProperties from './CommonBufferProperties';
 import CommonEmbeddedBufferProperties from './CommonEmbeddedBufferProperties';
+import {OptionalFieldSize, BufferSize} from './BufferSize';
 
 export{
     bufferUtils,
@@ -60,5 +61,6 @@ export{
     SecretProofTransactionBufferPackage,
     TransferTransactionBufferPackage,
     TransactionBufferPackage,
-    
+    OptionalFieldSize, 
+    BufferSize,
 }

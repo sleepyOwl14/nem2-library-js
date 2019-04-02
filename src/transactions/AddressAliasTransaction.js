@@ -19,6 +19,7 @@ import BaseBuilder from './BaseBuilder';
 
 import convert from '../coders/convert';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AddressAliasTransactionBufferPackage,
@@ -112,11 +113,15 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.AddressAliasBaseSize.main;
+			}
+
 			build() {
 
 				var addressAliasTransactionBuffer = new AddressAliasTransactionBuffer();
 
-				addressAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));
+				addressAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				addressAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				addressAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				addressAliasTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

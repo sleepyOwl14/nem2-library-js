@@ -16,15 +16,15 @@
 
 import bufferUtils from './BufferUtils';
 
-var concat_typedarrays = bufferUtils.concat_typedarrays;
-var fit_bytearray = bufferUtils.fit_bytearray;
-var buffer_to_uint = bufferUtils.buffer_to_uint;
-var uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = bufferUtils.concat_typedarrays;
+const fit_bytearray = bufferUtils.fit_bytearray;
+const buffer_to_uint = bufferUtils.buffer_to_uint;
+const uint_to_buffer = bufferUtils.uint_to_buffer;
 
-var NamespaceType = Object.freeze({"root":0, "child":1})
-var NamespaceTypeSize = Object.freeze({"duration": 8, "parentid": 8})
+const NamespaceType = Object.freeze({"root":0, "child":1})
+const NamespaceTypeSize = Object.freeze({"duration": 8, "parentid": 8})
 
-var returnBytes_by_namespaceType = (namespaceType, duration, parentid) => {
+const returnBytes_by_namespaceType = (namespaceType, duration, parentid) => {
 
     var object = {};
 
@@ -46,7 +46,7 @@ var returnBytes_by_namespaceType = (namespaceType, duration, parentid) => {
     return object;
 }
 
-var getBytes_by_namespaceType = (namespaceType, consumableBuffer) => {
+const getBytes_by_namespaceType = (namespaceType, consumableBuffer) => {
 
     switch(buffer_to_uint(namespaceType)){
         case NamespaceType.root:

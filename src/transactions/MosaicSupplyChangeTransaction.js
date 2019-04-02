@@ -17,6 +17,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	MosaicSupplyChangeTransactionBufferPackage,
@@ -111,11 +112,15 @@ export default class MosaicSupplyChangeTransaction extends VerifiableTransaction
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.MosaicSupplyChangeBaseSize.main;
+			}
+
 			build() {
 				var mosaicSupplyChangeTransactionBuffer = new MosaicSupplyChangeTransactionBuffer();
 
 				// does not need to be in order 
-				mosaicSupplyChangeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(137 , 4));
+				mosaicSupplyChangeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize() , 4));
 				mosaicSupplyChangeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				mosaicSupplyChangeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				mosaicSupplyChangeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

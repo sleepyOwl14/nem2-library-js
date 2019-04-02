@@ -62,6 +62,8 @@ export declare module SecretLockTransaction {
 
         addRecipient(recipient): Builder;
 
+        getSize(): number;
+
         build(): SecretLockTransaction;
     }
 }

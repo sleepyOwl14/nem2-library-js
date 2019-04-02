@@ -48,6 +48,10 @@ export declare module SecretProofTransaction {
 
         addProof(proof): Builder;
 
+        setByteProof(byteProof): void;
+
+        getSize(): number;
+
         build(): SecretProofTransaction;
     }
 }

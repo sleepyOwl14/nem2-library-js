@@ -20,6 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	SecretProofTransactionBufferPackage, 
@@ -111,13 +112,20 @@ export default class SecretProofTransaction extends VerifiableTransaction {
 				return this;
 			}
 
+			setByteProof(byteProof){
+				this.byteProof = byteProof;
+			}
+
+			getSize(){
+				return BufferSize.SecretProofBaseSize.main + this.byteProof.length;
+			}
+
 			build() {
 				var secretProofTransactionBuffer = new SecretProofTransactionBuffer();
 
-				var byteProof = convert.hexToUint8(this.proof);
-
+				this.setByteProof(convert.hexToUint8(this.proof));
 				// does not need to be in order 
-				secretProofTransactionBuffer.setSize(bufferUtils.uint_to_buffer(155 + byteProof.length, 4));
+				secretProofTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				secretProofTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				secretProofTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				secretProofTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
@@ -125,7 +133,7 @@ export default class SecretProofTransaction extends VerifiableTransaction {
 				
 				secretProofTransactionBuffer.setHashalgorithm(bufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
 				secretProofTransactionBuffer.setSecret(convert.hexToUint8(this.secret));
-				secretProofTransactionBuffer.setProof(byteProof);
+				secretProofTransactionBuffer.setProof(this.byteProof);
 	
 				var bytes = secretProofTransactionBuffer.serialize();
 

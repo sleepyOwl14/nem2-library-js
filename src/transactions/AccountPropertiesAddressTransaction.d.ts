@@ -44,6 +44,8 @@ export declare module AccountPropertiesAddressTransaction {
 
         addModifications(modifications): Builder;
 
+        getSize(): number;
+
         build(): AccountPropertiesAddressTransaction;
 
     }

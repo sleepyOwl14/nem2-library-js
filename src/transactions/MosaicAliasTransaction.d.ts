@@ -48,6 +48,8 @@ export declare module MosaicAliasTransaction {
 
         addMosaicId(mosaicName): Builder;
 
+        getSize(): number;
+
         build(): MosaicAliasTransaction;
 
     }

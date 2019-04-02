@@ -40,6 +40,8 @@ export declare module AggregateTransaction {
 
         addTransactions(transactions): Builder;
 
+        getSize(): number;
+
         build(): AggregateTransaction;
 
     }

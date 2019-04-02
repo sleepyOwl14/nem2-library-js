@@ -44,7 +44,8 @@ export declare module AccountLinkTransaction {
 
         addLinkAction(linkAction): Builder;
 
-        build(): AccountLinkTransaction;
+        getSize(): number;
 
+        build(): AccountLinkTransaction;
     }
 }

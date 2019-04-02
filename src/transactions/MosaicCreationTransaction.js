@@ -20,6 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	MosaicDefinitionTransactionBufferPackage,
@@ -174,11 +175,29 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 				return this;
 			}
 
+			setProperties(properties){
+				this.properties = properties;
+			}
+
+			getSize(){
+				return BufferSize.MosaicDefinitionBaseSize.main + ( BufferSize.MosaicProperty * this.properties.length);
+			}
+
 			build() {
 				var mosaicCreationTransactionBuffer = new MosaicCreationTransactionBuffer();
 
+				var properties = [];
+
+				var mosaicPropertyBuffer = new MosaicPropertyBuffer();
+				mosaicPropertyBuffer.setId(bufferUtils.uint_to_buffer(2 , 1)); // duration is ID 2
+				mosaicPropertyBuffer.setValue(bufferUtils.uint32Array_to_bufferArray(this.duration));
+
+				properties.push(mosaicPropertyBuffer);
+
+				this.setProperties(properties);
+
 				// does not need to be in order 
-				mosaicCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(144, 4));
+				mosaicCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				mosaicCreationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				mosaicCreationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				mosaicCreationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
@@ -187,15 +206,6 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 				mosaicCreationTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
 				mosaicCreationTransactionBuffer.setFlags(bufferUtils.uint_to_buffer(this.flags, 1));
 				mosaicCreationTransactionBuffer.setDivisibility(bufferUtils.uint_to_buffer(this.divisibility, 1));
-
-				var properties = [];
-
-				var mosaicPropertyBuffer = new MosaicPropertyBuffer();
-				mosaicPropertyBuffer.setId(bufferUtils.uint_to_buffer(2 , 1));
-				mosaicPropertyBuffer.setValue(bufferUtils.uint32Array_to_bufferArray(this.duration));
-
-				properties.push(mosaicPropertyBuffer);
-
 				mosaicCreationTransactionBuffer.setProperties(properties);
 			
 				var bytes = mosaicCreationTransactionBuffer.serialize();

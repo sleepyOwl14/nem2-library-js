@@ -20,6 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	SecretLockTransactionBufferPackage, 
@@ -150,6 +151,10 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.SecretLockBaseSize.main + BufferSize.UnresolvedMosaic;
+			}
+
 			build() {
 				var secretLockTransactionBuffer = new SecretLockTransactionBuffer();
 
@@ -159,7 +164,7 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 				mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
 
 				// does not need to be in order 
-				secretLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(202, 4));
+				secretLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				secretLockTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				secretLockTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				secretLockTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

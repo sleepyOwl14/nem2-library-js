@@ -17,10 +17,10 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	ModifyMultisigAccountTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
 	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
 
 import convert from '../coders/convert';
@@ -125,6 +125,10 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.ModifyMultisigAccountBaseSize.main + ( BufferSize.CosignatoryModification * this.modifications.length);
+			}
+
 			build() {
 				var multisigModificationTransactionBuffer = new MultisigModificationTransactionBuffer();
 
@@ -139,7 +143,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 				});
 
 				// does not need to be in order 
-				multisigModificationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(123 + (33 * this.modifications.length), 4));
+				multisigModificationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				multisigModificationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				multisigModificationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				multisigModificationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

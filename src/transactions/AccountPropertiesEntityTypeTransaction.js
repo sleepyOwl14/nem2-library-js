@@ -22,6 +22,7 @@ import BaseBuilder from './BaseBuilder';
 
 import convert from '../coders/convert';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AccountPropertiesEntityTypeTransactionBufferPackage,
@@ -115,6 +116,10 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 				return this;
 			}
 
+			getSize(){
+				return BufferSize.TransactionTypePropertyBaseSize.main + (BufferSize.TransactionTypePropertyModification * this.modifications.length);
+			}
+
 			build() {
 				var accountPropertiesEntityTypeTransactionBuffer = new AccountPropertiesEntityTypeTransactionBuffer();
 
@@ -129,7 +134,7 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 				});
 
 				// does not need to be in order 
-				accountPropertiesEntityTypeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(122 + (3 * this.modifications.length), 4));
+				accountPropertiesEntityTypeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				accountPropertiesEntityTypeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountPropertiesEntityTypeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountPropertiesEntityTypeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));

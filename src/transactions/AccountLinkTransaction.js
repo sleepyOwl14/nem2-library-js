@@ -22,6 +22,7 @@ import BaseBuilder from './BaseBuilder';
 
 import convert from '../coders/convert';
 import {
+	BufferSize,
 	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	AccountLinkTransactionBufferPackage, 
@@ -101,11 +102,16 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 				this.linkAction = linkAction;
 				return this;
 			}
+
+			getSize(){
+				return BufferSize.AccountLinkBaseSize.main;
+			}
+
 			build() {
 				var accountLinkTransactionBuffer = new AccountLinkTransactionBuffer();
 
 				// does not need to be in this order 
-				accountLinkTransactionBuffer.setSize(bufferUtils.uint_to_buffer(154, 4));
+				accountLinkTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
 				accountLinkTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
 				accountLinkTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
 				accountLinkTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
