@@ -28,7 +28,6 @@ export default class VerifiableTransaction {
 	/**
 	 * @constructor
 	 * @param {Uint8Array} bytes Uint8Array after flatbuffers.build.asUint8Array()
-	 * @param {module:schema/Schema} schema Schema definition corresponding to flatbuffer Schema
 	 */
 	constructor(bytes) {
 		this.bytes = bytes;

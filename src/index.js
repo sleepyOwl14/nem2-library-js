@@ -493,11 +493,6 @@ export {
         UnconfirmedTransactionsListener,
 
     /**
-     * @property {module:schema/Schema}
-     */
-        Schema,
-
-    /**
      * @property {module:transactions/CosignatureTransaction}
      */
         CosignatureTransaction,
