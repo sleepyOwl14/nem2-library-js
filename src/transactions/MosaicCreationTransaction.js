@@ -39,7 +39,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var MosaicCreationTransactionBufferData = MosaicCreationTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
 
 		return new BufferProperties(MosaicCreationTransactionBufferData);
 	}
@@ -56,7 +56,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var MosaicCreationTransactionBufferData = EmbeddedMosaicCreationTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
 
 		return new BufferProperties(MosaicCreationTransactionBufferData);
 	}
@@ -68,7 +68,7 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 		return this.loadEmbeddedFromBinary(binary);
 	}
 
-	static createBufferProperties(ExtendingClass){
+	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{
 			constructor(mosaicCreationTransactionBuffer){

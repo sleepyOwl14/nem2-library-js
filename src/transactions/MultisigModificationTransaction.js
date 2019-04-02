@@ -39,7 +39,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var multisigModificationTransactionBufferData = MultisigModificationTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
 
 		return new BufferProperties(multisigModificationTransactionBufferData);
 	}
@@ -56,7 +56,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var multisigModificationTransactionBufferData = EmbeddedMultisigModificationTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
 
 		return new BufferProperties(multisigModificationTransactionBufferData);
 	}
@@ -68,7 +68,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 		return this.loadEmbeddedFromBinary(binary);
 	}
 
-	static createBufferProperties(ExtendingClass){
+	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{
 			constructor(multisigModificationTransactionBuffer){

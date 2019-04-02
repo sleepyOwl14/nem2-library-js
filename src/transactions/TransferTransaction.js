@@ -41,7 +41,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var TransferTransactionBufferData = TransferTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
 
 		return new BufferProperties(TransferTransactionBufferData);
 	}
@@ -58,7 +58,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var TransferTransactionBufferData = EmbeddedTransferTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
 
 		return new BufferProperties(TransferTransactionBufferData);
 	}
@@ -70,7 +70,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 		return this.loadEmbeddedFromBinary(binary);
 	}
 
-	static createBufferProperties(ExtendingClass){
+	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{
 			constructor(transferTransactionBuffer){

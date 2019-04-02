@@ -41,7 +41,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var NamespaceCreationTransactionBufferData = NamespaceCreationTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
 
 		return new BufferProperties(NamespaceCreationTransactionBufferData);
 	}
@@ -58,7 +58,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
 		var NamespaceCreationTransactionBuffer = EmbeddedNamespaceCreationTransactionBuffer.loadFromBinary(consumableBuffer);
 
-		var BufferProperties = this.createBufferProperties(CommonEmbeddedBufferProperties);
+		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
 
 		return new BufferProperties(NamespaceCreationTransactionBuffer);
 	}
@@ -70,7 +70,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 		return this.loadEmbeddedFromBinary(binary);
 	}
 
-	static createBufferProperties(ExtendingClass){
+	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{
 			constructor(namespaceCreationTransactionBuffer){
