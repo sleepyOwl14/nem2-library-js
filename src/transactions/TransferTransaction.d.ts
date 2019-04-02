@@ -25,20 +25,9 @@ export declare class TransferTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module TransferTransaction {
-
-    class BufferProperties{
-
-        getRecipient(): String;
-    
-        getMessage(): String;
-    
-        getMosaics(): Array;
-    }
 
     class Builder extends BaseBuilder {
 

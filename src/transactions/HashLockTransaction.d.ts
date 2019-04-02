@@ -25,24 +25,9 @@ export declare class HashLockTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module HashLockTransaction {
-
-    class BufferProperties{
-
-        getMosaic(): Array;
-
-        getMosaicId(): Array;
-
-        getMosaicAmount(): Array;
-    
-        getDuration(): Array;
-    
-        getHash() : String;
-    }
 
     class Builder extends BaseBuilder{
 

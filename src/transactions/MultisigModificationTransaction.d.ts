@@ -25,20 +25,9 @@ export declare class MultisigModificationTransaction extends VerifiableTransacti
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MultisigModificationTransaction {
-
-    class BufferProperties{
-
-        getMinRemovalDelta(): number;
-    
-        getMinApprovalDelta(): number;
-    
-        getModifications(): Array;
-    }
 
     class Builder extends BaseBuilder{
 

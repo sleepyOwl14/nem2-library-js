@@ -25,24 +25,9 @@ export declare class NamespaceCreationTransaction extends VerifiableTransaction 
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module NamespaceCreationTransaction {
-
-    class BufferProperties{
-
-        getNamespacetype(): number;
-    
-        getDuration(): Array | null;
-    
-        getParentid(): Array | null;
-    
-        getNamespaceid(): Array;
-    
-        getName() : String;
-    }
 
     class Builder extends BaseBuilder{
 

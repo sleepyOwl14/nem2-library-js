@@ -25,26 +25,9 @@ export declare class MosaicCreationTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MosaicCreationTransaction {
-
-    class BufferProperties{
-
-        getMosaicNonce(): Array;
-    
-        getMosaicId(): Array;
-    
-        getFlags(): number;
-
-        getDivisibility(): number; 
-
-        getProperties(): Array;
-
-        getDuration(): Array;
-    }
 
     class Builder extends BaseBuilder{
 

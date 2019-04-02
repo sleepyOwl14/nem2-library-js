@@ -25,18 +25,9 @@ export declare class AccountPropertiesMosaicTransaction extends VerifiableTransa
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AccountPropertiesMosaicTransaction {
-
-    class BufferProperties{
-    
-        getPropertyType(): Number;
-    
-        getModifications():  Array;
-    }
 
     class Builder extends BaseBuilder{
 

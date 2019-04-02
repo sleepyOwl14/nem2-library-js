@@ -25,28 +25,9 @@ export declare class SecretLockTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module SecretLockTransaction {
-
-    class BufferProperties{
-
-        getMosaic(): object;
-
-        getMosaicId(): Array;
-
-        getMosaicAmount(): Array;
-
-        getDuration(): Array;
-
-        getHashAlgorithm(): number;
-    
-        getSecret(): String;
-    
-        getRecipient(): String;
-    }
 
     class Builder extends BaseBuilder {
 

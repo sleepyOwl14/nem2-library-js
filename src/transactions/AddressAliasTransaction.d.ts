@@ -25,20 +25,9 @@ export declare class AddressAliasTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AddressAliasTransaction {
-
-    class BufferProperties{
-    
-        getAliasAction(): Number;
-    
-        getNamespaceId(): Array;
-    
-        getAddress(): String;
-    }
 
     class Builder extends BaseBuilder{
 

@@ -25,20 +25,9 @@ export declare class SecretProofTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module SecretProofTransaction {
-
-    class BufferProperties{
-
-        getHashAlgorithm(): number;
-    
-        getSecret(): string;
-    
-        getProof(): string;
-    }
 
     class Builder extends BaseBuilder{
 

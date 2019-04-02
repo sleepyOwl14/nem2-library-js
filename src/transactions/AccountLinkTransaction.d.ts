@@ -25,18 +25,9 @@ export declare class AccountLinkTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AccountLinkTransaction {
-
-    class BufferProperties{
-    
-        getRemoteAccountKey(): String;
-
-        getLinkAction(): Number;
-    }
 
     class Builder extends BaseBuilder{
 

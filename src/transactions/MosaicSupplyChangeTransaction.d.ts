@@ -25,20 +25,9 @@ export declare class MosaicSupplyChangeTransaction extends VerifiableTransaction
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MosaicSupplyChangeTransaction {
-
-    class BufferProperties{
-
-        getMosaicId(): Array;
-    
-        getDirection(): number;
-    
-        getDelta(): Array;
-    }
 
     class Builder extends BaseBuilder{
 

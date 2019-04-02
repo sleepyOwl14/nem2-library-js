@@ -23,18 +23,9 @@ export declare class AggregateTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
 
     static loadFromPayload(string): BufferProperties; 
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AggregateTransaction {
-
-    class BufferProperties{
-
-        getTransactionsSize(): number;
-    
-        getTransactions(): Array;
-    }
 
     class Builder extends BaseBuilder{
 

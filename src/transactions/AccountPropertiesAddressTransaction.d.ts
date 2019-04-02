@@ -25,18 +25,9 @@ export declare class AccountPropertiesAddressTransaction extends VerifiableTrans
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AccountPropertiesAddressTransaction {
-
-    class BufferProperties{
-    
-        getPropertyType(): Number;
-    
-        getModifications():  Array;
-    }
 
     class Builder extends BaseBuilder{
         

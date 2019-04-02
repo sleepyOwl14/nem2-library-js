@@ -25,18 +25,9 @@ export declare class AccountPropertiesEntityTypeTransaction extends VerifiableTr
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module AccountPropertiesEntityTypeTransaction {
-
-    class BufferProperties{
-    
-        getPropertyType(): Number;
-    
-        getModifications():  Array;
-    }
 
     class Builder extends BaseBuilder{
 

@@ -25,20 +25,9 @@ export declare class MosaicAliasTransaction extends VerifiableTransaction {
     static loadEmbeddedFromBinary(binary): BufferProperties; 
 
     static loadEmbeddedFromPayload(string): BufferProperties;
-    
-    static createBufferProperties(CommonBufferProperties): BufferProperties;
 }
 
 export declare module MosaicAliasTransaction {
-
-    class BufferProperties{
-
-        getAliasaction(): number;
-
-        getNamespaceid() : Array;
-    
-        getMosaicid(): Array;
-    }
 
     class Builder extends BaseBuilder{
 
