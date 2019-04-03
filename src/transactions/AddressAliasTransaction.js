@@ -17,13 +17,10 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 
-import convert from '../coders/convert';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AddressAliasTransactionBufferPackage,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	AddressAliasTransactionBufferPackage} from '../buffers';
 
 const addressEncoder = require('../coders/address').default;
 
@@ -35,37 +32,19 @@ const EmbeddedAddressAliasTransactionBuffer = AddressAliasTransactionBufferPacka
 export default class AddressAliasTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AddressAliasTransactionBufferData = AddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(AddressAliasTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, AddressAliasTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedAddressAliasTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AddressAliasTransactionBufferData = EmbeddedAddressAliasTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(AddressAliasTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, AddressAliasTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedAddressAliasTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

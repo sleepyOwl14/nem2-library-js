@@ -22,11 +22,8 @@ import BaseBuilder from './BaseBuilder';
 import {
 	OptionalFieldSize,
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	RegisterNamespaceTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	RegisterNamespaceTransactionBufferPackage} from '../buffers';
 
 import convert from '../coders/convert';
 
@@ -37,37 +34,19 @@ const NamespaceType = RegisterNamespaceTransactionBufferPackage.NamespaceType;
 export default class NamespaceCreationTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var NamespaceCreationTransactionBufferData = NamespaceCreationTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(NamespaceCreationTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, NamespaceCreationTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedNamespaceCreationTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var NamespaceCreationTransactionBuffer = EmbeddedNamespaceCreationTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(NamespaceCreationTransactionBuffer);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, NamespaceCreationTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedNamespaceCreationTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

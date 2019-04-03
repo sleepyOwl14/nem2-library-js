@@ -21,11 +21,9 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	HashLockTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	UnresolvedMosaicBuffer} from '../buffers';
 
 import convert from '../coders/convert';
 
@@ -35,37 +33,19 @@ const EmbeddedHashLockTransactionBuffer = HashLockTransactionBufferPackage.embed
 export default class HashLockTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var HashLockTransactionBufferData = HashLockTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(HashLockTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, HashLockTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedHashLockTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var HashLockTransactionBufferData = EmbeddedHashLockTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(HashLockTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, HashLockTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedHashLockTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

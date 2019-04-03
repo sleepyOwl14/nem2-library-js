@@ -23,10 +23,8 @@ import BaseBuilder from './BaseBuilder';
 import convert from '../coders/convert';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountLinkTransactionBufferPackage, 
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	AccountLinkTransactionBufferPackage} from '../buffers';
 
 const AccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.main;
 const EmbeddedAccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.embedded;
@@ -34,37 +32,19 @@ const EmbeddedAccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage
 export default class AccountLinkTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountLinkTransactionBufferData = AccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(AccountLinkTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, AccountLinkTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedAccountLinkTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountLinkTransactionBufferData = EmbeddedAccountLinkTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(AccountLinkTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, AccountLinkTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedAccountLinkTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

@@ -37,35 +37,25 @@ import SecretLockTransaction from './SecretLockTransaction';
 import SecretProofTransaction from './SecretProofTransaction';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
-    bufferUtils,
+	bufferUtils,
 	AggregateTransactionBufferPackage, 
 	CommonBufferProperties} from '../buffers';
-
-import convert from '../coders/convert';
 
 const AggregateTransactionBuffer = AggregateTransactionBufferPackage.main;
 
 export default class AggregateTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AggregateTransactionBufferData = AggregateTransactionBuffer.loadAggregateFromBinary(consumableBuffer);
-
-		return new this.BufferProperties(AggregateTransactionBufferData);
+		return super.loadFromBinary(binary, AggregateTransactionBuffer);
 	}
 
 	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromPayload(payload, AggregateTransactionBuffer);
 	}
 
-	static get BufferProperties(){
+	static _createBufferProperties(){
 
-		class BufferProperties extends CommonBufferProperties{
+		return class BufferProperties extends CommonBufferProperties{
 			constructor(aggeragateTransactionBuffer){
 				super(aggeragateTransactionBuffer);
 			}
@@ -165,8 +155,6 @@ export default class AggregateTransaction extends VerifiableTransaction {
 				return transactionsData;
 			}
 		}
-
-		return BufferProperties;
 	}
 
 	static get Builder() {
@@ -202,7 +190,7 @@ export default class AggregateTransaction extends VerifiableTransaction {
 				aggregateTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
 				aggregateTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
 				aggregateTransactionBuffer.setTransactions(this.transactions);
-			
+
 				var bytes = aggregateTransactionBuffer.serializeAggregate();
 
 				return new AggregateTransaction(bytes);

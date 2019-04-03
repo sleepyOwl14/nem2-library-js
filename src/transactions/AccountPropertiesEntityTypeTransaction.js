@@ -20,13 +20,10 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 
-import convert from '../coders/convert';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountPropertiesEntityTypeTransactionBufferPackage,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	AccountPropertiesEntityTypeTransactionBufferPackage} from '../buffers';
 
 const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.TransactionTypePropertyModificationBuffer;
 const AccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.main;
@@ -35,37 +32,19 @@ const EmbeddedAccountPropertiesEntityTypeTransactionBuffer = AccountPropertiesEn
 export default class AccountPropertiesEntityTypeTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(AccountPropertiesEntityTypeTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, AccountPropertiesEntityTypeTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedAccountPropertiesEntityTypeTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertiesEntityTypeTransactionBufferData = EmbeddedAccountPropertiesEntityTypeTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(AccountPropertiesEntityTypeTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, AccountPropertiesEntityTypeTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedAccountPropertiesEntityTypeTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

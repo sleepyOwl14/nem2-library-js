@@ -21,12 +21,9 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	TransferTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
-	CommonBufferProperties, 
-	CommonEmbeddedBufferProperties} from '../buffers';
+	UnresolvedMosaicBuffer} from '../buffers';
 
 import convert from '../coders/convert';
 const address = require('../coders/address').default;
@@ -37,37 +34,19 @@ const EmbeddedTransferTransactionBuffer = TransferTransactionBufferPackage.embed
 export default class TransferTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var TransferTransactionBufferData = TransferTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(TransferTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, TransferTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedTransferTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var TransferTransactionBufferData = EmbeddedTransferTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(TransferTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, TransferTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedTransferTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

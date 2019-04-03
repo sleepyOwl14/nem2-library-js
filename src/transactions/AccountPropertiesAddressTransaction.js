@@ -24,10 +24,8 @@ import convert from '../coders/convert';
 
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	AccountPropertiesAddressBufferPackage,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	AccountPropertiesAddressBufferPackage} from '../buffers';
 
 const AddressPropertyModificationBuffer = AccountPropertiesAddressBufferPackage.AddressPropertyModificationBuffer;
 const AccountPropertiesAddressTransactionBuffer = AccountPropertiesAddressBufferPackage.main;
@@ -38,37 +36,19 @@ const address = require('../coders/address').default;
 export default class AccountPropertiesAddressTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertyAddressTransactionBufferData = AccountPropertiesAddressTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(AccountPropertyAddressTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, AccountPropertiesAddressTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedAccountPropertiesAddressTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var AccountPropertyAddressTransactionBufferData = EmbeddedAccountPropertiesAddressTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(AccountPropertyAddressTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, AccountPropertiesAddressTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedAccountPropertiesAddressTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

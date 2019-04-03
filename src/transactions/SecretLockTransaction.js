@@ -21,11 +21,9 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
 	SecretLockTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	UnresolvedMosaicBuffer} from '../buffers';
 import address from '../coders/address';
 import convert from '../coders/convert';
 
@@ -35,37 +33,19 @@ const EmbeddedSecretLockTransactionBuffer = SecretLockTransactionBufferPackage.e
 export default class SecretLockTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var SecretLockTransactionBufferData = SecretLockTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(SecretLockTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, SecretLockTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedSecretLockTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var SecretLockTransactionBufferData = EmbeddedSecretLockTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(SecretLockTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, SecretLockTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedSecretLockTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

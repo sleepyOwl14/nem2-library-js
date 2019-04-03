@@ -17,6 +17,11 @@
 import convert from '../coders/convert';
 import sha3Hasher from '../crypto/sha3Hasher';
 
+import {
+	Uint8ArrayConsumableBuffer,
+	CommonBufferProperties, 
+	CommonEmbeddedBufferProperties} from '../buffers';
+
 const KeyPair = require('../crypto/keyPair');
 
 /**
@@ -110,5 +115,71 @@ export default class VerifiableTransaction {
 			(resultBytes.length + 4 & 0x00ff0000) >> 16,
 			(resultBytes.length + 4 & 0xff000000) >> 24
 		]))).concat(resultBytes);
+	}
+
+	/**
+	 * Load and assign properties by TransactionPayload bytes
+	 * @param {Uint8Array} TransactionPayload in bytes
+	 * @param {any} ClassName of Transaction to load from 
+	 * @returns {BufferProperties|null} BufferProperties
+	 */
+	static loadFromBinary(binary, className){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var TransactionBufferData = className.loadFromBinary(consumableBuffer);
+
+		if(this._createBufferProperties){
+			var BufferProperties = this._createBufferProperties(CommonBufferProperties);
+
+			return new BufferProperties(TransactionBufferData);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Convert payload to bytes, then load and assign properties by loadFromBinary method
+	 * @param {string} TransactionPayload in hex
+	 * @param {any} ClassName of Transaction to load from 
+	 * @returns {BufferProperties|null} BufferProperties
+	 */
+	static loadFromPayload(payload, className){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadFromBinary(binary, className);
+	}
+
+	/**
+	 * Load and assign properties by embedded TransactionPayload bytes
+	 * @param {Uint8Array} Embedded TransactionPayload in bytes
+	 * @param {any} ClassName of Transaction to load from 
+	 * @returns {BufferProperties|null} BufferProperties
+	 */
+	static loadEmbeddedFromBinary(binary, className){
+
+		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
+		var TransactionBufferData = className.loadFromBinary(consumableBuffer);
+
+		if(this._createBufferProperties){
+			var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
+
+			return new BufferProperties(TransactionBufferData);
+		}
+
+		return null;
+	}
+
+	/**
+	 * Convert embedded payload to bytes, then load and assign properties by loadEmbeddedFromBinary method
+	 * @param {string} Embedded TransactionPayload in hex 
+	 * @param {any} ClassName of Transaction to load from 
+	 * @returns {BufferProperties|null} BufferProperties
+	 */
+	static loadEmbeddedFromPayload(payload, className){
+
+		var binary = convert.hexToUint8(payload);
+
+		return this.loadEmbeddedFromBinary(binary, className);
 	}
 }

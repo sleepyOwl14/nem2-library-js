@@ -18,53 +18,31 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	MosaicAliasTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	MosaicAliasTransactionBufferPackage} from '../buffers';
 
 const MosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.main;
 const EmbeddedMosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.embedded;
 
-import convert from '../coders/convert';
 /**
  * @module transactions/MosaicAliasTransaction
  */
 export default class MosaicAliasTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicAliasTransactionBufferData = MosaicAliasTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(MosaicAliasTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, MosaicAliasTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedMosaicAliasTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicAliasTransactionBufferDataData = EmbeddedMosaicAliasTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(MosaicAliasTransactionBufferDataData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, MosaicAliasTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedMosaicAliasTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

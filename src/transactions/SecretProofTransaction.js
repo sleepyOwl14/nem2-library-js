@@ -21,11 +21,8 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	SecretProofTransactionBufferPackage, 
-	UnresolvedMosaicBuffer,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	SecretProofTransactionBufferPackage} from '../buffers';
 import convert from '../coders/convert';
 
 const SecretProofTransactionBuffer = SecretProofTransactionBufferPackage.main;
@@ -34,37 +31,19 @@ const EmbeddedSecretProofTransactionBuffer = SecretProofTransactionBufferPackage
 export default class SecretProofTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var SecretProofTransactionBufferData = SecretProofTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(SecretProofTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, SecretProofTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedSecretProofTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var SecretProofTransactionBufferData = EmbeddedSecretProofTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(SecretProofTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, SecretProofTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedSecretProofTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

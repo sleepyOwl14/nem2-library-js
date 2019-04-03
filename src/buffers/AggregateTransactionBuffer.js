@@ -48,11 +48,11 @@ class AggregateTransactionBuffer extends TransactionBuffer{
         this.transactions = transactions;
     }
 
-    static loadAggregateFromBinary(consumableBuffer) {
+    static loadFromBinary(consumableBuffer) {
 
         var object = new AggregateTransactionBuffer();
 
-        var transactionBuffer = this.loadFromBinary(consumableBuffer);
+        var transactionBuffer = TransactionBuffer.loadFromBinary(consumableBuffer);
 
         object.size = transactionBuffer.getSize();
         object.signature = transactionBuffer.getSignature();

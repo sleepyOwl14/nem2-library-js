@@ -18,12 +18,8 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	MosaicSupplyChangeTransactionBufferPackage,
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
-
-import convert from '../coders/convert';
+	MosaicSupplyChangeTransactionBufferPackage} from '../buffers';
 
 const MosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.main;
 const EmbeddedMosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.embedded;
@@ -34,37 +30,19 @@ const EmbeddedMosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactio
 export default class MosaicSupplyChangeTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicSupplyChangeTransactionBufferData = MosaicSupplyChangeTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(MosaicSupplyChangeTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, MosaicSupplyChangeTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedMosaicSupplyChangeTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var MosaicSupplyChangeTransactionBufferData = EmbeddedMosaicSupplyChangeTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(MosaicSupplyChangeTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, MosaicSupplyChangeTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedMosaicSupplyChangeTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){

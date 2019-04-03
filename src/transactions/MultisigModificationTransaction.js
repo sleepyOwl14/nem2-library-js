@@ -18,10 +18,8 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
 	BufferSize,
-	Uint8ArrayConsumableBuffer,
     bufferUtils,
-	ModifyMultisigAccountTransactionBufferPackage, 
-	CommonBufferProperties, CommonEmbeddedBufferProperties} from '../buffers';
+	ModifyMultisigAccountTransactionBufferPackage} from '../buffers';
 
 import convert from '../coders/convert';
 
@@ -35,37 +33,19 @@ const CosignatoryModificationBuffer = ModifyMultisigAccountTransactionBufferPack
 export default class MultisigModificationTransaction extends VerifiableTransaction {
 
 	static loadFromBinary(binary){
-
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var multisigModificationTransactionBufferData = MultisigModificationTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonBufferProperties);
-
-		return new BufferProperties(multisigModificationTransactionBufferData);
-	}
-
-	static loadFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary);
+		return super.loadFromBinary(binary, MultisigModificationTransactionBuffer);
 	}
 
 	static loadEmbeddedFromBinary(binary){
+		return super.loadEmbeddedFromBinary(binary, EmbeddedMultisigModificationTransactionBuffer);
+	}
 
-		var consumableBuffer = new Uint8ArrayConsumableBuffer(binary);
-		var multisigModificationTransactionBufferData = EmbeddedMultisigModificationTransactionBuffer.loadFromBinary(consumableBuffer);
-
-		var BufferProperties = this._createBufferProperties(CommonEmbeddedBufferProperties);
-
-		return new BufferProperties(multisigModificationTransactionBufferData);
+	static loadFromPayload(payload){
+		return super.loadFromPayload(payload, MultisigModificationTransactionBuffer);
 	}
 
 	static loadEmbeddedFromPayload(payload){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadEmbeddedFromBinary(binary);
+		return super.loadEmbeddedFromPayload(payload, EmbeddedMultisigModificationTransactionBuffer);
 	}
 
 	static _createBufferProperties(ExtendingClass){
