@@ -20,8 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	HashLockTransactionBufferPackage, 
 	UnresolvedMosaicBuffer} from '../buffers';
 
@@ -60,8 +59,8 @@ export default class HashLockTransaction extends VerifiableTransaction {
 				var mosaic = this.bufferClass.getMosaic();
 
 				var mosaicData = {
-					mosaicId : bufferUtils.bufferArray_to_uint32Array(mosaic.mosaicId),
-					amount : bufferUtils.bufferArray_to_uint32Array(mosaic.amount),
+					mosaicId : BufferUtils.bufferArray_to_uint32Array(mosaic.mosaicId),
+					amount : BufferUtils.bufferArray_to_uint32Array(mosaic.amount),
 				};
 
 				return mosaicData;
@@ -76,7 +75,7 @@ export default class HashLockTransaction extends VerifiableTransaction {
 			}
 		
 			getDuration(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDuration());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDuration());
 			}
 		
 			getHash(){
@@ -114,27 +113,22 @@ export default class HashLockTransaction extends VerifiableTransaction {
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.HashLockBaseSize.main + BufferSize.UnresolvedMosaic;
-			}
-
 			build() {
 
 				var hashLockTransactionBuffer = new HashLockTransactionBuffer();
 
 				var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-				mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
-				mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
+				mosaicBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicBuffer.setAmount(BufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
 
 				// does not need to be in order 
-				hashLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				hashLockTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				hashLockTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				hashLockTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				hashLockTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				hashLockTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				hashLockTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				hashLockTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				hashLockTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				hashLockTransactionBuffer.setMosaic(mosaicBuffer);
-				hashLockTransactionBuffer.setDuration(bufferUtils.uint32Array_to_bufferArray(this.duration));
+				hashLockTransactionBuffer.setDuration(BufferUtils.uint32Array_to_bufferArray(this.duration));
 				hashLockTransactionBuffer.setHash(convert.hexToUint8(this.hash));
 			
 				var bytes = hashLockTransactionBuffer.serialize();

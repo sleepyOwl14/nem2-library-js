@@ -17,8 +17,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	MosaicSupplyChangeTransactionBufferPackage} from '../buffers';
 
 const MosaicSupplyChangeTransactionBuffer = MosaicSupplyChangeTransactionBufferPackage.main;
@@ -53,15 +52,15 @@ export default class MosaicSupplyChangeTransaction extends VerifiableTransaction
 			}
 
 			getMosaicId(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
 			}
 
 			getDirection(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getDirection());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getDirection());
 			}
 		
 			getDelta(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDelta());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDelta());
 			}
 		}
 	}
@@ -90,22 +89,17 @@ export default class MosaicSupplyChangeTransaction extends VerifiableTransaction
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.MosaicSupplyChangeBaseSize.main;
-			}
-
 			build() {
 				var mosaicSupplyChangeTransactionBuffer = new MosaicSupplyChangeTransactionBuffer();
 
 				// does not need to be in order 
-				mosaicSupplyChangeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize() , 4));
-				mosaicSupplyChangeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				mosaicSupplyChangeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				mosaicSupplyChangeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				mosaicSupplyChangeTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				mosaicSupplyChangeTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
-				mosaicSupplyChangeTransactionBuffer.setDirection(bufferUtils.uint_to_buffer(this.direction, 1));
-				mosaicSupplyChangeTransactionBuffer.setDelta(bufferUtils.uint32Array_to_bufferArray(this.delta));
+				mosaicSupplyChangeTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				mosaicSupplyChangeTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				mosaicSupplyChangeTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				mosaicSupplyChangeTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				mosaicSupplyChangeTransactionBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicSupplyChangeTransactionBuffer.setDirection(BufferUtils.uint_to_buffer(this.direction, 1));
+				mosaicSupplyChangeTransactionBuffer.setDelta(BufferUtils.uint32Array_to_bufferArray(this.delta));
 			
 				var bytes = mosaicSupplyChangeTransactionBuffer.serialize();
 

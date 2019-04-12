@@ -15,12 +15,12 @@
  */
 
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 
-const concat_typedarrays = bufferUtils.concat_typedarrays;
-const fit_bytearray = bufferUtils.fit_bytearray;
-const buffer_to_uint = bufferUtils.buffer_to_uint;
-const uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
 
 class SecretLockTransactionBodyBuffer {
     getMosaic = () => {
@@ -191,6 +191,11 @@ class SecretLockTransactionBuffer {
         this.recipient = recipient
     }
 
+    calculateSize = () => {
+        var size = 202
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new SecretLockTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -213,7 +218,7 @@ class SecretLockTransactionBuffer {
         object.duration = duration
         var hashAlgorithm = consumableBuffer.get_bytes(1)
         object.hashAlgorithm = hashAlgorithm
-        var secret = consumableBuffer.get_bytes(32) 
+        var secret = consumableBuffer.get_bytes(32)
         object.secret = secret
         var recipient = consumableBuffer.get_bytes(25)
         object.recipient = recipient
@@ -222,6 +227,7 @@ class SecretLockTransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysignature = fit_bytearray(this.signature, 64)
@@ -323,6 +329,11 @@ class EmbeddedSecretLockTransactionBuffer {
         this.recipient = recipient
     }
 
+    calculateSize = () => {
+        var size = 122
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new EmbeddedSecretLockTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -348,6 +359,7 @@ class EmbeddedSecretLockTransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysigner = fit_bytearray(this.signer, 32)

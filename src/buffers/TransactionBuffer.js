@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 
-const concat_typedarrays = bufferUtils.concat_typedarrays;
-const fit_bytearray = bufferUtils.fit_bytearray;
-const buffer_to_uint = bufferUtils.buffer_to_uint;
-const uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
 
 class TransactionBuffer {
     getSize = () => {
@@ -78,6 +78,11 @@ class TransactionBuffer {
         this.deadline = deadline
     }
 
+    calculateSize = () => {
+        var size = 120
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new TransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -99,6 +104,7 @@ class TransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysignature = fit_bytearray(this.signature, 64)
@@ -151,6 +157,11 @@ class EmbeddedTransactionBuffer {
         this.type = type
     }
 
+    calculateSize = () => {
+        var size = 40
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new EmbeddedTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -166,6 +177,7 @@ class EmbeddedTransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysigner = fit_bytearray(this.signer, 32)

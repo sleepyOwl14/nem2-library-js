@@ -22,8 +22,7 @@ import BaseBuilder from './BaseBuilder';
 
 import convert from '../coders/convert';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	AccountLinkTransactionBufferPackage} from '../buffers';
 
 const AccountLinkTransactionBuffer = AccountLinkTransactionBufferPackage.main;
@@ -59,7 +58,7 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 			}
 		
 			getLinkAction(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getLinkaction());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getLinkaction());
 			}
 		}
 	}
@@ -83,21 +82,16 @@ export default class AccountLinkTransaction extends VerifiableTransaction {
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.AccountLinkBaseSize.main;
-			}
-
 			build() {
 				var accountLinkTransactionBuffer = new AccountLinkTransactionBuffer();
 
 				// does not need to be in this order 
-				accountLinkTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				accountLinkTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				accountLinkTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountLinkTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				accountLinkTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				accountLinkTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				accountLinkTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				accountLinkTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountLinkTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				accountLinkTransactionBuffer.setRemoteaccountkey(this.remoteAccountKey);
-				accountLinkTransactionBuffer.setLinkaction(bufferUtils.uint_to_buffer(this.linkAction,1));
+				accountLinkTransactionBuffer.setLinkaction(BufferUtils.uint_to_buffer(this.linkAction,1));
 			
 				var bytes = accountLinkTransactionBuffer.serialize();
 

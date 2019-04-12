@@ -20,8 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	TransferTransactionBufferPackage, 
 	UnresolvedMosaicBuffer} from '../buffers';
 
@@ -69,7 +68,7 @@ export default class TransferTransaction extends VerifiableTransaction {
 				var messageBytes = this.bufferClass.getMessage();
 
 				var message = convert.hexToUtf8(convert.uint8ToHex(messageBytes.subarray(1)));
-				var messageType = bufferUtils.buffer_to_uint(messageBytes.subarray(0, 1));
+				var messageType = BufferUtils.buffer_to_uint(messageBytes.subarray(0, 1));
 
 				var messageObj = {
 					type: messageType,
@@ -86,8 +85,8 @@ export default class TransferTransaction extends VerifiableTransaction {
 
 				for(var i = 0; i < mosaics.length; i++){
 					var mosaicData = {
-						id : bufferUtils.bufferArray_to_uint32Array(mosaics[i].mosaicId),
-						amount : bufferUtils.bufferArray_to_uint32Array(mosaics[i].amount),
+						id : BufferUtils.bufferArray_to_uint32Array(mosaics[i].mosaicId),
+						amount : BufferUtils.bufferArray_to_uint32Array(mosaics[i].amount),
 					};
 					mosaicsData.push(mosaicData);
 				}
@@ -135,10 +134,6 @@ export default class TransferTransaction extends VerifiableTransaction {
 				this.bytePayload = bytePayload;
 			}
 
-			getSize(){
-				return BufferSize.TransferBaseSize.main + (BufferSize.UnresolvedMosaic * this.mosaics.length) + this.bytePayload.length;
-			}
-
 			build() {
 				var transferTransactionBuffer = new TransferTransactionBuffer();
 
@@ -146,8 +141,8 @@ export default class TransferTransaction extends VerifiableTransaction {
 				this.mosaics.forEach(mosaic => {
 					var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-					mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(mosaic.id));
-					mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(mosaic.amount));
+					mosaicBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(mosaic.id));
+					mosaicBuffer.setAmount(BufferUtils.uint32Array_to_bufferArray(mosaic.amount));
 					mosaics.push(mosaicBuffer);
 
 				});
@@ -155,16 +150,15 @@ export default class TransferTransaction extends VerifiableTransaction {
 				var messagePayload = convert.hexToUint8(convert.utf8ToHex(this.message.payload));
 
 				// extra byte for message type
-				var bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([this.message.type]), messagePayload);
+				var bytePayload = BufferUtils.concat_typedarrays( Uint8Array.of([this.message.type]), messagePayload);
 
 				this.setBytePayload(bytePayload);
 
 				// does not need to be in order 
-				transferTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				transferTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				transferTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				transferTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				transferTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				transferTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				transferTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				transferTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				transferTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				transferTransactionBuffer.setRecipient(this.recipient);
 				transferTransactionBuffer.setMessage(this.bytePayload);
 				transferTransactionBuffer.setMosaics(mosaics);

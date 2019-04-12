@@ -21,8 +21,7 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	MosaicPropertyTransactionBufferPackage} from '../buffers';
 
 const MosaicPropertyModificationBuffer = MosaicPropertyTransactionBufferPackage.MosaicPropertyModificationBuffer;
@@ -55,7 +54,7 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 			}
 		
 			getPropertyType(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
 			}
 		
 			getModifications(){
@@ -65,8 +64,8 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 
 				for(var i = 0; i < modifications.length; i++){
 					var modification = {
-						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
-						value : bufferUtils.bufferArray_to_uint32Array(modifications[i].value),
+						modificationType : BufferUtils.buffer_to_uint(modifications[i].modificationType),
+						value : BufferUtils.bufferArray_to_uint32Array(modifications[i].value),
 					};
 					modificationsData.push(modification);
 				}
@@ -95,10 +94,6 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.MosaicPropertyBaseSize.main + (BufferSize.MosaicPropertyModification * this.modifications.length);
-			}
-
 			build() {
 				var accountPropertiesMosaicTransactionBuffer = new AccountPropertiesMosaicTransactionBuffer();
 
@@ -107,18 +102,17 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 					
 					var mosaicPropertyModificationBuffer = new MosaicPropertyModificationBuffer();
 
-					mosaicPropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType, 1));
-					mosaicPropertyModificationBuffer.setValue(bufferUtils.uint32Array_to_bufferArray(modification.value));
+					mosaicPropertyModificationBuffer.setModificationtype(BufferUtils.uint_to_buffer(modification.modificationType, 1));
+					mosaicPropertyModificationBuffer.setValue(BufferUtils.uint32Array_to_bufferArray(modification.value));
 					modificationsArray.push(mosaicPropertyModificationBuffer);
 				});
 
 				// does not need to be in order 
-				accountPropertiesMosaicTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				accountPropertiesMosaicTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				accountPropertiesMosaicTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountPropertiesMosaicTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				accountPropertiesMosaicTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				accountPropertiesMosaicTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
+				accountPropertiesMosaicTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				accountPropertiesMosaicTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				accountPropertiesMosaicTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountPropertiesMosaicTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				accountPropertiesMosaicTransactionBuffer.setPropertytype(BufferUtils.uint_to_buffer(this.propertyType,1));
 				accountPropertiesMosaicTransactionBuffer.setModifications(modificationsArray);
 			
 				var bytes = accountPropertiesMosaicTransactionBuffer.serialize();

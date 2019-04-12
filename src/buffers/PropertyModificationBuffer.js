@@ -14,6 +14,13 @@
  * limitations under the License.
  */
 
+import BufferUtils from './BufferUtils';
+
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
+
 class PropertyModificationBuffer {
     getModificationtype = () => {
         return this.modificationType

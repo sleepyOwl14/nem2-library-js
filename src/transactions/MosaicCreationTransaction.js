@@ -20,8 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	MosaicDefinitionTransactionBufferPackage} from '../buffers';
 
 const MosaicCreationTransactionBuffer = MosaicDefinitionTransactionBufferPackage.main;
@@ -58,15 +57,15 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 			}
 		
 			getMosaicId(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
 			}
 		
 			getFlags(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getFlags());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getFlags());
 			}
 		
 			getDivisibility(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getDivisibility());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getDivisibility());
 			}
 		
 			getProperties(){
@@ -76,8 +75,8 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 
 				for(var i = 0; i < properties.length; i++){
 					var propertyData = {
-						id : bufferUtils.buffer_to_uint(properties[i].id),
-						value : bufferUtils.bufferArray_to_uint32Array(properties[i].value),
+						id : BufferUtils.buffer_to_uint(properties[i].id),
+						value : BufferUtils.bufferArray_to_uint32Array(properties[i].value),
 					};
 
 					switch (propertyData.id) {
@@ -157,33 +156,28 @@ export default class MosaicCreationTransaction extends VerifiableTransaction {
 				this.properties = properties;
 			}
 
-			getSize(){
-				return BufferSize.MosaicDefinitionBaseSize.main + ( BufferSize.MosaicProperty * this.properties.length);
-			}
-
 			build() {
 				var mosaicCreationTransactionBuffer = new MosaicCreationTransactionBuffer();
 
 				var properties = [];
 
 				var mosaicPropertyBuffer = new MosaicPropertyBuffer();
-				mosaicPropertyBuffer.setId(bufferUtils.uint_to_buffer(2 , 1)); // duration is ID 2
-				mosaicPropertyBuffer.setValue(bufferUtils.uint32Array_to_bufferArray(this.duration));
+				mosaicPropertyBuffer.setId(BufferUtils.uint_to_buffer(2 , 1)); // duration is ID 2
+				mosaicPropertyBuffer.setValue(BufferUtils.uint32Array_to_bufferArray(this.duration));
 
 				properties.push(mosaicPropertyBuffer);
 
 				this.setProperties(properties);
 
 				// does not need to be in order 
-				mosaicCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				mosaicCreationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				mosaicCreationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				mosaicCreationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				mosaicCreationTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				mosaicCreationTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				mosaicCreationTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				mosaicCreationTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				mosaicCreationTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				mosaicCreationTransactionBuffer.setMosaicnonce(this.nonce);
-				mosaicCreationTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
-				mosaicCreationTransactionBuffer.setFlags(bufferUtils.uint_to_buffer(this.flags, 1));
-				mosaicCreationTransactionBuffer.setDivisibility(bufferUtils.uint_to_buffer(this.divisibility, 1));
+				mosaicCreationTransactionBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicCreationTransactionBuffer.setFlags(BufferUtils.uint_to_buffer(this.flags, 1));
+				mosaicCreationTransactionBuffer.setDivisibility(BufferUtils.uint_to_buffer(this.divisibility, 1));
 				mosaicCreationTransactionBuffer.setProperties(properties);
 			
 				var bytes = mosaicCreationTransactionBuffer.serialize();

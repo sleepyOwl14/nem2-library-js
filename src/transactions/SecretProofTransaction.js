@@ -20,8 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	SecretProofTransactionBufferPackage} from '../buffers';
 import convert from '../coders/convert';
 
@@ -54,7 +53,7 @@ export default class SecretProofTransaction extends VerifiableTransaction {
 			}
 
 			getHashAlgorithm(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getHashalgorithm());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getHashalgorithm());
 			}
 		
 			getSecret(){
@@ -95,22 +94,17 @@ export default class SecretProofTransaction extends VerifiableTransaction {
 				this.byteProof = byteProof;
 			}
 
-			getSize(){
-				return BufferSize.SecretProofBaseSize.main + this.byteProof.length;
-			}
-
 			build() {
 				var secretProofTransactionBuffer = new SecretProofTransactionBuffer();
 
 				this.setByteProof(convert.hexToUint8(this.proof));
 				// does not need to be in order 
-				secretProofTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				secretProofTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				secretProofTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				secretProofTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				secretProofTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				secretProofTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				secretProofTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				secretProofTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				secretProofTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				
-				secretProofTransactionBuffer.setHashalgorithm(bufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
+				secretProofTransactionBuffer.setHashalgorithm(BufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
 				secretProofTransactionBuffer.setSecret(convert.hexToUint8(this.secret));
 				secretProofTransactionBuffer.setProof(this.byteProof);
 	

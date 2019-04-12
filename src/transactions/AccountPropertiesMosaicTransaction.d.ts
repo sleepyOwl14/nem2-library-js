@@ -35,8 +35,6 @@ export declare module AccountPropertiesMosaicTransaction {
 
         addModifications(modifications): Builder;
 
-        getSize(): number;
-
         build(): AccountPropertiesMosaicTransaction;
 
     }

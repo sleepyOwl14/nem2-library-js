@@ -15,7 +15,7 @@
  */
 
 import convert from '../coders/convert';
-import {bufferUtils} from '../buffers';
+import {BufferUtils} from '../buffers';
 
 class CommonEmbeddedBufferProperties{
 
@@ -24,7 +24,7 @@ class CommonEmbeddedBufferProperties{
     }
 
     getSize(){
-        return bufferUtils.buffer_to_uint(this.bufferClass.getSize());
+        return BufferUtils.buffer_to_uint(this.bufferClass.getSize());
     }
 
     getSigner(){
@@ -32,19 +32,19 @@ class CommonEmbeddedBufferProperties{
     }
 
     getVersion(){
-        return bufferUtils.buffer_to_uint(this.bufferClass.getVersion());
+        return BufferUtils.buffer_to_uint(this.bufferClass.getVersion());
     }
 
     getVersionHex(){
-        return bufferUtils.buffer_to_uint(this.bufferClass.getVersion()).toString(16);
+        return BufferUtils.buffer_to_uint(this.bufferClass.getVersion()).toString(16);
     }
 
     getType(){
-        return bufferUtils.buffer_to_uint(this.bufferClass.getType());
+        return BufferUtils.buffer_to_uint(this.bufferClass.getType());
     }
 
     getTypeHex(){
-        return bufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
+        return BufferUtils.buffer_to_uint(this.bufferClass.getType()).toString(16);
     }
 }
 

@@ -35,8 +35,6 @@ export declare module AccountPropertiesEntityTypeTransaction {
 
         addModifications(modifications): Builder;
 
-        getSize(): number;
-
         build(): AccountPropertiesEntityTypeTransaction;
 
     }

@@ -16,7 +16,7 @@
 
 import expect from 'expect.js';
 import VerifiableTransactionBuilder from '../../src/transactions/VerificableTransactionBuilder';
-import {TransferTransactionBufferPackage, UnresolvedMosaicBuffer, bufferUtils} from '../../src/buffers';
+import {TransferTransactionBufferPackage, UnresolvedMosaicBuffer, BufferUtils} from '../../src/buffers';
 
 import convert from '../../src/coders/convert';
 
@@ -42,8 +42,8 @@ describe('VerifiableTransaction', () => {
 				transfer.mosaics.forEach(mosaic => {
 					var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-					mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(mosaic.id));
-					mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(mosaic.amount));
+					mosaicBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(mosaic.id));
+					mosaicBuffer.setAmount(BufferUtils.uint32Array_to_bufferArray(mosaic.amount));
 					mosaics.push(mosaicBuffer);
 
 				});
@@ -55,15 +55,15 @@ describe('VerifiableTransaction', () => {
 					bytePayload = Uint8Array.of([transfer.message.type]);
 				}
 				else{
-					bytePayload = bufferUtils.concat_typedarrays( Uint8Array.of([transfer.message.type]), bytePayload);
+					bytePayload = BufferUtils.concat_typedarrays( Uint8Array.of([transfer.message.type]), bytePayload);
 				}
 
 				// does not need to be in order 
-				transferTransactionBuffer.setSize(bufferUtils.uint_to_buffer(148 + (16 * transfer.mosaics.length) + bytePayload.length, 4));
-				transferTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(transfer.version, 2));
-				transferTransactionBuffer.setType(bufferUtils.uint_to_buffer(transfer.type, 2));
-				transferTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(transfer.fee));
-				transferTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(transfer.deadline));
+				transferTransactionBuffer.setSize(BufferUtils.uint_to_buffer(148 + (16 * transfer.mosaics.length) + bytePayload.length, 4));
+				transferTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(transfer.version, 2));
+				transferTransactionBuffer.setType(BufferUtils.uint_to_buffer(transfer.type, 2));
+				transferTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(transfer.fee));
+				transferTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(transfer.deadline));
 				transferTransactionBuffer.setRecipient(transfer.recipient);
 				transferTransactionBuffer.setMessage(bytePayload);
 				transferTransactionBuffer.setMosaics(mosaics);

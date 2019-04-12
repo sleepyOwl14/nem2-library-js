@@ -36,8 +36,7 @@ import NamespaceCreationTransaction from './NamespaceCreationTransaction';
 import SecretLockTransaction from './SecretLockTransaction';
 import SecretProofTransaction from './SecretProofTransaction';
 import {
-	BufferSize,
-	bufferUtils,
+	BufferUtils,
 	AggregateTransactionBufferPackage, 
 	CommonBufferProperties} from '../buffers';
 
@@ -61,7 +60,7 @@ export default class AggregateTransaction extends VerifiableTransaction {
 			}
 		
 			getTransactionsSize(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getTransactionsSize());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getTransactionsSize());
 			}
 
 			getTransactions(){
@@ -175,20 +174,15 @@ export default class AggregateTransaction extends VerifiableTransaction {
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.AggregateBaseSize.main + this.transactions.length;
-			}
-
 			build() {
 
 				var aggregateTransactionBuffer = new AggregateTransactionBuffer();
 
 				// does not need to be in order 
-				aggregateTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				aggregateTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				aggregateTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				aggregateTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				aggregateTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				aggregateTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				aggregateTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				aggregateTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				aggregateTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				aggregateTransactionBuffer.setTransactions(this.transactions);
 
 				var bytes = aggregateTransactionBuffer.serializeAggregate();

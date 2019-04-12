@@ -16,7 +16,7 @@
 
 import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 import TransactionBufferPackage from './TransactionBuffer';
 import TransferTransactionBufferPackage from './TransferTransactionBuffer';
 import AccountLinkTransactionBufferPackage from './AccountLinkTransactionBuffer';
@@ -36,10 +36,9 @@ import SecretProofTransactionBufferPackage from './SecretProofTransactionBuffer'
 import CommonBufferPackage from './CommonBuffer';
 import CommonBufferProperties from './CommonBufferProperties';
 import CommonEmbeddedBufferProperties from './CommonEmbeddedBufferProperties';
-import {OptionalFieldSize, BufferSize} from './BufferSize';
 
 export{
-    bufferUtils,
+    BufferUtils,
     Uint8ArrayConsumableBuffer,
     UnresolvedMosaicBuffer,
     CommonBufferProperties,
@@ -61,6 +60,4 @@ export{
     SecretProofTransactionBufferPackage,
     TransferTransactionBufferPackage,
     TransactionBufferPackage,
-    OptionalFieldSize, 
-    BufferSize,
 }

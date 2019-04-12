@@ -20,8 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	SecretLockTransactionBufferPackage, 
 	UnresolvedMosaicBuffer} from '../buffers';
 import address from '../coders/address';
@@ -59,8 +58,8 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 				var mosaic = this.bufferClass.getMosaic();
 
 				var mosaicData = {
-					mosaicId : bufferUtils.bufferArray_to_uint32Array(mosaic.mosaicId),
-					amount : bufferUtils.bufferArray_to_uint32Array(mosaic.amount),
+					mosaicId : BufferUtils.bufferArray_to_uint32Array(mosaic.mosaicId),
+					amount : BufferUtils.bufferArray_to_uint32Array(mosaic.amount),
 				};
 
 				return mosaicData;
@@ -75,11 +74,11 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 			}
 		
 			getDuration(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDuration());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getDuration());
 			}
 
 			getHashAlgorithm(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getHashalgorithm());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getHashalgorithm());
 			}
 		
 			getSecret(){
@@ -131,27 +130,22 @@ export default class SecretLockTransaction extends VerifiableTransaction {
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.SecretLockBaseSize.main + BufferSize.UnresolvedMosaic;
-			}
-
 			build() {
 				var secretLockTransactionBuffer = new SecretLockTransactionBuffer();
 
 				var mosaicBuffer = new UnresolvedMosaicBuffer();
 
-				mosaicBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
-				mosaicBuffer.setAmount(bufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
+				mosaicBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicBuffer.setAmount(BufferUtils.uint32Array_to_bufferArray(this.mosaicAmount));
 
 				// does not need to be in order 
-				secretLockTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				secretLockTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				secretLockTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				secretLockTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				secretLockTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				secretLockTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				secretLockTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				secretLockTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				secretLockTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 				secretLockTransactionBuffer.setMosaic(mosaicBuffer);
-				secretLockTransactionBuffer.setDuration(bufferUtils.uint32Array_to_bufferArray(this.duration));
-				secretLockTransactionBuffer.setHashalgorithm(bufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
+				secretLockTransactionBuffer.setDuration(BufferUtils.uint32Array_to_bufferArray(this.duration));
+				secretLockTransactionBuffer.setHashalgorithm(BufferUtils.uint_to_buffer(this.hashAlgorithm, 1));
 				secretLockTransactionBuffer.setSecret(convert.hexToUint8(this.secret));
 				secretLockTransactionBuffer.setRecipient(this.recipient);
 	

@@ -37,8 +37,6 @@ export declare module MultisigModificationTransaction {
 
         addModifications(modifications): Builder;
 
-        getSize(): number;
-
         build(): MultisigModificationTransaction;
 
     }

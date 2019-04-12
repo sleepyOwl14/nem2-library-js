@@ -21,8 +21,7 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	AccountPropertiesEntityTypeTransactionBufferPackage} from '../buffers';
 
 const TransactionTypePropertyModificationBuffer = AccountPropertiesEntityTypeTransactionBufferPackage.TransactionTypePropertyModificationBuffer;
@@ -55,7 +54,7 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 			}
 		
 			getPropertyType(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
 			}
 		
 			getModifications(){
@@ -65,8 +64,8 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 
 				for(var i = 0; i < modifications.length; i++){
 					var modification = {
-						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
-						value : bufferUtils.buffer_to_uint(modifications[i].value),
+						modificationType : BufferUtils.buffer_to_uint(modifications[i].modificationType),
+						value : BufferUtils.buffer_to_uint(modifications[i].value),
 					};
 					modificationsData.push(modification);
 				}
@@ -95,10 +94,6 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.TransactionTypePropertyBaseSize.main + (BufferSize.TransactionTypePropertyModification * this.modifications.length);
-			}
-
 			build() {
 				var accountPropertiesEntityTypeTransactionBuffer = new AccountPropertiesEntityTypeTransactionBuffer();
 
@@ -107,18 +102,17 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 					
 					var transactionTypePropertyModificationBuffer = new TransactionTypePropertyModificationBuffer();
 
-					transactionTypePropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType, 1));
-					transactionTypePropertyModificationBuffer.setValue(bufferUtils.uint_to_buffer(modification.value, 2));
+					transactionTypePropertyModificationBuffer.setModificationtype(BufferUtils.uint_to_buffer(modification.modificationType, 1));
+					transactionTypePropertyModificationBuffer.setValue(BufferUtils.uint_to_buffer(modification.value, 2));
 					modificationsArray.push(transactionTypePropertyModificationBuffer);
 				});
 
 				// does not need to be in order 
-				accountPropertiesEntityTypeTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				accountPropertiesEntityTypeTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				accountPropertiesEntityTypeTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountPropertiesEntityTypeTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				accountPropertiesEntityTypeTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				accountPropertiesEntityTypeTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
+				accountPropertiesEntityTypeTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				accountPropertiesEntityTypeTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				accountPropertiesEntityTypeTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountPropertiesEntityTypeTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				accountPropertiesEntityTypeTransactionBuffer.setPropertytype(BufferUtils.uint_to_buffer(this.propertyType,1));
 				accountPropertiesEntityTypeTransactionBuffer.setModifications(modificationsArray);
 			
 				var bytes = accountPropertiesEntityTypeTransactionBuffer.serialize();

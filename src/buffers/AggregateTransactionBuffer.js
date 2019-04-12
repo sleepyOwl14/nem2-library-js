@@ -16,15 +16,15 @@
 
 import TransactionBufferPackage from './TransactionBuffer';
 import Uint8ArrayConsumableBuffer from './Uint8ArrayConsumableBuffer';
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 
 const TransactionBuffer = TransactionBufferPackage.main;
 const EmbeddedTransactionBuffer = TransactionBufferPackage.embedded;
 
-const concat_typedarrays = bufferUtils.concat_typedarrays;
-const fit_bytearray = bufferUtils.fit_bytearray;
-const buffer_to_uint = bufferUtils.buffer_to_uint;
-const uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
 
 class AggregateTransactionBuffer extends TransactionBuffer{
 
@@ -46,6 +46,11 @@ class AggregateTransactionBuffer extends TransactionBuffer{
 
     setTransactions = (transactions) =>{
         this.transactions = transactions;
+    }
+
+    calculateAggregateSize = (base_size) => {
+        var size = base_size + 4 + this.transactions.length
+        this.size = uint_to_buffer(size, 4)
     }
 
     static loadFromBinary(consumableBuffer) {
@@ -91,9 +96,14 @@ class AggregateTransactionBuffer extends TransactionBuffer{
     }
 
     serializeAggregate = () => {
+
         var transactionBytes = this.serialize();
 
+        this.calculateAggregateSize(buffer_to_uint(this.size))
+
         var newArray = Uint8Array.from(transactionBytes);
+
+        newArray = concat_typedarrays(this.size, newArray.slice(4));
         
         newArray = concat_typedarrays(newArray, uint_to_buffer(this.transactions.length, 4));
 

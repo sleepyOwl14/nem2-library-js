@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-class bufferUtils{
+class BufferUtils{
 
     static concat_typedarrays = (array1, array2) => {
         var newArray = new Uint8Array(array1.length + array2.length);
@@ -98,4 +98,4 @@ class bufferUtils{
     }
 }
 
-export default bufferUtils;
+export default BufferUtils;

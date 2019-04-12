@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 
-const concat_typedarrays = bufferUtils.concat_typedarrays;
-const fit_bytearray = bufferUtils.fit_bytearray;
-const buffer_to_uint = bufferUtils.buffer_to_uint;
-const uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
 
 class UnresolvedMosaicBuffer{
     getMosaicid = () => {

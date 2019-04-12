@@ -15,12 +15,12 @@
  */
 
 import UnresolvedMosaicBuffer from './UnresolvedMosaicBuffer';
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 
-const concat_typedarrays = bufferUtils.concat_typedarrays;
-const fit_bytearray = bufferUtils.fit_bytearray;
-const buffer_to_uint = bufferUtils.buffer_to_uint;
-const uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
 
 class TransferTransactionBodyBuffer {
     getRecipient = () => {
@@ -161,6 +161,11 @@ class TransferTransactionBuffer {
         this.mosaics = mosaics
     }
 
+    calculateSize = () => {
+        var size = 148 + ( this.mosaics.length * 16 ) + this.message.length
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new TransferTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -195,8 +200,8 @@ class TransferTransactionBuffer {
     serialize = () => {
 
         var newArray = new Uint8Array();
-        var fitArraysize = fit_bytearray(this.size, 4);
-        //console.log(fitArraysize);
+        this.calculateSize()
+        var fitArraysize = fit_bytearray(this.size, 4);  
         newArray = concat_typedarrays(newArray, fitArraysize);
         var fitArraysignature = fit_bytearray(this.signature, 64);
         newArray = concat_typedarrays(newArray, fitArraysignature);
@@ -218,7 +223,6 @@ class TransferTransactionBuffer {
         newArray = concat_typedarrays(newArray, this.message)
         var i;
         for (i in this.mosaics) {
-            //console.log(this.mosaics[i].serialize());
             newArray = concat_typedarrays(newArray, this.mosaics[i].serialize());
         }
         return newArray;
@@ -283,6 +287,11 @@ class EmbeddedTransferTransactionBuffer {
         this.mosaics = mosaics
     }
 
+    calculateSize = () => {
+        var size = 68 + ( this.mosaics.length * 16 ) + this.message.length
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new EmbeddedTransferTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -310,6 +319,7 @@ class EmbeddedTransferTransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysigner = fit_bytearray(this.signer, 32)
@@ -333,7 +343,6 @@ class EmbeddedTransferTransactionBuffer {
 }
 
 module.exports = {
-    UnresolvedMosaicBuffer,
     body : TransferTransactionBodyBuffer,
     main : TransferTransactionBuffer,
     embedded: EmbeddedTransferTransactionBuffer,

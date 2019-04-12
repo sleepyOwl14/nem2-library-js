@@ -20,9 +20,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	OptionalFieldSize,
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	RegisterNamespaceTransactionBufferPackage} from '../buffers';
 
 import convert from '../coders/convert';
@@ -57,7 +55,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 			}
 		
 			getNamespaceType(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getNamespacetype());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getNamespacetype());
 			}
 		
 			getDuration(){
@@ -65,7 +63,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 				var duration = this.bufferClass.getDuration();
 
 				if(duration !== undefined){
-					return bufferUtils.bufferArray_to_uint32Array(duration);
+					return BufferUtils.bufferArray_to_uint32Array(duration);
 				}
 				else{
 					return null;
@@ -76,7 +74,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 				var parentId = this.bufferClass.getParentid();
 
 				if(parentId !== undefined){
-					return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getParentid());
+					return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getParentid());
 				}
 				else{
 					return null;
@@ -84,7 +82,7 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 			}
 		
 			getNamespaceId(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
 			}
 		
 			getName(){
@@ -127,26 +125,6 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 				return this;
 			}
 
-			getSize(){
-				var namespaceNameLength = convert.utf8ToHex(this.namespaceName).length / 2;
-
-				var additonalOptionalLength;
-
-				switch (this.namespaceType) {
-					case NamespaceType.root:
-						additonalOptionalLength = OptionalFieldSize.RegisterNamespace.duration;
-						break;
-					case NamespaceType.child:
-						additonalOptionalLength = OptionalFieldSize.RegisterNamespace.parentId;
-						break;
-				
-					default:
-						throw "Incorrect namespaceType added";
-				}
-
-				return BufferSize.RegisterNamespaceBaseSize.main + additonalOptionalLength + namespaceNameLength;
-			}
-
 			build() {			
 				var namespaceCreationTransactionBuffer = new NamespaceCreationTransactionBuffer();
 				// does not need to be in order 
@@ -155,24 +133,23 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 
 				switch (this.namespaceType) {
 					case NamespaceType.root:
-						namespaceCreationTransactionBuffer.setDuration(bufferUtils.uint32Array_to_bufferArray(this.duration));
+						namespaceCreationTransactionBuffer.setDuration(BufferUtils.uint32Array_to_bufferArray(this.duration));
 						break;
 					case NamespaceType.child:
-						namespaceCreationTransactionBuffer.setParentid(bufferUtils.uint32Array_to_bufferArray(this.parentId));
+						namespaceCreationTransactionBuffer.setParentid(BufferUtils.uint32Array_to_bufferArray(this.parentId));
 						break;
 				
 					default:
 						throw "Incorrect namespaceType added";
 				}
 
-				namespaceCreationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				namespaceCreationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				namespaceCreationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				namespaceCreationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				namespaceCreationTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				namespaceCreationTransactionBuffer.setNamespacetype(bufferUtils.uint_to_buffer(this.namespaceType, 1));
+				namespaceCreationTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				namespaceCreationTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				namespaceCreationTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				namespaceCreationTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				namespaceCreationTransactionBuffer.setNamespacetype(BufferUtils.uint_to_buffer(this.namespaceType, 1));
 				
-				namespaceCreationTransactionBuffer.setNamespaceid(bufferUtils.uint32Array_to_bufferArray(this.namespaceId));
+				namespaceCreationTransactionBuffer.setNamespaceid(BufferUtils.uint32Array_to_bufferArray(this.namespaceId));
 				namespaceCreationTransactionBuffer.setName(convert.hexToUint8(convert.utf8ToHex(this.namespaceName)));
 
 				var bytes = namespaceCreationTransactionBuffer.serialize();

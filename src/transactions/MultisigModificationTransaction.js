@@ -17,8 +17,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	ModifyMultisigAccountTransactionBufferPackage} from '../buffers';
 
 import convert from '../coders/convert';
@@ -56,11 +55,11 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 			}
 		
 			getMinRemovalDelta(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getMinremovaldelta());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getMinremovaldelta());
 			}
 		
 			getMinApprovalDelta(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getMinapprovaldelta());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getMinapprovaldelta());
 			}
 		
 			getModifications = () => {
@@ -70,7 +69,7 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 
 				for(var i = 0; i < modifications.length; i++){
 					var modificationData = {
-						type : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						type : BufferUtils.buffer_to_uint(modifications[i].modificationType),
 						cosignatoryPublicKey : convert.uint8ToHex(modifications[i].cosignatoryPublicKey),
 					};
 					modificationsData.push(modificationData);
@@ -105,10 +104,6 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.ModifyMultisigAccountBaseSize.main + ( BufferSize.CosignatoryModification * this.modifications.length);
-			}
-
 			build() {
 				var multisigModificationTransactionBuffer = new MultisigModificationTransactionBuffer();
 
@@ -116,20 +111,19 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 				this.modifications.forEach(modification => {
 					const cosignatoryModificationBuffer = new CosignatoryModificationBuffer();
 
-					cosignatoryModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.type, 1));
+					cosignatoryModificationBuffer.setModificationtype(BufferUtils.uint_to_buffer(modification.type, 1));
 					cosignatoryModificationBuffer.setCosignatorypublickey(convert.hexToUint8(modification.cosignatoryPublicKey));
 
 					modificationsArray.push(cosignatoryModificationBuffer);
 				});
 
 				// does not need to be in order 
-				multisigModificationTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				multisigModificationTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				multisigModificationTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				multisigModificationTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				multisigModificationTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				multisigModificationTransactionBuffer.setMinremovaldelta(bufferUtils.uint_to_buffer(this.minRemovalDelta, 1));
-				multisigModificationTransactionBuffer.setMinapprovaldelta(bufferUtils.uint_to_buffer(this.minApprovalDelta, 1));
+				multisigModificationTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				multisigModificationTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				multisigModificationTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				multisigModificationTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				multisigModificationTransactionBuffer.setMinremovaldelta(BufferUtils.uint_to_buffer(this.minRemovalDelta, 1));
+				multisigModificationTransactionBuffer.setMinapprovaldelta(BufferUtils.uint_to_buffer(this.minApprovalDelta, 1));
 				multisigModificationTransactionBuffer.setModifications(modificationsArray);
 
 				var bytes = multisigModificationTransactionBuffer.serialize();

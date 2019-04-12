@@ -15,12 +15,12 @@
  */
 
 import PropertyModificationBuffer from './PropertyModificationBuffer';
-import bufferUtils from './BufferUtils';
+import BufferUtils from './BufferUtils';
 
-const concat_typedarrays = bufferUtils.concat_typedarrays;
-const fit_bytearray = bufferUtils.fit_bytearray;
-const buffer_to_uint = bufferUtils.buffer_to_uint;
-const uint_to_buffer = bufferUtils.uint_to_buffer;
+const concat_typedarrays = BufferUtils.concat_typedarrays;
+const fit_bytearray = BufferUtils.fit_bytearray;
+const buffer_to_uint = BufferUtils.buffer_to_uint;
+const uint_to_buffer = BufferUtils.uint_to_buffer;
 
 class MosaicPropertyModificationBuffer {
     getModificationtype = () => {
@@ -177,6 +177,11 @@ class MosaicPropertyTransactionBuffer {
         this.modifications = modifications
     }
 
+    calculateSize = () => {
+        var size = 122 + ( this.modifications.length * 9 )
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new MosaicPropertyTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -207,6 +212,7 @@ class MosaicPropertyTransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysignature = fit_bytearray(this.signature, 64)
@@ -282,6 +288,11 @@ class EmbeddedMosaicPropertyTransactionBuffer {
         this.modifications = modifications
     }
 
+    calculateSize = () => {
+        var size = 42 + ( this.modifications.length * 9 )
+        this.size = uint_to_buffer(size, 4)
+    }
+
     static loadFromBinary(consumableBuffer) {
         var object = new EmbeddedMosaicPropertyTransactionBuffer()
         var size = consumableBuffer.get_bytes(4)
@@ -306,6 +317,7 @@ class EmbeddedMosaicPropertyTransactionBuffer {
 
     serialize = () => {
         var newArray = new Uint8Array()
+        this.calculateSize()
         var fitArraysize = fit_bytearray(this.size, 4)
         newArray = concat_typedarrays(newArray, fitArraysize)
         var fitArraysigner = fit_bytearray(this.signer, 32)

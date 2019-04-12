@@ -39,8 +39,6 @@ export declare module HashLockTransaction {
 
         addHash(hash): Builder;
 
-        getSize(): number;
-
         build(): HashLockTransaction;
     }
 }

@@ -39,8 +39,6 @@ export declare module TransferTransaction {
 
         setBytePayload(bytePayload): void;
 
-        getSize(): number;
-
         build(): TransferTransaction;
 
     }

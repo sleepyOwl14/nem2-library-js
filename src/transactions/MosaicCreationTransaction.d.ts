@@ -47,8 +47,6 @@ export declare module MosaicCreationTransaction {
 
         setProperties(properties): void;
 
-        getSize(): number;
-
         build(): MosaicCreationTransaction;
 
     }

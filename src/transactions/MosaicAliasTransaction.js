@@ -17,8 +17,7 @@
 import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	MosaicAliasTransactionBufferPackage} from '../buffers';
 
 const MosaicAliasTransactionBuffer = MosaicAliasTransactionBufferPackage.main;
@@ -53,15 +52,15 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 			}
 
 			getAliasAction(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getAliasaction());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getAliasaction());
 			}
 
 			getNamespaceId(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
 			}
 		
 			getMosaicId(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getMosaicid());
 			}
 		}
 	}
@@ -89,24 +88,19 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 				this.mosaicId = mosaicId;
 				return this;
 			}
-
-			getSize(){
-				return BufferSize.MosaicAliasBaseSize.main;
-			}
-
+			
 			build() {
 
 				var mosaicAliasTransactionBuffer = new MosaicAliasTransactionBuffer();
 				// does not need to be in order 
-				mosaicAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				mosaicAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				mosaicAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				mosaicAliasTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				mosaicAliasTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
+				mosaicAliasTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				mosaicAliasTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				mosaicAliasTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				mosaicAliasTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
 
-				mosaicAliasTransactionBuffer.setAliasaction(bufferUtils.uint_to_buffer(this.actionType, 1));
-				mosaicAliasTransactionBuffer.setNamespaceid(bufferUtils.uint32Array_to_bufferArray(this.namespaceId));
-                mosaicAliasTransactionBuffer.setMosaicid(bufferUtils.uint32Array_to_bufferArray(this.mosaicId));
+				mosaicAliasTransactionBuffer.setAliasaction(BufferUtils.uint_to_buffer(this.actionType, 1));
+				mosaicAliasTransactionBuffer.setNamespaceid(BufferUtils.uint32Array_to_bufferArray(this.namespaceId));
+                mosaicAliasTransactionBuffer.setMosaicid(BufferUtils.uint32Array_to_bufferArray(this.mosaicId));
 			
 				var bytes = mosaicAliasTransactionBuffer.serialize();
 

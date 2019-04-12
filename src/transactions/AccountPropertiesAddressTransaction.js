@@ -23,8 +23,7 @@ import BaseBuilder from './BaseBuilder';
 import convert from '../coders/convert';
 
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	AccountPropertiesAddressBufferPackage} from '../buffers';
 
 const AddressPropertyModificationBuffer = AccountPropertiesAddressBufferPackage.AddressPropertyModificationBuffer;
@@ -59,7 +58,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 			}
 		
 			getPropertyType(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getPropertytype());
 			}
 		
 			getModifications(){
@@ -69,7 +68,7 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 
 				for(var i = 0; i < modifications.length; i++){
 					var modification = {
-						modificationType : bufferUtils.buffer_to_uint(modifications[i].modificationType),
+						modificationType : BufferUtils.buffer_to_uint(modifications[i].modificationType),
 						value : address.addressToString(modifications[i].value),
 					};
 					modificationsData.push(modification);
@@ -99,10 +98,6 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.AddressPropertyBaseSize.main + (BufferSize.AddressPropertyModification * this.modifications.length);
-			}
-
 			build() {
 				var accountPropertiesAddressTransactionBuffer = new AccountPropertiesAddressTransactionBuffer();
 
@@ -120,18 +115,17 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 						addressString = address.stringToAddress(modification.value);
 					}
 
-					addressPropertyModificationBuffer.setModificationtype(bufferUtils.uint_to_buffer(modification.modificationType));
+					addressPropertyModificationBuffer.setModificationtype(BufferUtils.uint_to_buffer(modification.modificationType));
 					addressPropertyModificationBuffer.setValue(addressString);
 					modificationsArray.push(addressPropertyModificationBuffer);
 				});
 
 				// does not need to be in order 
-				accountPropertiesAddressTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				accountPropertiesAddressTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				accountPropertiesAddressTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				accountPropertiesAddressTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				accountPropertiesAddressTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				accountPropertiesAddressTransactionBuffer.setPropertytype(bufferUtils.uint_to_buffer(this.propertyType,1));
+				accountPropertiesAddressTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				accountPropertiesAddressTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				accountPropertiesAddressTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				accountPropertiesAddressTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				accountPropertiesAddressTransactionBuffer.setPropertytype(BufferUtils.uint_to_buffer(this.propertyType,1));
 				accountPropertiesAddressTransactionBuffer.setModifications(modificationsArray);
 			
 				var bytes = accountPropertiesAddressTransactionBuffer.serialize();

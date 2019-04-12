@@ -39,8 +39,6 @@ export declare module SecretProofTransaction {
 
         setByteProof(byteProof): void;
 
-        getSize(): number;
-
         build(): SecretProofTransaction;
     }
 }

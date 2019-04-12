@@ -18,8 +18,7 @@ import VerifiableTransaction from './VerifiableTransaction';
 import BaseBuilder from './BaseBuilder';
 
 import {
-	BufferSize,
-    bufferUtils,
+    BufferUtils,
 	AddressAliasTransactionBufferPackage} from '../buffers';
 
 const addressEncoder = require('../coders/address').default;
@@ -55,11 +54,11 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 			}
 		
 			getAliasAction(){
-				return bufferUtils.buffer_to_uint(this.bufferClass.getAliasaction());
+				return BufferUtils.buffer_to_uint(this.bufferClass.getAliasaction());
 			}
 		
 			getNamespaceId(){
-				return bufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
+				return BufferUtils.bufferArray_to_uint32Array(this.bufferClass.getNamespaceid());
 			}
 		
 			getAddress(){
@@ -92,21 +91,16 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 				return this;
 			}
 
-			getSize(){
-				return BufferSize.AddressAliasBaseSize.main;
-			}
-
 			build() {
 
 				var addressAliasTransactionBuffer = new AddressAliasTransactionBuffer();
 
-				addressAliasTransactionBuffer.setSize(bufferUtils.uint_to_buffer(this.getSize(), 4));
-				addressAliasTransactionBuffer.setVersion(bufferUtils.uint_to_buffer(this.version, 2));
-				addressAliasTransactionBuffer.setType(bufferUtils.uint_to_buffer(this.type, 2));
-				addressAliasTransactionBuffer.setFee(bufferUtils.uint32Array_to_bufferArray(this.fee));
-				addressAliasTransactionBuffer.setDeadline(bufferUtils.uint32Array_to_bufferArray(this.deadline));
-				addressAliasTransactionBuffer.setAliasaction(bufferUtils.uint_to_buffer(this.actionType));
-				addressAliasTransactionBuffer.setNamespaceid(bufferUtils.uint32Array_to_bufferArray(this.namespaceId));
+				addressAliasTransactionBuffer.setVersion(BufferUtils.uint_to_buffer(this.version, 2));
+				addressAliasTransactionBuffer.setType(BufferUtils.uint_to_buffer(this.type, 2));
+				addressAliasTransactionBuffer.setFee(BufferUtils.uint32Array_to_bufferArray(this.fee));
+				addressAliasTransactionBuffer.setDeadline(BufferUtils.uint32Array_to_bufferArray(this.deadline));
+				addressAliasTransactionBuffer.setAliasaction(BufferUtils.uint_to_buffer(this.actionType));
+				addressAliasTransactionBuffer.setNamespaceid(BufferUtils.uint32Array_to_bufferArray(this.namespaceId));
 				addressAliasTransactionBuffer.setAddress(this.address);
 
 				var bytes = addressAliasTransactionBuffer.serialize();
