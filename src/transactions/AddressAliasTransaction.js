@@ -38,14 +38,6 @@ export default class AddressAliasTransaction extends VerifiableTransaction {
 		return super.loadEmbeddedFromBinary(binary, EmbeddedAddressAliasTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, AddressAliasTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedAddressAliasTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

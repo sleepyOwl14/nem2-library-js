@@ -38,14 +38,6 @@ export default class AccountPropertiesEntityTypeTransaction extends VerifiableTr
 		return super.loadEmbeddedFromBinary(binary, EmbeddedAccountPropertiesEntityTypeTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, AccountPropertiesEntityTypeTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedAccountPropertiesEntityTypeTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

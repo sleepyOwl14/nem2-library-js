@@ -17,6 +17,7 @@
 import expect from 'expect.js';
 import MultisigModificationTransaction from '../../src/transactions/MultisigModificationTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('MultisigModificationTransaction', () => {
 	const keyPair = {
@@ -49,7 +50,7 @@ describe('MultisigModificationTransaction', () => {
 			.to.be.equal('0102020068B3FBB18729C1FDE225C57F8CE080FA828F0067E451A3FD81FA628842B' +
 			'0B76300CF893FFCC47C33E7F68AB1DB56365C156B0736824A0C1E273F9E00B8DF8F01EB');
 
-		const MultisigModificationTransactionBufferData = MultisigModificationTransaction.loadFromPayload(transactionPayload.payload);
+		const MultisigModificationTransactionBufferData = MultisigModificationTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(MultisigModificationTransactionBufferData.getDeadline()).to.eql(multisigAggregateTransaction.deadline);
 		expect(MultisigModificationTransactionBufferData.getMinRemovalDelta()).to.eql(multisigAggregateTransaction.minRemovalDelta);

@@ -18,6 +18,7 @@ import expect from 'expect.js';
 import MosaicSupplyChangeTransaction from '../../src/transactions/MosaicSupplyChangeTransaction';
 import deadline from '../../src/transactions/Deadline';
 import uint64 from '../../src/coders/uint64';
+import convert from '../../src/coders/convert';
 
 describe('MosaicSupplyChangeTransaction', () => {
 	const keyPair = {
@@ -44,7 +45,7 @@ describe('MosaicSupplyChangeTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('18C5AFC0A842D83A010A00000000000000');
 
-		const MosaicSupplyChangeTransactionBufferData = MosaicSupplyChangeTransaction.loadFromPayload(transactionPayload.payload);
+		const MosaicSupplyChangeTransactionBufferData = MosaicSupplyChangeTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(MosaicSupplyChangeTransactionBufferData.getDeadline()).to.eql(mosaicSupplyChangeTransaction.deadline);
 		expect(MosaicSupplyChangeTransactionBufferData.getMosaicId()).to.eql(mosaicSupplyChangeTransaction.mosaicId);

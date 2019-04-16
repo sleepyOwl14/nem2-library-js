@@ -17,6 +17,7 @@
 import expect from 'expect.js';
 import AccountPropertiesEntityTypeTransaction from '../../src/transactions/AccountPropertiesEntityTypeTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('AccountPropertiesEntityTypeTransaction', () => {
 	const keyPair = {
@@ -42,7 +43,7 @@ describe('AccountPropertiesEntityTypeTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('0401004841');
 
-		const AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransaction.loadFromPayload(transactionPayload.payload);
+		const AccountPropertiesEntityTypeTransactionBufferData = AccountPropertiesEntityTypeTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(AccountPropertiesEntityTypeTransactionBufferData.getDeadline()).to.eql(model.deadline);
 		expect(AccountPropertiesEntityTypeTransactionBufferData.getPropertyType()).to.be.equal(model.propertyType);

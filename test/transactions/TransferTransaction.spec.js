@@ -60,7 +60,7 @@ describe('TransferTransaction', () => {
 			'030002F00FA0DEDD9086400000000000000443F6D806C05543A640000000000000029C' +
 			'F5FD941AD25D56400000000000000');
 
-		const TransferTransactionBufferData = TransferTransaction.loadFromPayload(transactionPayload.payload);
+		const TransferTransactionBufferData = TransferTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(TransferTransactionBufferData.getDeadline()).to.eql(transferTransaction.deadline);
 		expect(TransferTransactionBufferData.getMosaics()).to.eql(transferTransaction.mosaics);
@@ -103,7 +103,7 @@ describe('TransferTransaction', () => {
 			'0FA0DEDD9086400000000000000443F6D806C05543A640000000000000029CF5FD941AD25D' +
 			'56400000000000000');
 
-		const TransferTransactionBufferData = TransferTransaction.loadFromPayload(transactionPayload.payload);
+		const TransferTransactionBufferData = TransferTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(TransferTransactionBufferData.getDeadline()).to.eql(transferTransaction.deadline);
 		expect(TransferTransactionBufferData.getMosaics()).to.eql(transferTransaction.mosaics);
@@ -146,7 +146,7 @@ describe('TransferTransaction', () => {
 			'0DEDD9086400000000000000443F6D806C05543A640000000000000029CF5FD941AD25' +
 			'D56400000000000000');
 
-		const TransferTransactionBufferData = TransferTransaction.loadFromPayload(transactionPayload.payload);
+		const TransferTransactionBufferData = TransferTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 
 		expect(TransferTransactionBufferData.getDeadline()).to.eql(transferTransaction.deadline);
 		expect(TransferTransactionBufferData.getMosaics()).to.eql(transferTransaction.mosaics);

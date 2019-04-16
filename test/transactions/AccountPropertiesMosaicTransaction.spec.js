@@ -17,6 +17,7 @@
 import expect from 'expect.js';
 import AccountPropertiesMosaicTransaction from '../../src/transactions/AccountPropertiesMosaicTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('AccountPropertiesMosaicTransaction', () => {
 	const keyPair = {
@@ -42,7 +43,7 @@ describe('AccountPropertiesMosaicTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('02010018C5AFC0A842D83A');
 
-		const AccountPropertiesMosaicTransactionBufferData = AccountPropertiesMosaicTransaction.loadFromPayload(transactionPayload.payload);
+		const AccountPropertiesMosaicTransactionBufferData = AccountPropertiesMosaicTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(AccountPropertiesMosaicTransactionBufferData.getDeadline()).to.eql(model.deadline);
 		expect(AccountPropertiesMosaicTransactionBufferData.getPropertyType()).to.be.equal(model.propertyType);

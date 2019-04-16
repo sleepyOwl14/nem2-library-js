@@ -36,14 +36,6 @@ export default class MosaicAliasTransaction extends VerifiableTransaction {
 		return super.loadEmbeddedFromBinary(binary, EmbeddedMosaicAliasTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, MosaicAliasTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedMosaicAliasTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

@@ -48,10 +48,6 @@ export default class AggregateTransaction extends VerifiableTransaction {
 		return super.loadFromBinary(binary, AggregateTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, AggregateTransactionBuffer);
-	}
-
 	static _createBufferProperties(){
 
 		return class BufferProperties extends CommonBufferProperties{

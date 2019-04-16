@@ -42,14 +42,6 @@ export default class AccountPropertiesAddressTransaction extends VerifiableTrans
 		return super.loadEmbeddedFromBinary(binary, EmbeddedAccountPropertiesAddressTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, AccountPropertiesAddressTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedAccountPropertiesAddressTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

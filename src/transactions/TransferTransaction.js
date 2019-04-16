@@ -40,14 +40,6 @@ export default class TransferTransaction extends VerifiableTransaction {
 		return super.loadEmbeddedFromBinary(binary, EmbeddedTransferTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, TransferTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedTransferTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

@@ -51,7 +51,7 @@ describe('MosaicCreationTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('E6DE84B88675F65ED72E4B43010104021027000000000000');
 
-		const MosaicCreationTransactionBufferData = MosaicCreationTransaction.loadFromPayload(transactionPayload.payload);
+		const MosaicCreationTransactionBufferData = MosaicCreationTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(MosaicCreationTransactionBufferData.getDeadline()).to.eql(mosaicCreationTransaction.deadline);
 		expect(MosaicCreationTransactionBufferData.getDuration()).to.eql(mosaicCreationTransaction.duration);

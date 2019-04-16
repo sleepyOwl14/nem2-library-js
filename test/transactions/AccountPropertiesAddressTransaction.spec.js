@@ -17,6 +17,7 @@
 import expect from 'expect.js';
 import AccountPropertiesAddressTransaction from '../../src/transactions/AccountPropertiesAddressTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('AccountPropertiesAddressTransaction', () => {
 	const keyPair = {
@@ -42,7 +43,7 @@ describe('AccountPropertiesAddressTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('01010090E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC');
 
-		const AccountPropertiesAddressTransactionBufferData = AccountPropertiesAddressTransaction.loadFromPayload(transactionPayload.payload);
+		const AccountPropertiesAddressTransactionBufferData = AccountPropertiesAddressTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(AccountPropertiesAddressTransactionBufferData.getDeadline()).to.eql(accountPropertiesAddressTransaction.deadline);
 		expect(AccountPropertiesAddressTransactionBufferData.getPropertyType()).to.be.equal(accountPropertiesAddressTransaction.propertyType);

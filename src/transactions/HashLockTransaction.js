@@ -39,14 +39,6 @@ export default class HashLockTransaction extends VerifiableTransaction {
 		return super.loadEmbeddedFromBinary(binary, EmbeddedHashLockTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, HashLockTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedHashLockTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

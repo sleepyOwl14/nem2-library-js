@@ -18,6 +18,7 @@ import expect from 'expect.js';
 import HashLockTransaction from '../../src/transactions/HashLockTransaction';
 import deadline from '../../src/transactions/Deadline';
 import uint64 from '../../src/coders/uint64';
+import convert from '../../src/coders/convert';
 
 describe('HashLockTransaction', () => {
 	const keyPair = {
@@ -49,7 +50,7 @@ describe('HashLockTransaction', () => {
 		)).to.be.equal('29CF5FD941AD25D580969800000000006400000000000000' +
 			'8498B38D89C1DC8A448EA5824938FF828926CD9F7747B1844B59B4B6807E878B');
 
-		const HashLockTransactionBufferData = HashLockTransaction.loadFromPayload(transactionPayload.payload);
+		const HashLockTransactionBufferData = HashLockTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(HashLockTransactionBufferData.getDeadline()).to.eql(hashLockTransaction.deadline);
 		expect(HashLockTransactionBufferData.getDuration()).to.eql(hashLockTransaction.duration);

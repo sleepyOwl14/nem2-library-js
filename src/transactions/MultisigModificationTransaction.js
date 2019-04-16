@@ -39,14 +39,6 @@ export default class MultisigModificationTransaction extends VerifiableTransacti
 		return super.loadEmbeddedFromBinary(binary, EmbeddedMultisigModificationTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, MultisigModificationTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedMultisigModificationTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

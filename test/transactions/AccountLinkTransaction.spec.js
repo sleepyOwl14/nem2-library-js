@@ -17,6 +17,7 @@
 import expect from 'expect.js';
 import AccountLinkTransaction from '../../src/transactions/AccountLinkTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('AccountLinkTransaction', () => {
 	const keyPair = {
@@ -43,7 +44,7 @@ describe('AccountLinkTransaction', () => {
 			transactionPayload.payload.length
 		)).to.be.equal('9A49366406ACA952B88BADF5F1E9BE6CE4968141035A60BE503273EA65456B2400');
 
-		const AccountLinkTransactionBufferData = AccountLinkTransaction.loadFromPayload(transactionPayload.payload);
+		const AccountLinkTransactionBufferData = AccountLinkTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(AccountLinkTransactionBufferData.getDeadline()).to.eql(accountLinkTransaction.deadline);
 		expect(AccountLinkTransactionBufferData.getRemoteAccountKey()).to.be.equal(accountLinkTransaction.remoteAccountKey.toUpperCase());

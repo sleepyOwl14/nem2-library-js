@@ -39,14 +39,6 @@ export default class NamespaceCreationTransaction extends VerifiableTransaction 
 		return super.loadEmbeddedFromBinary(binary, EmbeddedNamespaceCreationTransactionBuffer);
 	}
 
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, NamespaceCreationTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedNamespaceCreationTransactionBuffer);
-	}
-
 	static _createBufferProperties(ExtendingClass){
 
 		return class BufferProperties extends ExtendingClass{

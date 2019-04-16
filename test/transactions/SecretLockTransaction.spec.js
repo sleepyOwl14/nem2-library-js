@@ -19,6 +19,7 @@ import { sha3_256 } from 'js-sha3';
 import SecretLockTransaction from '../../src/transactions/SecretLockTransaction';
 import deadline from '../../src/transactions/Deadline';
 import uint64 from '../../src/coders/uint64';
+import convert from '../../src/coders/convert';
 
 describe('SecretLockTransaction', () => {
 	const keyPair = {
@@ -57,7 +58,7 @@ describe('SecretLockTransaction', () => {
 			'F5A5207A8729B1F709CB710311751EB2FC8ACAD5A1FB8AC991B736E69B6529A3' +
 			'90E8FEBD671DD41BEE94EC3BA5831CB608A312C2F203BA84AC');
 
-		const SecretLockTransactionBufferData = SecretLockTransaction.loadFromPayload(transactionPayload.payload);
+		const SecretLockTransactionBufferData = SecretLockTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(SecretLockTransactionBufferData.getDeadline()).to.eql(secretLockTransaction.deadline);
 		expect(SecretLockTransactionBufferData.getMosaicId()).to.eql(secretLockTransaction.mosaicId);

@@ -37,14 +37,6 @@ export default class AccountPropertiesMosaicTransaction extends VerifiableTransa
 	static loadEmbeddedFromBinary(binary){
 		return super.loadEmbeddedFromBinary(binary, EmbeddedAccountPropertiesMosaicTransactionBuffer);
 	}
-
-	static loadFromPayload(payload){
-		return super.loadFromPayload(payload, AccountPropertiesMosaicTransactionBuffer);
-	}
-
-	static loadEmbeddedFromPayload(payload){
-		return super.loadEmbeddedFromPayload(payload, EmbeddedAccountPropertiesMosaicTransactionBuffer);
-	}
 	
 	static _createBufferProperties(ExtendingClass){
 

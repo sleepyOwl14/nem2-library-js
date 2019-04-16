@@ -138,19 +138,6 @@ export default class VerifiableTransaction {
 	}
 
 	/**
-	 * Convert payload to bytes, then load and assign properties by loadFromBinary method
-	 * @param {string} TransactionPayload in hex
-	 * @param {any} ClassName of Transaction to load from 
-	 * @returns {BufferProperties|null} BufferProperties
-	 */
-	static loadFromPayload(payload, className){
-
-		var binary = convert.hexToUint8(payload);
-
-		return this.loadFromBinary(binary, className);
-	}
-
-	/**
 	 * Load and assign properties by embedded TransactionPayload bytes
 	 * @param {Uint8Array} Embedded TransactionPayload in bytes
 	 * @param {any} ClassName of Transaction to load from 

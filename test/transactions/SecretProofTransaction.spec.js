@@ -18,6 +18,7 @@ import { sha3_256 } from 'js-sha3';
 import expect from 'expect.js';
 import SecretProofTransaction from '../../src/transactions/SecretProofTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('SecretProofTransaction', () => {
 	const keyPair = {
@@ -49,7 +50,7 @@ describe('SecretProofTransaction', () => {
 		)).to.be.equal('00F5A5207A8729B1F709CB710311751EB2FC8ACAD5A1FB8AC991B736E69B6529A3' +
 			'04009A493664');
 
-		const SecretProofTransactionBufferData = SecretProofTransaction.loadFromPayload(transactionPayload.payload);
+		const SecretProofTransactionBufferData = SecretProofTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(SecretProofTransactionBufferData.getDeadline()).to.eql(secretProofTransaction.deadline);
 		expect(SecretProofTransactionBufferData.getHashAlgorithm()).to.be.equal(secretProofTransaction.hashAlgorithm);

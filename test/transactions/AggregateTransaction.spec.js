@@ -18,6 +18,7 @@ import expect from 'expect.js';
 import AggregateTransaction from '../../src/transactions/AggregateTransaction';
 import TransferTransaction from '../../src/transactions/TransferTransaction';
 import deadline from '../../src/transactions/Deadline';
+import convert from '../../src/coders/convert';
 
 describe('AggregateTransaction', () => {
 	const keyPair = {
@@ -68,7 +69,7 @@ describe('AggregateTransaction', () => {
 			'0000057000000846B4439154579A5903B1459C9CF69CB8153F6D0110A7A0ED61DE29AE4810BF2039054419050B9' +
 			'837EFAB4BBE8A4B9BB32D812F9885C00D8FC1650E142030001003030'+'29CF5FD941AD25D5'+'8096980000000000');
 
-		const AggregateTransactionBufferData = AggregateTransaction.loadFromPayload(transactionPayload.payload);
+		const AggregateTransactionBufferData = AggregateTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 
 		expect(AggregateTransactionBufferData.getDeadline()).to.eql(aggregateTransaction.deadline);
 		expect(AggregateTransactionBufferData.getTransactions()[0].getMessage()).to.eql({

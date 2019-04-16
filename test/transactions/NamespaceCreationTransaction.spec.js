@@ -19,6 +19,7 @@ import NamespaceCreationTransaction from '../../src/transactions/NamespaceCreati
 import deadline from '../../src/transactions/Deadline';
 import { namespaceId, subnamespaceNamespaceId, subnamespaceParentId } from '../../src/transactions/NamespaceMosaicId';
 import uint64 from '../../src/coders/uint64';
+import convert from '../../src/coders/convert';
 
 describe('NamespaceCreationTransaction', () => {
 	const keyPair = {
@@ -47,7 +48,7 @@ describe('NamespaceCreationTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('0010270000000000007EE9B3B8AFDF53C00C6E65776E616D657370616365');
 
-		const NamespaceCreationTransactionBufferData = NamespaceCreationTransaction.loadFromPayload(transactionPayload.payload);
+		const NamespaceCreationTransactionBufferData = NamespaceCreationTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(NamespaceCreationTransactionBufferData.getDeadline()).to.eql(namespaceCreationTransaction.deadline);
 		expect(NamespaceCreationTransactionBufferData.getNamespaceType()).to.be.equal(namespaceCreationTransaction.namespaceType);
@@ -79,7 +80,7 @@ describe('NamespaceCreationTransaction', () => {
 		expect(transactionPayload.payload.substring(240, transactionPayload.payload.length))
 			.to.be.equal('017EE9B3B8AFDF53C028ED7825B972AC9D0473756232');
 
-		const NamespaceCreationTransactionBufferData = NamespaceCreationTransaction.loadFromPayload(transactionPayload.payload);
+		const NamespaceCreationTransactionBufferData = NamespaceCreationTransaction.loadFromBinary(convert.hexToUint8(transactionPayload.payload));
 		
 		expect(NamespaceCreationTransactionBufferData.getDeadline()).to.eql(namespaceCreationTransaction.deadline);
 		expect(NamespaceCreationTransactionBufferData.getNamespaceType()).to.be.equal(namespaceCreationTransaction.namespaceType);

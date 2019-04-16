@@ -21,8 +21,6 @@ export declare class AggregateTransaction extends VerifiableTransaction {
     public signTransactionWithCosigners(initializer, cosigners): {payload: string, hash:string}
 
     static loadFromBinary(binary): BufferProperties;
-
-    static loadFromPayload(string): BufferProperties; 
 }
 
 export declare module AggregateTransaction {

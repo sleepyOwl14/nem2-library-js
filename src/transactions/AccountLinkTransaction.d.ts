@@ -20,11 +20,7 @@ import BaseBuilder from './BaseBuilder';
 export declare class AccountLinkTransaction extends VerifiableTransaction {
     static loadFromBinary(binary): BufferProperties;
 
-    static loadFromPayload(string): BufferProperties; 
-
-    static loadEmbeddedFromBinary(binary): BufferProperties; 
-
-    static loadEmbeddedFromPayload(string): BufferProperties;
+    static loadEmbeddedFromBinary(binary): BufferProperties;
 }
 
 export declare module AccountLinkTransaction {
