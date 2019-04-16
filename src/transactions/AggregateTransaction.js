@@ -141,7 +141,7 @@ export default class AggregateTransaction extends VerifiableTransaction {
 
 						case 0x414C:
 							// Account Link
-							transactionData = AccountLinkTransaction.loadFromBinary( transactions[i].bytes );
+							transactionData = AccountLinkTransaction.loadEmbeddedFromBinary( transactions[i].bytes );
 							break;
 
 						default:
